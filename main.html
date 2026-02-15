@@ -247,6 +247,65 @@
             overflow-y: auto;
         }
 
+        .hat-description {
+            background: #f0f7ff;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        body.dark-mode .hat-description {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+        }
+
+        .hat-description h3 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .hat-description h3 {
+            color: #60a5fa;
+        }
+
+        .hat-description p {
+            color: #1e40af;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .hat-description p {
+            color: #bfdbfe;
+        }
+
+        .desc-components {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: #4b5563;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode .desc-components {
+            background: #0f172a;
+            color: #94a3b8;
+        }
+
+        .desc-components strong {
+            color: #3b82f6;
+        }
+
+        body.dark-mode .desc-components strong {
+            color: #60a5fa;
+        }
+
         .hat-category {
             margin-bottom: 25px;
         }
@@ -640,6 +699,13 @@
 
                 <div class="card hat-selector">
                     <h2>Available Hats</h2>
+                    
+                    <div id="hatDescription" class="hat-description" style="display: none;">
+                        <h3 id="descTitle"></h3>
+                        <p id="descText"></p>
+                        <div class="desc-components" id="descComponents"></div>
+                    </div>
+                    
                     <div id="hatOptions"></div>
                     <div class="conflict-warning" id="conflictWarning">
                         Pin conflict detected! Check GPIO allocation below.
@@ -691,7 +757,8 @@
         const basePins = {
             2: 'Touch 1', 3: 'Touch 2', 4: 'Touch 3', 5: 'Touch 4',
             18: 'Touch 5', 19: 'Touch 6', 20: 'Touch 7', 21: 'Touch 8',
-            22: 'Servo', 14: 'I2C SDA', 15: 'I2C SCL'
+            22: 'Servo', 14: 'I2C SDA', 15: 'I2C SCL',
+            'wifi': 'WiFi (Built-in)'
         };
 
         const hats = {
@@ -703,7 +770,10 @@
                 stackable: 'Stackable with all',
                 i2c: false,
                 inputs: ['ldr'],
-                outputs: ['neopixels']
+                outputs: ['neopixels'],
+                description: 'Control addressable RGB LEDs and measure ambient light levels. Perfect for creating colorful displays, mood lighting, night lights, and light-responsive projects.',
+                components: 'WS2812B NeoPixel strip/ring (16 LEDs), LDR photoresistor (GL5528), 10kΩ resistor for voltage divider',
+                useCase: 'Build a smart lamp that changes color based on room brightness, or create visual notifications for sensor events.'
             },
             environmental: {
                 name: 'Environmental',
@@ -713,7 +783,10 @@
                 stackable: 'I2C - stack unlimited',
                 i2c: true,
                 inputs: ['temperature', 'humidity', 'pressure', 'air_quality'],
-                outputs: []
+                outputs: [],
+                description: 'Monitor temperature, humidity, pressure, and air quality. Ideal for weather stations, indoor air quality monitoring, and environmental sensing applications.',
+                components: 'BME680 sensor (temp/humidity/pressure/gas), optional BH1750 light sensor, status LED',
+                useCase: 'Create a home weather station, monitor greenhouse conditions, or track indoor air quality with WiFi data logging.'
             },
             motion: {
                 name: 'Motion & IMU',
@@ -723,7 +796,10 @@
                 stackable: 'I2C - stack unlimited',
                 i2c: true,
                 inputs: ['accelerometer', 'gyroscope', 'magnetometer', 'gesture'],
-                outputs: []
+                outputs: [],
+                description: 'Detect movement, orientation, direction, and gestures. Great for robotics, gesture control, fall detection, step counting, and orientation-aware applications.',
+                components: 'MPU6050 (6-axis accelerometer/gyroscope), QMC5883L magnetometer (compass), optional APDS-9960 gesture sensor',
+                useCase: 'Build a gesture-controlled robot, step counter, compass, fall detection system, or orientation-aware display.'
             },
             input: {
                 name: 'Input Expansion',
@@ -733,7 +809,10 @@
                 stackable: 'I2C - stack unlimited',
                 i2c: true,
                 inputs: ['button_0', 'button_1', 'button_2', 'button_3'],
-                outputs: ['led_0', 'led_1', 'led_2', 'led_3']
+                outputs: ['led_0', 'led_1', 'led_2', 'led_3'],
+                description: 'Add up to 16 extra buttons, switches, or LED outputs via I2C port expander. No additional GPIO pins needed beyond the I2C bus.',
+                components: 'MCP23017 16-bit I2C GPIO expander, tactile buttons with pull-up resistors, LEDs with current-limiting resistors',
+                useCase: 'Add a custom control panel with multiple buttons and indicator LEDs without using up precious GPIO pins.'
             },
             display: {
                 name: 'Display OLED',
@@ -743,7 +822,10 @@
                 stackable: 'I2C - stack unlimited',
                 i2c: true,
                 inputs: [],
-                outputs: ['display_text', 'display_graphics']
+                outputs: ['display_text', 'display_graphics'],
+                description: 'Show text, graphics, icons, and sensor data on a crisp monochrome OLED display. Perfect for status displays, data visualization, menus, and user interfaces.',
+                components: 'SSD1306 OLED display (0.96" or 1.3", 128x64 pixels), optional backlight control circuit',
+                useCase: 'Display sensor readings, show WiFi status, create interactive menus, or visualize data with graphs and icons.'
             },
             color: {
                 name: 'RGB Sensor',
@@ -753,7 +835,10 @@
                 stackable: 'I2C - stack unlimited',
                 i2c: true,
                 inputs: ['color_rgb'],
-                outputs: []
+                outputs: [],
+                description: 'Detect and measure colors with precision RGB sensing. Useful for color sorting, matching, paint color identification, light quality analysis, and creative projects.',
+                components: 'TCS34725 RGB color sensor with IR filter, optional white LED for consistent illumination',
+                useCase: 'Build a color sorter, match paint colors, detect colored objects, or create an ambient light color matcher.'
             },
             distance: {
                 name: 'Distance ToF',
@@ -763,7 +848,10 @@
                 stackable: 'I2C - stack unlimited',
                 i2c: true,
                 inputs: ['distance'],
-                outputs: []
+                outputs: [],
+                description: 'Measure precise distances up to 2 meters using laser Time-of-Flight technology. Great for robotics obstacle avoidance, level sensing, proximity detection, and parking assistance.',
+                components: 'VL53L0X or VL53L1X Time-of-Flight laser ranging sensor (±3mm accuracy)',
+                useCase: 'Build a parking sensor, robot obstacle avoidance, automatic hand sanitizer dispenser, or liquid level monitor.'
             },
             audio: {
                 name: 'Audio',
@@ -773,7 +861,10 @@
                 stackable: 'Check pin conflicts',
                 i2c: false,
                 inputs: ['microphone'],
-                outputs: ['speaker_tone', 'speaker_melody']
+                outputs: ['speaker_tone', 'speaker_melody'],
+                description: 'Generate tones, melodies, and sound effects while recording audio input. Perfect for musical instruments, alarms, voice projects, sound-reactive applications, and notification sounds.',
+                components: 'PAM8403 class-D amplifier (3W), 8Ω speaker, electret microphone with MAX4466 preamp, capacitors',
+                useCase: 'Create a musical instrument, sound-reactive LED display, voice-activated system, or audio notification system.'
             },
             power: {
                 name: 'Power Monitor',
@@ -783,7 +874,10 @@
                 stackable: 'Check pin conflicts',
                 i2c: false,
                 inputs: ['battery_voltage', 'solar_voltage', 'power_button'],
-                outputs: ['power_led']
+                outputs: ['power_led'],
+                description: 'Monitor battery voltage, solar charging, and power consumption. Essential for battery-powered projects, solar systems, portable devices, and power management.',
+                components: 'Voltage dividers (100kΩ/10kΩ), status LEDs, power button, optional TP4056 LiPo charger module',
+                useCase: 'Build a solar-powered weather station, battery monitor with WiFi alerts, or portable IoT device with power management.'
             },
             motor: {
                 name: 'Motor Driver',
@@ -793,17 +887,23 @@
                 stackable: 'Uses 4 pins + battery',
                 i2c: false,
                 inputs: [],
-                outputs: ['motor_a', 'motor_b']
+                outputs: ['motor_a', 'motor_b'],
+                description: 'Drive two DC motors with independent speed and direction control using DRV8833PW chip. Requires separate battery supply. Perfect for robots, RC vehicles, conveyor systems, and any motorized project.',
+                components: 'DRV8833PW dual H-bridge motor driver, motor terminal blocks, separate battery pack (4.5-10V), flyback diodes',
+                useCase: 'Build a line-following robot, remote-controlled car, automated curtain opener, or pan-tilt camera mount.'
             },
             wireless: {
-                name: 'Wireless',
+                name: 'Wireless Expansion',
                 pins: { 16: 'UART TX', 17: 'UART RX', 12: 'Enable', 13: 'Reset' },
                 color: '#a855f7',
                 category: 'dedicated',
-                stackable: 'Check pin conflicts',
+                stackable: 'Uses 4 pins (UART)',
                 i2c: false,
                 inputs: ['wireless_receive'],
-                outputs: ['wireless_send']
+                outputs: ['wireless_send'],
+                description: 'Add Bluetooth, LoRa long-range, or 2.4GHz wireless communication for projects beyond WiFi. Note: Pico W has built-in WiFi, so this is for additional wireless protocols only.',
+                components: 'HC-05/HC-06 Bluetooth module, RFM95W LoRa module, or nRF24L01+ 2.4GHz transceiver',
+                useCase: 'Add Bluetooth control to your project, create a long-range LoRa sensor network, or build wireless sensor nodes. Most projects can use built-in WiFi instead.'
             },
             analog: {
                 name: 'Analog Mux',
@@ -813,7 +913,10 @@
                 stackable: 'Uses 5 pins',
                 i2c: false,
                 inputs: ['analog_0', 'analog_1', 'analog_2', 'analog_3'],
-                outputs: []
+                outputs: [],
+                description: 'Read up to 8 analog sensors using just one ADC pin via multiplexer. Ideal for multi-sensor projects like soil monitoring arrays, temperature monitoring, analog input expansion.',
+                components: 'CD74HC4051 8-channel analog multiplexer, terminal blocks, 0.1µF filtering capacitors',
+                useCase: 'Monitor 8 soil moisture sensors, create a multi-zone temperature monitor, or read multiple potentiometers with one ADC.'
             }
         };
 
@@ -892,6 +995,12 @@
                     
                     if (!isFull) {
                         hatOption.addEventListener('click', () => toggleHat(hatKey));
+                        hatOption.addEventListener('mouseenter', () => showHatDescription(hatKey));
+                        hatOption.addEventListener('mouseleave', () => {
+                            if (!activeHats.includes(hatKey)) {
+                                hideHatDescription();
+                            }
+                        });
                     }
                     categoryDiv.appendChild(hatOption);
                 });
@@ -942,6 +1051,34 @@
             initHatOptions();
             updatePins();
             updateHexagons();
+            updateActiveHatDescription();
+        }
+
+        function showHatDescription(hatKey) {
+            const hat = hats[hatKey];
+            const descBox = document.getElementById('hatDescription');
+            const descTitle = document.getElementById('descTitle');
+            const descText = document.getElementById('descText');
+            const descComponents = document.getElementById('descComponents');
+            
+            descBox.style.display = 'block';
+            descTitle.textContent = hat.name + ' Hat';
+            descText.innerHTML = `<strong>What it does:</strong> ${hat.description}<br><br><strong>Use Case:</strong> ${hat.useCase}`;
+            descComponents.innerHTML = `<strong>Components:</strong> ${hat.components}`;
+        }
+
+        function hideHatDescription() {
+            if (activeHats.length === 0) {
+                document.getElementById('hatDescription').style.display = 'none';
+            }
+        }
+
+        function updateActiveHatDescription() {
+            if (activeHats.length > 0) {
+                showHatDescription(activeHats[activeHats.length - 1]);
+            } else {
+                hideHatDescription();
+            }
         }
 
         function updatePins() {
@@ -1051,6 +1188,8 @@
             for (let i = 1; i <= 8; i++) {
                 options += `<option value="touch_${i}">Touch Sensor ${i}</option>`;
             }
+            options += '<option value="wifi_connected">WiFi Connected</option>';
+            options += '<option value="wifi_message">WiFi Message Received</option>';
             options += '</optgroup>';
             
             activeHats.forEach(hatKey => {
@@ -1072,6 +1211,8 @@
             let options = '<optgroup label="Base Board">';
             options += '<option value="servo_sweep">Servo Sweep</option>';
             options += '<option value="servo_position">Servo Position</option>';
+            options += '<option value="wifi_send">WiFi Send Message</option>';
+            options += '<option value="wifi_post">WiFi HTTP POST</option>';
             options += '</optgroup>';
             
             activeHats.forEach(hatKey => {
@@ -1133,6 +1274,45 @@ i2c = busio.I2C(board.GP15, board.GP14)
 
             // Initialize base board components
             code += `# Initialize Base Board Components
+
+# WiFi Setup (Pico W built-in)
+import wifi
+import socketpool
+import ssl
+
+wifi_connected = False
+
+def connect_wifi(ssid, password):
+    """Connect to WiFi network"""
+    global wifi_connected
+    try:
+        print(f"Connecting to {ssid}...")
+        wifi.radio.connect(ssid, password)
+        wifi_connected = True
+        print(f"Connected! IP: {wifi.radio.ipv4_address}")
+        return True
+    except Exception as e:
+        print(f"WiFi connection failed: {e}")
+        wifi_connected = False
+        return False
+
+def wifi_send_data(url, data):
+    """Send data via HTTP POST"""
+    if not wifi_connected:
+        print("WiFi not connected")
+        return False
+    try:
+        pool = socketpool.SocketPool(wifi.radio)
+        # Add your HTTP request code here
+        print(f"Sending to {url}: {data}")
+        return True
+    except Exception as e:
+        print(f"Send failed: {e}")
+        return False
+
+# Uncomment and configure your WiFi credentials:
+# connect_wifi("YOUR_SSID", "YOUR_PASSWORD")
+
 `;
             
             code += `# Touch sensors
@@ -1346,6 +1526,14 @@ def check_interactions():
                 return `touch_sensors[${num}].value`;
             }
             
+            if (input === 'wifi_connected') {
+                return 'wifi_connected';
+            }
+            
+            if (input === 'wifi_message') {
+                return 'wifi_message_received()';
+            }
+            
             const [hatKey, inputType] = input.split(':');
             
             switch(inputType) {
@@ -1369,6 +1557,14 @@ def check_interactions():
             
             if (output === 'servo_position') {
                 return 'servo_motor.angle = 90';
+            }
+            
+            if (output === 'wifi_send') {
+                return 'wifi_send_data("http://example.com/api", "sensor_data")';
+            }
+            
+            if (output === 'wifi_post') {
+                return 'wifi_send_data("http://your-server.com/endpoint", "triggered")';
             }
             
             const [hatKey, outputType] = output.split(':');
