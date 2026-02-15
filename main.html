@@ -787,12 +787,12 @@
             },
             motor: {
                 name: 'Motor Driver',
-                pins: { 6: 'Motor A PWM', 7: 'Motor A DIR', 8: 'Motor B PWM', 9: 'Motor B DIR', 10: 'Enable', 11: 'Current' },
+                pins: { 6: 'Motor A IN1', 7: 'Motor A IN2', 8: 'Motor B IN1', 9: 'Motor B IN2' },
                 color: '#ef4444',
                 category: 'dedicated',
-                stackable: 'Uses 6 pins',
+                stackable: 'Uses 4 pins + battery',
                 i2c: false,
-                inputs: ['motor_current'],
+                inputs: [],
                 outputs: ['motor_a', 'motor_b']
             },
             wireless: {
@@ -1261,21 +1261,48 @@ def play_tone(frequency, duration=0.5):
                     break;
                     
                 case 'motor':
-                    code += `motor_a_pwm = PWMOut(board.GP6, frequency=1000)
-motor_a_dir = digitalio.DigitalInOut(board.GP7)
-motor_a_dir.direction = digitalio.Direction.OUTPUT
+                    code += `# Motor Driver Hat - DRV8833PW
+# Uses separate battery supply for motors
+motor_a_in1 = PWMOut(board.GP6, frequency=1000)
+motor_a_in2 = PWMOut(board.GP7, frequency=1000)
 
-motor_b_pwm = PWMOut(board.GP8, frequency=1000)
-motor_b_dir = digitalio.DigitalInOut(board.GP9)
-motor_b_dir.direction = digitalio.Direction.OUTPUT
+motor_b_in1 = PWMOut(board.GP8, frequency=1000)
+motor_b_in2 = PWMOut(board.GP9, frequency=1000)
 
-def set_motor_a(speed, direction):
-    motor_a_dir.value = direction
-    motor_a_pwm.duty_cycle = int(abs(speed) * 65535)
+def set_motor_a(speed):
+    """
+    Set motor A speed and direction.
+    speed: -1.0 (full reverse) to 1.0 (full forward), 0 = stop
+    """
+    if speed > 0:  # Forward
+        motor_a_in1.duty_cycle = int(abs(speed) * 65535)
+        motor_a_in2.duty_cycle = 0
+    elif speed < 0:  # Reverse
+        motor_a_in1.duty_cycle = 0
+        motor_a_in2.duty_cycle = int(abs(speed) * 65535)
+    else:  # Brake
+        motor_a_in1.duty_cycle = 0
+        motor_a_in2.duty_cycle = 0
 
-def set_motor_b(speed, direction):
-    motor_b_dir.value = direction
-    motor_b_pwm.duty_cycle = int(abs(speed) * 65535)
+def set_motor_b(speed):
+    """
+    Set motor B speed and direction.
+    speed: -1.0 (full reverse) to 1.0 (full forward), 0 = stop
+    """
+    if speed > 0:  # Forward
+        motor_b_in1.duty_cycle = int(abs(speed) * 65535)
+        motor_b_in2.duty_cycle = 0
+    elif speed < 0:  # Reverse
+        motor_b_in1.duty_cycle = 0
+        motor_b_in2.duty_cycle = int(abs(speed) * 65535)
+    else:  # Brake
+        motor_b_in1.duty_cycle = 0
+        motor_b_in2.duty_cycle = 0
+
+def stop_motors():
+    """Stop both motors"""
+    set_motor_a(0)
+    set_motor_b(0)
 
 `;
                     break;
@@ -1354,7 +1381,9 @@ def check_interactions():
                 case 'speaker_tone':
                     return 'play_tone(440, 0.3)';
                 case 'motor_a':
-                    return 'set_motor_a(0.5, True)';
+                    return 'set_motor_a(0.7)  # Forward at 70% speed';
+                case 'motor_b':
+                    return 'set_motor_b(0.7)  # Forward at 70% speed';
                 default:
                     return 'pass';
             }
