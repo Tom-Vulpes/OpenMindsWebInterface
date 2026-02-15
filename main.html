@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenMinds Board - Complete Configuration System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: #4a5568;
+        }
+
+        .tab:hover {
+            background: #e2e8f0;
+        }
+
+        .tab.active {
+            background: #4a5568;
+            color: white;
+            border-color: #4a5568;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #2d3748;
+            border-bottom: 2px solid #4a5568;
+            padding-bottom: 10px;
+        }
+
+        .hexagon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hexagon-board {
+            position: relative;
+            width: 700px;
+            height: 700px;
+        }
+
+        .hex-layer {
+            position: absolute;
+            width: 140px;
+            height: 161px;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .hexagon {
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hexagon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 100;
+        }
+
+        .hex-layer.base {
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 207px;
+            z-index: 10;
+        }
+
+        .hex-layer.base .hexagon {
+            background: #2d3748;
+        }
+
+        .hex-layer.pos-0 { left: 50%; top: 12%; transform: translate(-50%, 0); }
+        .hex-layer.pos-1 { left: 70%; top: 23%; transform: translate(-50%, 0); }
+        .hex-layer.pos-2 { left: 70%; top: 57%; transform: translate(-50%, 0); }
+        .hex-layer.pos-3 { left: 50%; top: 68%; transform: translate(-50%, 0); }
+        .hex-layer.pos-4 { left: 30%; top: 57%; transform: translate(-50%, 0); }
+        .hex-layer.pos-5 { left: 30%; top: 23%; transform: translate(-50%, 0); }
+        .hex-layer.pos-6 { left: 50%; top: 5%; transform: translate(-50%, 0) scale(0.9); }
+        .hex-layer.pos-7 { left: 78%; top: 15%; transform: translate(-50%, 0) scale(0.9); }
+        .hex-layer.pos-8 { left: 82%; top: 50%; transform: translate(-50%, 0) scale(0.9); }
+        .hex-layer.pos-9 { left: 78%; top: 65%; transform: translate(-50%, 0) scale(0.9); }
+        .hex-layer.pos-10 { left: 50%; top: 75%; transform: translate(-50%, 0) scale(0.9); }
+        .hex-layer.pos-11 { left: 22%; top: 65%; transform: translate(-50%, 0) scale(0.9); }
+        .hex-layer.pos-12 { left: 18%; top: 50%; transform: translate(-50%, 0) scale(0.9); }
+        .hex-layer.pos-13 { left: 22%; top: 15%; transform: translate(-50%, 0) scale(0.9); }
+
+        .hex-content {
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.75em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            padding: 8px;
+            line-height: 1.3;
+        }
+
+        .hat-selector {
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .hat-category {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hat-option {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hat-option:hover {
+            border-color: #4a5568;
+            background: #edf2f7;
+        }
+
+        .hat-option.active {
+            background: #4a5568;
+            color: white;
+            border-color: #4a5568;
+        }
+
+        .hat-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hat-name {
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 4px;
+        }
+
+        .hat-pins {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .hat-stackable {
+            font-size: 0.75em;
+            opacity: 0.9;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .pins-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+        }
+
+        .pin-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .pin-card.used {
+            border-color: #667eea;
+        }
+
+        .pin-card.base {
+            background: #2d3748;
+            color: white;
+            border-color: #2d3748;
+        }
+
+        .pin-card.i2c {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .pin-number {
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 4px;
+        }
+
+        .pin-function {
+            font-size: 0.75em;
+            opacity: 0.9;
+        }
+
+        .pin-users {
+            font-size: 0.65em;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        .conflict-warning {
+            background: #fed7d7;
+            border: 2px solid #fc8181;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #742a2a;
+            display: none;
+        }
+
+        .conflict-warning.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        .stack-info {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #065f46;
+        }
+
+        .code-output {
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .code-header h3 {
+            color: #fff;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .copy-btn {
+            padding: 8px 16px;
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #2d3748;
+        }
+
+        .copy-btn.copied {
+            background: #28a745;
+        }
+
+        pre {
+            margin: 0;
+            overflow-x: auto;
+            max-height: 600px;
+        }
+
+        code {
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 12px;
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 20px;
+        }
+
+        .generate-btn:hover {
+            background: #2d3748;
+        }
+
+        .interaction-builder {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .interaction-builder h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .interaction-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .interaction-row select {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .interaction-row .arrow {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .add-interaction-btn {
+            padding: 10px 20px;
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .remove-btn {
+            padding: 5px 10px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 1400px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .hexagon-board {
+                width: 600px;
+                height: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OpenMinds Board - Complete Configuration System</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('configure')">Configure Hats</button>
+            <button class="tab" onclick="switchTab('interactions')">Build Interactions</button>
+            <button class="tab" onclick="switchTab('code')">Generate Code</button>
+        </div>
+
+        <!-- TAB 1: CONFIGURE HATS -->
+        <div id="tab-configure" class="tab-content active">
+            <div class="main-grid">
+                <div class="card hexagon-container">
+                    <h2 style="margin-bottom: 20px;">Board Configuration</h2>
+                    <div class="hexagon-board" id="hexagonBoard">
+                        <div class="hex-layer base">
+                            <div class="hexagon">
+                                <div class="hex-content">BASE<br>BOARD</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card hat-selector">
+                    <h2>Available Hats</h2>
+                    <div id="hatOptions"></div>
+                    <div class="conflict-warning" id="conflictWarning">
+                        Pin conflict detected! Check GPIO allocation below.
+                    </div>
+                    <div class="stack-info">
+                        <strong>Stack Tip:</strong> I2C hats (green pins) can all work together! Non-I2C hats should use different GPIO pins.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>GPIO Pin Allocation</h2>
+                <div class="pins-container" id="pinGrid"></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: BUILD INTERACTIONS -->
+        <div id="tab-interactions" class="tab-content">
+            <div class="card">
+                <h2>Build Input → Output Interactions</h2>
+                <p style="margin-bottom: 20px; color: #4a5568;">Define how your inputs trigger outputs. The code generator will create the complete logic.</p>
+                
+                <div id="interactionsContainer"></div>
+                
+                <button class="add-interaction-btn" onclick="addInteraction()">+ Add Interaction</button>
+            </div>
+        </div>
+
+        <!-- TAB 3: GENERATE CODE -->
+        <div id="tab-code" class="tab-content">
+            <div class="card">
+                <h2>Generated CircuitPython Code</h2>
+                <p style="margin-bottom: 20px; color: #4a5568;">Complete code for your OpenMinds Board configuration</p>
+                
+                <button class="generate-btn" onclick="generateCompleteCode()">Generate Complete Code</button>
+                
+                <div class="code-output" style="margin-top: 20px;">
+                    <div class="code-header">
+                        <h3>code.py</h3>
+                        <button class="copy-btn" onclick="copyCode()">Copy Code</button>
+                    </div>
+                    <pre><code id="generated-code">Click "Generate Complete Code" to create your program!</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const basePins = {
+            2: 'Touch 1', 3: 'Touch 2', 4: 'Touch 3', 5: 'Touch 4',
+            18: 'Touch 5', 19: 'Touch 6', 20: 'Touch 7', 21: 'Touch 8',
+            22: 'Servo', 14: 'I2C SDA', 15: 'I2C SCL'
+        };
+
+        const hats = {
+            light: {
+                name: 'Light & Color',
+                pins: { 0: 'NeoPixels', 28: 'LDR' },
+                color: '#f59e0b',
+                category: 'stackable',
+                stackable: 'Stackable with all',
+                i2c: false,
+                inputs: ['ldr'],
+                outputs: ['neopixels']
+            },
+            environmental: {
+                name: 'Environmental',
+                pins: { 14: 'I2C', 15: 'I2C', 1: 'Status LED' },
+                color: '#10b981',
+                category: 'i2c',
+                stackable: 'I2C - stack unlimited',
+                i2c: true,
+                inputs: ['temperature', 'humidity', 'pressure', 'air_quality'],
+                outputs: []
+            },
+            motion: {
+                name: 'Motion & IMU',
+                pins: { 14: 'I2C', 15: 'I2C', 26: 'Interrupt' },
+                color: '#06b6d4',
+                category: 'i2c',
+                stackable: 'I2C - stack unlimited',
+                i2c: true,
+                inputs: ['accelerometer', 'gyroscope', 'magnetometer', 'gesture'],
+                outputs: []
+            },
+            input: {
+                name: 'Input Expansion',
+                pins: { 14: 'I2C', 15: 'I2C' },
+                color: '#8b5cf6',
+                category: 'i2c',
+                stackable: 'I2C - stack unlimited',
+                i2c: true,
+                inputs: ['button_0', 'button_1', 'button_2', 'button_3'],
+                outputs: ['led_0', 'led_1', 'led_2', 'led_3']
+            },
+            display: {
+                name: 'Display OLED',
+                pins: { 14: 'I2C', 15: 'I2C', 23: 'Backlight' },
+                color: '#3b82f6',
+                category: 'i2c',
+                stackable: 'I2C - stack unlimited',
+                i2c: true,
+                inputs: [],
+                outputs: ['display_text', 'display_graphics']
+            },
+            color: {
+                name: 'RGB Sensor',
+                pins: { 14: 'I2C', 15: 'I2C' },
+                color: '#ec4899',
+                category: 'i2c',
+                stackable: 'I2C - stack unlimited',
+                i2c: true,
+                inputs: ['color_rgb'],
+                outputs: []
+            },
+            distance: {
+                name: 'Distance ToF',
+                pins: { 14: 'I2C', 15: 'I2C' },
+                color: '#14b8a6',
+                category: 'i2c',
+                stackable: 'I2C - stack unlimited',
+                i2c: true,
+                inputs: ['distance'],
+                outputs: []
+            },
+            audio: {
+                name: 'Audio',
+                pins: { 16: 'PWM Out', 17: 'Enable', 26: 'Mic ADC' },
+                color: '#f59e0b',
+                category: 'stackable',
+                stackable: 'Check pin conflicts',
+                i2c: false,
+                inputs: ['microphone'],
+                outputs: ['speaker_tone', 'speaker_melody']
+            },
+            power: {
+                name: 'Power Monitor',
+                pins: { 29: 'Battery', 27: 'Solar', 24: 'LED', 25: 'Button' },
+                color: '#84cc16',
+                category: 'stackable',
+                stackable: 'Check pin conflicts',
+                i2c: false,
+                inputs: ['battery_voltage', 'solar_voltage', 'power_button'],
+                outputs: ['power_led']
+            },
+            motor: {
+                name: 'Motor Driver',
+                pins: { 6: 'Motor A PWM', 7: 'Motor A DIR', 8: 'Motor B PWM', 9: 'Motor B DIR', 10: 'Enable', 11: 'Current' },
+                color: '#ef4444',
+                category: 'dedicated',
+                stackable: 'Uses 6 pins',
+                i2c: false,
+                inputs: ['motor_current'],
+                outputs: ['motor_a', 'motor_b']
+            },
+            wireless: {
+                name: 'Wireless',
+                pins: { 16: 'UART TX', 17: 'UART RX', 12: 'Enable', 13: 'Reset' },
+                color: '#a855f7',
+                category: 'dedicated',
+                stackable: 'Check pin conflicts',
+                i2c: false,
+                inputs: ['wireless_receive'],
+                outputs: ['wireless_send']
+            },
+            analog: {
+                name: 'Analog Mux',
+                pins: { 26: 'ADC In', 6: 'S0', 7: 'S1', 8: 'S2', 9: 'Enable' },
+                color: '#f97316',
+                category: 'dedicated',
+                stackable: 'Uses 5 pins',
+                i2c: false,
+                inputs: ['analog_0', 'analog_1', 'analog_2', 'analog_3'],
+                outputs: []
+            }
+        };
+
+        let activeHats = [];
+        let interactions = [];
+        const maxHats = 12;
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            if (tabName === 'interactions') {
+                updateInteractionBuilder();
+            }
+        }
+
+        function initPinGrid() {
+            const pinGrid = document.getElementById('pinGrid');
+            pinGrid.innerHTML = '';
+            
+            for (let i = 0; i <= 29; i++) {
+                const pinCard = document.createElement('div');
+                pinCard.className = 'pin-card';
+                pinCard.id = `pin-${i}`;
+                
+                let pinFunction = 'Available';
+                let className = '';
+                
+                if (basePins[i]) {
+                    pinFunction = basePins[i];
+                    className = basePins[i].includes('I2C') ? 'i2c' : 'base';
+                }
+                
+                pinCard.className = `pin-card ${className}`;
+                pinCard.innerHTML = `
+                    <div class="pin-number">GP${i}</div>
+                    <div class="pin-function">${pinFunction}</div>
+                `;
+                
+                pinGrid.appendChild(pinCard);
+            }
+        }
+
+        function initHatOptions() {
+            const hatOptions = document.getElementById('hatOptions');
+            hatOptions.innerHTML = '';
+            
+            const categories = {
+                i2c: 'I2C Hats (Unlimited Stacking)',
+                stackable: 'Stackable Hats',
+                dedicated: 'Multi-Pin Hats'
+            };
+            
+            Object.entries(categories).forEach(([catKey, catName]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'hat-category';
+                categoryDiv.innerHTML = `<div class="category-title">${catName}</div>`;
+                
+                Object.keys(hats).forEach(hatKey => {
+                    const hat = hats[hatKey];
+                    if (hat.category !== catKey) return;
+                    
+                    const isActive = activeHats.includes(hatKey);
+                    const isFull = activeHats.length >= maxHats && !isActive;
+                    
+                    const hatOption = document.createElement('div');
+                    hatOption.className = `hat-option ${isActive ? 'active' : ''} ${isFull ? 'disabled' : ''}`;
+                    hatOption.innerHTML = `
+                        <div class="hat-name">${hat.name}</div>
+                        <div class="hat-pins">GPIO: ${Object.keys(hat.pins).join(', ')}</div>
+                        <div class="hat-stackable">${hat.stackable}</div>
+                    `;
+                    
+                    if (!isFull) {
+                        hatOption.addEventListener('click', () => toggleHat(hatKey));
+                    }
+                    categoryDiv.appendChild(hatOption);
+                });
+                
+                hatOptions.appendChild(categoryDiv);
+            });
+        }
+
+        function checkPinConflicts(newHatKey) {
+            const newHat = hats[newHatKey];
+            
+            for (const existingKey of activeHats) {
+                const existingHat = hats[existingKey];
+                
+                if (newHat.i2c && existingHat.i2c) continue;
+                
+                const newPins = Object.keys(newHat.pins).filter(p => !newHat.i2c || (p != 14 && p != 15));
+                const existingPins = Object.keys(existingHat.pins).filter(p => !existingHat.i2c || (p != 14 && p != 15));
+                
+                const overlap = newPins.filter(pin => existingPins.includes(pin));
+                if (overlap.length > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function toggleHat(hatKey) {
+            const index = activeHats.indexOf(hatKey);
+            
+            if (index > -1) {
+                activeHats.splice(index, 1);
+            } else {
+                if (activeHats.length >= maxHats) return;
+                if (checkPinConflicts(hatKey)) {
+                    const warning = document.getElementById('conflictWarning');
+                    warning.classList.add('show');
+                    setTimeout(() => warning.classList.remove('show'), 3000);
+                    return;
+                }
+                activeHats.push(hatKey);
+            }
+            
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            initHatOptions();
+            updatePins();
+            updateHexagons();
+        }
+
+        function updatePins() {
+            const pinUsage = {};
+            
+            activeHats.forEach(hatKey => {
+                const hat = hats[hatKey];
+                Object.keys(hat.pins).forEach(pin => {
+                    if (!pinUsage[pin]) pinUsage[pin] = [];
+                    pinUsage[pin].push(hat.name);
+                });
+            });
+            
+            for (let i = 0; i <= 29; i++) {
+                const pinCard = document.getElementById(`pin-${i}`);
+                if (!pinCard) continue;
+                
+                let pinFunction = 'Available';
+                let className = '';
+                let users = '';
+                
+                if (basePins[i]) {
+                    pinFunction = basePins[i];
+                    className = basePins[i].includes('I2C') ? 'i2c' : 'base';
+                    
+                    if (pinUsage[i] && pinUsage[i].length > 0) {
+                        users = pinUsage[i].join(', ');
+                    }
+                } else if (pinUsage[i]) {
+                    className = 'used';
+                    const hat = hats[activeHats.find(key => hats[key].pins[i])];
+                    pinFunction = hat.pins[i];
+                    users = pinUsage[i].join(', ');
+                }
+                
+                pinCard.className = `pin-card ${className}`;
+                pinCard.innerHTML = `
+                    <div class="pin-number">GP${i}</div>
+                    <div class="pin-function">${pinFunction}</div>
+                    ${users ? `<div class="pin-users">${users}</div>` : ''}
+                `;
+            }
+        }
+
+        function updateHexagons() {
+            const board = document.getElementById('hexagonBoard');
+            const oldHats = board.querySelectorAll('.hex-layer:not(.base)');
+            oldHats.forEach(hat => hat.remove());
+            
+            activeHats.forEach((hatKey, index) => {
+                const hat = hats[hatKey];
+                const hexLayer = document.createElement('div');
+                hexLayer.className = `hex-layer pos-${index}`;
+                hexLayer.innerHTML = `
+                    <div class="hexagon" style="background: ${hat.color}">
+                        <div class="hex-content">${hat.name.toUpperCase()}</div>
+                    </div>
+                `;
+                hexLayer.addEventListener('click', () => toggleHat(hatKey));
+                board.appendChild(hexLayer);
+            });
+        }
+
+        function updateInteractionBuilder() {
+            const container = document.getElementById('interactionsContainer');
+            container.innerHTML = '';
+            
+            if (activeHats.length === 0) {
+                container.innerHTML = '<p style="color: #4a5568; padding: 20px; text-align: center;">Add some hats first to build interactions!</p>';
+                return;
+            }
+            
+            if (interactions.length === 0) {
+                interactions.push({ input: '', output: '', params: {} });
+            }
+            
+            interactions.forEach((interaction, idx) => {
+                const row = document.createElement('div');
+                row.className = 'interaction-builder';
+                row.innerHTML = `
+                    <div class="interaction-row">
+                        <select id="input-${idx}" onchange="updateInteraction(${idx}, 'input', this.value)">
+                            <option value="">Select Input...</option>
+                            ${getInputOptions()}
+                        </select>
+                        <div class="arrow">→</div>
+                        <select id="output-${idx}" onchange="updateInteraction(${idx}, 'output', this.value)">
+                            <option value="">Select Output...</option>
+                            ${getOutputOptions()}
+                        </select>
+                        ${interactions.length > 1 ? `<button class="remove-btn" onclick="removeInteraction(${idx})">Remove</button>` : ''}
+                    </div>
+                `;
+                container.appendChild(row);
+                
+                if (interaction.input) {
+                    document.getElementById(`input-${idx}`).value = interaction.input;
+                }
+                if (interaction.output) {
+                    document.getElementById(`output-${idx}`).value = interaction.output;
+                }
+            });
+        }
+
+        function getInputOptions() {
+            let options = '<optgroup label="Base Board">';
+            for (let i = 1; i <= 8; i++) {
+                options += `<option value="touch_${i}">Touch Sensor ${i}</option>`;
+            }
+            options += '</optgroup>';
+            
+            activeHats.forEach(hatKey => {
+                const hat = hats[hatKey];
+                if (hat.inputs.length > 0) {
+                    options += `<optgroup label="${hat.name}">`;
+                    hat.inputs.forEach(input => {
+                        const displayName = input.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        options += `<option value="${hatKey}:${input}">${displayName}</option>`;
+                    });
+                    options += '</optgroup>';
+                }
+            });
+            
+            return options;
+        }
+
+        function getOutputOptions() {
+            let options = '<optgroup label="Base Board">';
+            options += '<option value="servo_sweep">Servo Sweep</option>';
+            options += '<option value="servo_position">Servo Position</option>';
+            options += '</optgroup>';
+            
+            activeHats.forEach(hatKey => {
+                const hat = hats[hatKey];
+                if (hat.outputs.length > 0) {
+                    options += `<optgroup label="${hat.name}">`;
+                    hat.outputs.forEach(output => {
+                        const displayName = output.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        options += `<option value="${hatKey}:${output}">${displayName}</option>`;
+                    });
+                    options += '</optgroup>';
+                }
+            });
+            
+            return options;
+        }
+
+        function updateInteraction(idx, type, value) {
+            interactions[idx][type] = value;
+        }
+
+        function addInteraction() {
+            interactions.push({ input: '', output: '', params: {} });
+            updateInteractionBuilder();
+        }
+
+        function removeInteraction(idx) {
+            interactions.splice(idx, 1);
+            updateInteractionBuilder();
+        }
+
+        function generateCompleteCode() {
+            let code = `# OpenMinds Board - Complete Configuration
+# Generated for: ${activeHats.map(h => hats[h].name).join(', ')}
+# Date: ${new Date().toLocaleDateString()}
+
+import time
+import board
+import digitalio
+import touchio
+from pwmio import PWMOut
+from adafruit_motor import servo
+
+`;
+
+            // Add I2C if needed
+            const hasI2C = activeHats.some(h => hats[h].i2c);
+            if (hasI2C) {
+                code += `import busio
+i2c = busio.I2C(board.GP15, board.GP14)
+
+`;
+            }
+
+            // Add hat-specific imports and initializations
+            activeHats.forEach(hatKey => {
+                code += generateHatCode(hatKey);
+            });
+
+            // Initialize base board components
+            code += `# Initialize Base Board Components
+`;
+            
+            code += `# Touch sensors
+touch_sensors = [
+    touchio.TouchIn(board.GP2),
+    touchio.TouchIn(board.GP3),
+    touchio.TouchIn(board.GP4),
+    touchio.TouchIn(board.GP5),
+    touchio.TouchIn(board.GP18),
+    touchio.TouchIn(board.GP19),
+    touchio.TouchIn(board.GP20),
+    touchio.TouchIn(board.GP21),
+]
+
+`;
+
+            code += `# Servo motor
+servo_pwm = PWMOut(board.GP22, duty_cycle=2 ** 15, frequency=50)
+servo_motor = servo.Servo(servo_pwm, min_pulse=500, max_pulse=2500)
+
+`;
+
+            // Generate interaction logic
+            code += generateInteractionCode();
+
+            // Main loop
+            code += `# Main loop
+print("OpenMinds Board initialized!")
+print("Active hats: ${activeHats.map(h => hats[h].name).join(', ')}")
+print("System ready!")
+
+while True:
+    try:
+        # Check inputs and trigger outputs
+        check_interactions()
+        
+        time.sleep(0.01)
+        
+    except KeyboardInterrupt:
+        print("\\nProgram stopped")
+        break
+`;
+
+            document.getElementById('generated-code').textContent = code;
+        }
+
+        function generateHatCode(hatKey) {
+            let code = `# ${hats[hatKey].name} Hat
+`;
+            
+            switch(hatKey) {
+                case 'light':
+                    code += `import neopixel
+import analogio
+
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+ldr = analogio.AnalogIn(board.GP28)
+
+def get_light_level():
+    return ldr.value
+
+def set_neopixels(color):
+    pixels.fill(color)
+    pixels.show()
+
+`;
+                    break;
+                    
+                case 'environmental':
+                    code += `import adafruit_bme680
+
+bme680 = adafruit_bme680.Adafruit_BME680_I2C(i2c)
+
+def read_environment():
+    return {
+        'temperature': bme680.temperature,
+        'humidity': bme680.humidity,
+        'pressure': bme680.pressure,
+        'gas': bme680.gas
+    }
+
+`;
+                    break;
+                    
+                case 'motion':
+                    code += `import adafruit_mpu6050
+
+mpu = adafruit_mpu6050.MPU6050(i2c)
+
+def read_motion():
+    return {
+        'acceleration': mpu.acceleration,
+        'gyro': mpu.gyro,
+        'temperature': mpu.temperature
+    }
+
+`;
+                    break;
+                    
+                case 'display':
+                    code += `import adafruit_ssd1306
+
+display = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c)
+
+def show_text(text, x=0, y=0):
+    display.fill(0)
+    display.text(text, x, y, 1)
+    display.show()
+
+`;
+                    break;
+                    
+                case 'audio':
+                    code += `import analogio
+
+speaker_pwm = PWMOut(board.GP16, frequency=440)
+mic = analogio.AnalogIn(board.GP26)
+
+def play_tone(frequency, duration=0.5):
+    speaker_pwm.frequency = frequency
+    speaker_pwm.duty_cycle = 32768
+    time.sleep(duration)
+    speaker_pwm.duty_cycle = 0
+
+`;
+                    break;
+                    
+                case 'motor':
+                    code += `motor_a_pwm = PWMOut(board.GP6, frequency=1000)
+motor_a_dir = digitalio.DigitalInOut(board.GP7)
+motor_a_dir.direction = digitalio.Direction.OUTPUT
+
+motor_b_pwm = PWMOut(board.GP8, frequency=1000)
+motor_b_dir = digitalio.DigitalInOut(board.GP9)
+motor_b_dir.direction = digitalio.Direction.OUTPUT
+
+def set_motor_a(speed, direction):
+    motor_a_dir.value = direction
+    motor_a_pwm.duty_cycle = int(abs(speed) * 65535)
+
+def set_motor_b(speed, direction):
+    motor_b_dir.value = direction
+    motor_b_pwm.duty_cycle = int(abs(speed) * 65535)
+
+`;
+                    break;
+            }
+            
+            return code;
+        }
+
+        function generateInteractionCode() {
+            let code = `# Interaction Logic
+def check_interactions():
+`;
+            
+            if (interactions.length === 0 || !interactions[0].input) {
+                code += `    pass  # No interactions defined yet
+    
+`;
+                return code;
+            }
+            
+            interactions.forEach((interaction, idx) => {
+                if (!interaction.input || !interaction.output) return;
+                
+                const inputCode = generateInputCheck(interaction.input);
+                const outputCode = generateOutputAction(interaction.output);
+                
+                code += `    # Interaction ${idx + 1}: ${interaction.input} → ${interaction.output}
+    if ${inputCode}:
+        ${outputCode}
+        time.sleep(0.3)  # Debounce
+    
+`;
+            });
+            
+            return code;
+        }
+
+        function generateInputCheck(input) {
+            if (input.startsWith('touch_')) {
+                const num = parseInt(input.split('_')[1]) - 1;
+                return `touch_sensors[${num}].value`;
+            }
+            
+            const [hatKey, inputType] = input.split(':');
+            
+            switch(inputType) {
+                case 'ldr':
+                    return 'get_light_level() < 20000';
+                case 'temperature':
+                    return 'read_environment()["temperature"] > 25';
+                case 'distance':
+                    return 'read_distance() < 30';
+                default:
+                    return 'True';
+            }
+        }
+
+        function generateOutputAction(output) {
+            if (output === 'servo_sweep') {
+                return `for angle in range(0, 180, 10):
+            servo_motor.angle = angle
+            time.sleep(0.02)`;
+            }
+            
+            if (output === 'servo_position') {
+                return 'servo_motor.angle = 90';
+            }
+            
+            const [hatKey, outputType] = output.split(':');
+            
+            switch(outputType) {
+                case 'neopixels':
+                    return 'set_neopixels((255, 0, 0))';
+                case 'display_text':
+                    return 'show_text("Triggered!", 0, 0)';
+                case 'speaker_tone':
+                    return 'play_tone(440, 0.3)';
+                case 'motor_a':
+                    return 'set_motor_a(0.5, True)';
+                default:
+                    return 'pass';
+            }
+        }
+
+        function copyCode() {
+            const code = document.getElementById('generated-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy Code';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Initialize
+        initPinGrid();
+        initHatOptions();
+        updateDisplay();
+    </script>
+</body>
+</html>
