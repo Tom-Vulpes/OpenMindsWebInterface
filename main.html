@@ -892,19 +892,6 @@
                 components: 'DRV8833PW dual H-bridge motor driver, motor terminal blocks, separate battery pack (4.5-10V), flyback diodes',
                 useCase: 'Build a line-following robot, remote-controlled car, automated curtain opener, or pan-tilt camera mount.'
             },
-            wireless: {
-                name: 'Wireless Expansion',
-                pins: { 16: 'UART TX', 17: 'UART RX', 12: 'Enable', 13: 'Reset' },
-                color: '#a855f7',
-                category: 'dedicated',
-                stackable: 'Uses 4 pins (UART)',
-                i2c: false,
-                inputs: ['wireless_receive'],
-                outputs: ['wireless_send'],
-                description: 'Add Bluetooth, LoRa long-range, or 2.4GHz wireless communication for projects beyond WiFi. Note: Pico W has built-in WiFi, so this is for additional wireless protocols only.',
-                components: 'HC-05/HC-06 Bluetooth module, RFM95W LoRa module, or nRF24L01+ 2.4GHz transceiver',
-                useCase: 'Add Bluetooth control to your project, create a long-range LoRa sensor network, or build wireless sensor nodes. Most projects can use built-in WiFi instead.'
-            },
             analog: {
                 name: 'Analog Mux',
                 pins: { 26: 'ADC In', 6: 'S0', 7: 'S1', 8: 'S2', 9: 'Enable' },
@@ -922,7 +909,7 @@
 
         let activeHats = [];
         let interactions = [];
-        const maxHats = 12;
+        const maxHats = 11;
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
