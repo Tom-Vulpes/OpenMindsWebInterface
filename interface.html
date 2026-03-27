@@ -1,0 +1,2463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Minds — Student Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #f5f3ee;
+  --cream: #ede9e0;
+  --accent: #e85d26;
+  --accent-warm: #f0a500;
+  --accent-teal: #1a7a6e;
+  --accent-purple: #5c3d8f;
+  --muted: #8a8580;
+  --border: #d4cfc6;
+  --white: #ffffff;
+  --phase-1: #e85d26;
+  --phase-2: #f0a500;
+  --phase-3: #1a7a6e;
+  --phase-4: #5c3d8f;
+  --phase-5: #c44d6e;
+  --phase-6: #2b6cb0;
+  --sidebar-w: 260px;
+  --radius: 12px;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logo-mark {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.logo-sub {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.sidebar-phases {
+  flex: 1;
+  padding: 16px 0;
+  overflow-y: auto;
+}
+
+.phase-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 20px 13px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  color: rgba(245, 243, 238, 0.5);
+}
+
+.phase-item:hover {
+  color: var(--paper);
+  background: rgba(255,255,255,0.04);
+}
+
+.phase-item.active {
+  color: var(--paper);
+  background: rgba(255,255,255,0.06);
+}
+
+.phase-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--phase-accent);
+  border-radius: 0 2px 2px 0;
+}
+
+.phase-item.completed .phase-num {
+  background: rgba(255,255,255,0.12);
+}
+
+.phase-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.phase-item.active .phase-num {
+  background: var(--phase-accent);
+  color: white;
+}
+
+.phase-item.completed .phase-num::after {
+  content: '✓';
+}
+
+.phase-label {
+  font-size: 0.82rem;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.phase-label strong {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.sidebar-footer {
+  padding: 20px 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.progress-bar-track {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── MAIN CONTENT ─── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.phase-view {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  animation: fadeUp 0.35s ease forwards;
+}
+
+.phase-view.active {
+  display: flex;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── PHASE HEADER ─── */
+.phase-header {
+  padding: 48px 60px 36px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.phase-header::before {
+  content: attr(data-phase-num);
+  position: absolute;
+  right: 48px; top: -10px;
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 8rem;
+  color: var(--phase-color, #e85d26);
+  opacity: 0.06;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.phase-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--phase-color, #e85d26);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phase-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.phase-title {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 2.4rem;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+
+.phase-description {
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 640px;
+  line-height: 1.65;
+}
+
+/* ─── PHASE BODY ─── */
+.phase-body {
+  flex: 1;
+  padding: 48px 60px;
+}
+
+/* ─── NAV CONTROLS ─── */
+.phase-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 60px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn-primary:hover { background: #333; transform: translateY(-1px); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { color: var(--ink); border-color: var(--ink); }
+
+.btn-accent {
+  background: var(--accent);
+  color: white;
+}
+.btn-accent:hover { background: #d44e1e; transform: translateY(-1px); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  padding: 12px 0;
+}
+.btn-ghost:hover { color: var(--accent); }
+
+/* ─── CARDS / PANELS ─── */
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 20px;
+}
+
+.panel-accent {
+  border-left: 4px solid var(--phase-color, var(--accent));
+}
+
+/* ─── FORM ELEMENTS ─── */
+textarea, input[type="text"] {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  resize: vertical;
+  transition: border-color 0.2s;
+  line-height: 1.6;
+}
+
+textarea:focus, input[type="text"]:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* ─── TAG / BADGE ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-success { background: #d1fae5; color: #065f46; }
+.badge-warn { background: #fef3c7; color: #92400e; }
+.badge-info { background: #dbeafe; color: #1e40af; }
+
+/* ─── TOOLTIP ─── */
+.tooltip {
+  position: relative;
+}
+.tooltip:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ═══════════════════════════════
+   PHASE 1 — AFFORDANCE DISCOVERY
+═══════════════════════════════ */
+.affordance-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.affordance-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.affordance-card:hover {
+  border-color: var(--phase-1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(232,93,38,0.12);
+}
+
+.affordance-card.explored {
+  border-color: var(--accent-teal);
+  background: linear-gradient(135deg, #f0faf9 0%, var(--white) 100%);
+}
+
+.affordance-card.explored::after {
+  content: '✓';
+  position: absolute;
+  top: 14px; right: 16px;
+  width: 22px; height: 22px;
+  background: var(--accent-teal);
+  color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.affordance-icon {
+  font-size: 2.4rem;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.affordance-name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.affordance-desc {
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.affordance-demo {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-top: 24px;
+  display: none;
+}
+
+.affordance-demo.active {
+  display: block;
+  animation: fadeUp 0.3s ease;
+}
+
+.demo-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: var(--paper);
+}
+
+.demo-question {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: rgba(245,243,238,0.7);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.demo-sim {
+  background: rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.demo-insight {
+  font-size: 0.85rem;
+  color: rgba(245,243,238,0.6);
+  font-style: italic;
+  line-height: 1.5;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.sim-led {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.sim-led-dot {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #333;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.sim-led-dot.on { background: var(--led-color, #ff4444); box-shadow: 0 0 12px var(--led-color, #ff4444); }
+
+.sim-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+  outline: none;
+  margin: 8px 0;
+}
+.sim-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.sim-reading {
+  font-family: monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 8px 0;
+}
+
+.sim-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(245,243,238,0.4);
+  margin-bottom: 4px;
+}
+
+.board-connect-banner {
+  background: linear-gradient(135deg, var(--ink) 0%, #2d3748 100%);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+}
+
+.board-connect-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.board-status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #ef4444;
+  flex-shrink: 0;
+}
+
+.board-status-dot.connected {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.board-status-text {
+  color: var(--paper);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+.board-status-text strong { display: block; font-weight: 600; font-size: 0.9rem; }
+
+.hat-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.hat-chip {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s;
+}
+
+.hat-chip.selected {
+  border-color: currentColor;
+}
+
+/* ═══════════════════════════
+   PHASE 2 — IDEATION / CARDS
+═══════════════════════════ */
+.card-game-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.card-piles {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-pile {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.card-pile-header {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-pile-label {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pile-person { color: #c44d6e; }
+.pile-condition { color: #5c3d8f; }
+.pile-environment { color: #1a7a6e; }
+
+.pile-count {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.drawn-card {
+  padding: 20px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.drawn-card-content {
+  display: none;
+}
+
+.drawn-card-content.visible {
+  display: block;
+  animation: cardReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: scale(0.92) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.card-empty {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-style: italic;
+  font-weight: 300;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.card-body {
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.draw-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: var(--cream);
+  color: var(--ink);
+  border-top: 1px solid var(--border);
+  transition: all 0.18s;
+  text-align: center;
+}
+.draw-btn:hover { background: var(--border); }
+
+.scenario-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.scenario-display {
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 24px;
+  border: 1.5px solid var(--border);
+  min-height: 120px;
+}
+
+.scenario-display.has-cards {
+  background: white;
+  border-color: var(--phase-2);
+}
+
+.scenario-prompt {
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.scenario-text {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+.scenario-text .card-highlight {
+  font-weight: 600;
+}
+
+.scenario-text .card-highlight.person { color: #c44d6e; }
+.scenario-text .card-highlight.condition { color: #5c3d8f; }
+.scenario-text .card-highlight.environment { color: #1a7a6e; }
+
+.discussion-prompts {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.discussion-prompts h3 {
+  font-family: var(--font-head);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.discussion-prompts ol {
+  padding-left: 16px;
+}
+
+.discussion-prompts li {
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+
+.hypothesis-section {
+  grid-column: 1 / -1;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.hypothesis-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.hypothesis-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-style: italic;
+  max-width: 400px;
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════
+   PHASE 3 — INVESTIGATION
+═══════════════════════════ */
+.investigation-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 28px;
+}
+
+.investigation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.form-group h3 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.form-group p {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 300;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.hypothesis-echo {
+  background: var(--cream);
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink);
+  border-left: 3px solid var(--phase-2);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.investigation-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-hint {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.sidebar-hint h4 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+  color: var(--paper);
+}
+
+.sidebar-hint p {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(245,243,238,0.6);
+  line-height: 1.6;
+}
+
+.verdict-options {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.verdict-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--ink);
+  transition: all 0.18s;
+  text-align: center;
+}
+
+.verdict-btn:hover { border-color: var(--ink); }
+.verdict-btn.selected-holds { background: #d1fae5; border-color: #059669; color: #065f46; }
+.verdict-btn.selected-revised { background: #fef3c7; border-color: #d97706; color: #92400e; }
+.verdict-btn.selected-wrong { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+
+/* ═══════════════════════════
+   PHASE 4 — PROTOTYPING
+═══════════════════════════ */
+.proto-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 0;
+  min-height: calc(100vh - 280px);
+  background: var(--ink);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+
+.code-editor-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: #1a1a2e;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.editor-dot { width: 12px; height: 12px; border-radius: 50%; }
+.ed-red { background: #ff5f57; }
+.ed-yellow { background: #ffbd2e; }
+.ed-green { background: #28c840; }
+
+.editor-filename {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  margin-left: 8px;
+}
+
+.editor-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.editor-btn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+}
+
+.editor-btn-run { background: #10b981; color: white; }
+.editor-btn-run:hover { background: #059669; }
+.editor-btn-template { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+.editor-btn-template:hover { background: rgba(255,255,255,0.14); }
+.editor-btn-send { background: #3b82f6; color: white; }
+.editor-btn-send:hover { background: #2563eb; }
+
+.code-editor {
+  flex: 1;
+  background: #1e1e2e;
+  padding: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: #cdd6f4;
+  border: none;
+  resize: none;
+  line-height: 1.7;
+  outline: none;
+  min-height: 380px;
+  tab-size: 4;
+}
+
+.editor-output {
+  background: #11111b;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 14px 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #a6e3a1;
+  min-height: 80px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.output-line { margin-bottom: 2px; }
+.output-line.err { color: #f38ba8; }
+.output-line.sys { color: #89b4fa; }
+
+.proto-sidebar {
+  background: #16213e;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.proto-sidebar-section {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.proto-sidebar-section h4 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 12px;
+}
+
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.template-item {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.template-item:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.template-name {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 2px;
+}
+
+.template-desc {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.3);
+  line-height: 1.4;
+}
+
+.challenge-reminder {
+  padding: 16px;
+  background: rgba(232,93,38,0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(232,93,38,0.2);
+}
+
+.challenge-reminder h5 {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.challenge-reminder p {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════
+   PHASE 5 — REFLECTION
+═══════════════════════════ */
+.reflection-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.reflection-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.reflection-card h3 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.reflection-card p {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 300;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.reflection-card.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ═══════════════════════════
+   PHASE 6 — SHARING
+═══════════════════════════ */
+.share-hero {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 40px;
+  margin-bottom: 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.share-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 70% 50%, rgba(232,93,38,0.15) 0%, transparent 60%);
+}
+
+.share-hero-title {
+  font-family: var(--font-head);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--paper);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.share-hero-sub {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: rgba(245,243,238,0.55);
+  margin-bottom: 28px;
+}
+
+.journey-timeline {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.journey-entry {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  position: relative;
+}
+
+.journey-entry-phase {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+.journey-entry-content {
+  font-size: 0.88rem;
+  color: var(--ink);
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.journey-entry-content em {
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 300;
+}
+
+.journey-entry.empty .journey-entry-content {
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 300;
+}
+
+.share-formats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.format-chip {
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  background: rgba(255,255,255,0.08);
+  color: rgba(245,243,238,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ─── UTILITY ─── */
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
+.spacer-sm { height: 12px; }
+.spacer { height: 24px; }
+.text-muted { color: var(--muted); }
+.text-sm { font-size: 0.85rem; }
+.font-head { font-family: var(--font-head); }
+.fw-bold { font-weight: 700; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+.completeness-meter {
+  margin-top: 20px;
+}
+.completeness-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.completeness-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.completeness-fill {
+  height: 100%;
+  background: var(--accent-teal);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><span class="logo-dot"></span> Open Minds</div>
+    <div class="logo-sub">Student Journey · Demo</div>
+  </div>
+
+  <div class="sidebar-phases">
+    <button class="phase-item active" data-phase="1" style="--phase-accent: var(--phase-1)" onclick="goToPhase(1)">
+      <div class="phase-num">1</div>
+      <div class="phase-label"><strong>Affordance Discovery</strong>Explore the toolkit</div>
+    </button>
+    <button class="phase-item" data-phase="2" style="--phase-accent: var(--phase-2)" onclick="goToPhase(2)">
+      <div class="phase-num">2</div>
+      <div class="phase-label"><strong>Ideation</strong>Draw cards, form a hypothesis</div>
+    </button>
+    <button class="phase-item" data-phase="3" style="--phase-accent: var(--phase-3)" onclick="goToPhase(3)">
+      <div class="phase-num">3</div>
+      <div class="phase-label"><strong>Investigation</strong>Test your hypothesis</div>
+    </button>
+    <button class="phase-item" data-phase="4" style="--phase-accent: var(--phase-4)" onclick="goToPhase(4)">
+      <div class="phase-num">4</div>
+      <div class="phase-label"><strong>Prototyping</strong>Build with the board</div>
+    </button>
+    <button class="phase-item" data-phase="5" style="--phase-accent: var(--phase-5)" onclick="goToPhase(5)">
+      <div class="phase-num">5</div>
+      <div class="phase-label"><strong>Reflection</strong>What did we learn?</div>
+    </button>
+    <button class="phase-item" data-phase="6" style="--phase-accent: var(--phase-6)" onclick="goToPhase(6)">
+      <div class="phase-num">6</div>
+      <div class="phase-label"><strong>Sharing</strong>Present your journey</div>
+    </button>
+  </div>
+
+  <div class="sidebar-footer">
+    <div>Journey Progress</div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════ MAIN CONTENT ═══════ -->
+<main class="main">
+
+<!-- ─── PHASE 1: AFFORDANCE DISCOVERY ─── -->
+<section class="phase-view active" id="phase-1">
+  <div class="phase-header" data-phase-num="1" style="--phase-color: var(--phase-1)">
+    <div class="phase-eyebrow">Phase 1</div>
+    <h1 class="phase-title">Affordance Discovery</h1>
+    <p class="phase-description">Before you can imagine solutions, you need to understand what your tools make possible. Explore what the Open Minds board can sense and do — not to follow instructions, but to expand your sense of what's possible.</p>
+  </div>
+
+  <div class="phase-body">
+
+    <div class="board-connect-banner">
+      <div class="board-connect-info">
+        <div class="board-status-dot" id="boardStatusDot"></div>
+        <div class="board-status-text">
+          <strong id="boardStatusTitle">No board connected</strong>
+          <span id="boardStatusSub">You can explore simulated affordances below, or connect a board to try the real thing</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="connectBoardBtn" onclick="connectBoard()">Connect Board</button>
+    </div>
+
+    <p style="font-size:0.85rem; color:var(--muted); font-weight:300; margin-bottom:20px;">Click each affordance to explore it. What does the board make possible?</p>
+
+    <div class="affordance-grid" id="affordanceGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="affordance-demo" id="affordanceDemo">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+      <h3 style="font-family:var(--font-head); font-weight:700; font-size:1rem;">Your hats & toolkit</h3>
+      <span class="badge badge-info" id="hatCountBadge">No hats selected</span>
+    </div>
+    <p style="font-size:0.82rem; color:var(--muted); font-weight:300; margin-bottom:16px;">Select the hats you have available. Each one changes what you can build.</p>
+
+    <div class="hat-chips" id="hatChips">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="completeness-meter">
+      <div class="completeness-label">
+        <span>Affordances explored</span>
+        <span id="exploredCount">0 / 8</span>
+      </div>
+      <div class="completeness-track">
+        <div class="completeness-fill" id="exploredFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-nav">
+    <span class="text-sm text-muted">Explore at least 3 affordances to continue</span>
+    <button class="btn btn-primary" onclick="goToPhase(2)">Continue to Ideation →</button>
+  </div>
+</section>
+
+<!-- ─── PHASE 2: IDEATION ─── -->
+<section class="phase-view" id="phase-2">
+  <div class="phase-header" data-phase-num="2" style="--phase-color: var(--phase-2)">
+    <div class="phase-eyebrow">Phase 2</div>
+    <h1 class="phase-title">Ideation</h1>
+    <p class="phase-description">Draw three cards — a Person, a Condition, an Environment. Together they create a scenario. Your task isn't to jump to a solution. It's to form a hypothesis: a theory about what is true in this situation.</p>
+  </div>
+
+  <div class="phase-body">
+    <div class="card-game-area">
+
+      <div class="card-piles">
+        <div class="card-pile">
+          <div class="card-pile-header">
+            <span class="card-pile-label pile-person">👤 Person</span>
+            <span class="pile-count">Draw one card</span>
+          </div>
+          <div class="drawn-card">
+            <div class="drawn-card-content" id="drawnPerson">
+              <div class="card-title" id="personTitle"></div>
+              <div class="card-body" id="personBody"></div>
+            </div>
+            <div class="card-empty" id="personEmpty">No card drawn yet</div>
+          </div>
+          <button class="draw-btn" onclick="drawCard('person')">Draw Person Card ↻</button>
+        </div>
+
+        <div class="card-pile">
+          <div class="card-pile-header">
+            <span class="card-pile-label pile-condition">⚡ Condition</span>
+            <span class="pile-count">Draw one card</span>
+          </div>
+          <div class="drawn-card">
+            <div class="drawn-card-content" id="drawnCondition">
+              <div class="card-title" id="conditionTitle"></div>
+              <div class="card-body" id="conditionBody"></div>
+            </div>
+            <div class="card-empty" id="conditionEmpty">No card drawn yet</div>
+          </div>
+          <button class="draw-btn" onclick="drawCard('condition')">Draw Condition Card ↻</button>
+        </div>
+
+        <div class="card-pile">
+          <div class="card-pile-header">
+            <span class="card-pile-label pile-environment">🏢 Environment</span>
+            <span class="pile-count">Draw one card</span>
+          </div>
+          <div class="drawn-card">
+            <div class="drawn-card-content" id="drawnEnvironment">
+              <div class="card-title" id="environmentTitle"></div>
+              <div class="card-body" id="environmentBody"></div>
+            </div>
+            <div class="card-empty" id="environmentEmpty">No card drawn yet</div>
+          </div>
+          <button class="draw-btn" onclick="drawCard('environment')">Draw Environment Card ↻</button>
+        </div>
+      </div>
+
+      <div class="scenario-panel">
+        <div class="scenario-display" id="scenarioDisplay">
+          <p class="scenario-prompt">Draw all three cards to see your scenario take shape here.</p>
+        </div>
+
+        <div class="discussion-prompts">
+          <h3>Discussion questions</h3>
+          <ol>
+            <li>Who is this person, really? What's their life like beyond this one card?</li>
+            <li>What does this condition mean for them day to day?</li>
+            <li>What is it about this environment that might cause difficulty?</li>
+            <li>Is this actually a real challenge, or an assumption?</li>
+            <li>What can't be changed about this situation? What can?</li>
+          </ol>
+        </div>
+
+        <div class="panel" style="background:var(--cream);">
+          <p style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:8px;">Remember</p>
+          <p style="font-size:0.85rem; font-weight:300; color:var(--ink); line-height:1.6;">You cannot change the person. You cannot change the condition. But you can design the environment differently.</p>
+        </div>
+      </div>
+
+      <div class="hypothesis-section">
+        <div class="hypothesis-label-row">
+          <label>Your Hypothesis</label>
+          <span class="hypothesis-hint">A theory about what is true — not an idea for a solution. "The environment is causing difficulty because..." not "We should build..."</span>
+        </div>
+        <textarea id="hypothesisText" rows="4" placeholder="e.g. The school environment excludes Aisha from activities on upper floors because the building was designed without considering wheelchair access. The challenge is not Aisha's condition — it's that nobody considered diverse mobility needs when the building was designed." oninput="saveState()"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="phase-nav">
+    <button class="btn btn-secondary" onclick="goToPhase(1)">← Back</button>
+    <button class="btn btn-primary" onclick="goToPhase(3)">Continue to Investigation →</button>
+  </div>
+</section>
+
+<!-- ─── PHASE 3: INVESTIGATION ─── -->
+<section class="phase-view" id="phase-3">
+  <div class="phase-header" data-phase-num="3" style="--phase-color: var(--phase-3)">
+    <div class="phase-eyebrow">Phase 3</div>
+    <h1 class="phase-title">Investigation</h1>
+    <p class="phase-description">Before you build anything, test your hypothesis against reality. Is this actually true? Who experiences this? What has already been tried? Intellectual honesty happens here.</p>
+  </div>
+
+  <div class="phase-body">
+    <div class="investigation-layout">
+      <div class="investigation-form">
+
+        <div class="hypothesis-echo" id="hypothesisEcho">
+          Your hypothesis will appear here once you've written it in Phase 2.
+        </div>
+
+        <div class="form-group">
+          <h3>Is this actually true?</h3>
+          <p>What evidence can you find that this challenge is real? What do people who live with it say?</p>
+          <textarea id="inv1" rows="4" placeholder="Research, observations, quotes from affected people, statistics..." oninput="saveState()"></textarea>
+        </div>
+
+        <div class="form-group">
+          <h3>Who experiences this?</h3>
+          <p>How many people? In what contexts? Are there differences between groups?</p>
+          <textarea id="inv2" rows="3" placeholder="Scale, demographics, context variations..." oninput="saveState()"></textarea>
+        </div>
+
+        <div class="form-group">
+          <h3>What has already been tried?</h3>
+          <p>What existing solutions, technologies, or approaches exist? What worked? What didn't, and why?</p>
+          <textarea id="inv3" rows="3" placeholder="Existing approaches, products, policies, workarounds..." oninput="saveState()"></textarea>
+        </div>
+
+        <div class="form-group">
+          <h3>Does your hypothesis hold up?</h3>
+          <p>After investigating, what's your verdict?</p>
+          <div class="verdict-options">
+            <button class="verdict-btn" id="verdict-holds" onclick="setVerdict('holds')">✓ Holds up</button>
+            <button class="verdict-btn" id="verdict-revised" onclick="setVerdict('revised')">~ Needs revising</button>
+            <button class="verdict-btn" id="verdict-wrong" onclick="setVerdict('wrong')">✗ Wrong track</button>
+          </div>
+          <div class="spacer-sm"></div>
+          <label>Revised or confirmed hypothesis</label>
+          <textarea id="inv4" rows="3" placeholder="Your final, investigation-tested hypothesis to carry into prototyping..." oninput="saveState()"></textarea>
+        </div>
+
+      </div>
+
+      <div class="investigation-sidebar">
+        <div class="sidebar-hint">
+          <h4>Why this phase matters</h4>
+          <p>The most common failure in design is solving the wrong problem brilliantly. Investigation is what separates a real response from a clever gadget nobody needs.</p>
+        </div>
+
+        <div class="panel" style="border-color: var(--phase-3);">
+          <p class="text-sm fw-bold font-head" style="margin-bottom:8px;">Research strategies</p>
+          <ul style="font-size:0.8rem; color:var(--muted); font-weight:300; line-height:1.8; padding-left:16px;">
+            <li>Talk to people who are directly affected</li>
+            <li>Search for existing research or reports</li>
+            <li>Look for organisations working on this</li>
+            <li>Consider what stakeholders haven't been considered</li>
+            <li>Ask: who profits from this staying unsolved?</li>
+          </ul>
+        </div>
+
+        <div class="panel" style="background:var(--cream);">
+          <p style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:8px;">On AI use here</p>
+          <p style="font-size:0.82rem; color:var(--ink); font-weight:300; line-height:1.6;">AI can help you find sources and explore existing knowledge — but you must evaluate what it returns. Don't accept AI summaries uncritically. Verify. Follow citations. Talk to actual people.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-nav">
+    <button class="btn btn-secondary" onclick="goToPhase(2)">← Back</button>
+    <button class="btn btn-primary" onclick="goToPhase(4)">Continue to Prototyping →</button>
+  </div>
+</section>
+
+<!-- ─── PHASE 4: PROTOTYPING ─── -->
+<section class="phase-view" id="phase-4">
+  <div class="phase-header" data-phase-num="4" style="--phase-color: var(--phase-4)">
+    <div class="phase-eyebrow">Phase 4</div>
+    <h1 class="phase-title">Design & Prototyping</h1>
+    <p class="phase-description">Now build. Your hypothesis and investigation findings are your brief. What affordances are relevant? What could the board do that would make a difference in this environment?</p>
+  </div>
+
+  <div class="phase-body" style="padding:0; background:var(--ink);">
+    <div class="proto-layout">
+
+      <div class="code-editor-area">
+        <div class="editor-toolbar">
+          <div class="editor-dot ed-red"></div>
+          <div class="editor-dot ed-yellow"></div>
+          <div class="editor-dot ed-green"></div>
+          <span class="editor-filename">code.py — MicroPython</span>
+          <div class="editor-actions">
+            <button class="editor-btn editor-btn-template" onclick="showTemplates()">Templates</button>
+            <button class="editor-btn editor-btn-run" onclick="runCode()">▶ Run</button>
+            <button class="editor-btn editor-btn-send" id="sendBtn" onclick="sendToBoard()" disabled>↑ Send to Board</button>
+          </div>
+        </div>
+        <textarea class="code-editor" id="codeEditor" spellcheck="false" oninput="saveState()"># Open Minds Board — MicroPython
+# Your hypothesis: see the sidebar →
+#
+# Start here. What does your design need to do?
+# Which affordances are relevant to your challenge?
+
+import time
+
+# Example: a simple loop
+while True:
+    print("Board running...")
+    time.sleep(1)
+</textarea>
+        <div class="editor-output" id="editorOutput">
+          <div class="output-line sys">// Output will appear here when you run or connect a board</div>
+          <div class="output-line sys">// In simulation mode, code runs locally in the browser</div>
+        </div>
+      </div>
+
+      <div class="proto-sidebar">
+        <div class="proto-sidebar-section">
+          <h4>Your Challenge</h4>
+          <div class="challenge-reminder">
+            <h5>Hypothesis</h5>
+            <p id="protoHypothesis">Write your hypothesis in Phase 2, then come back here.</p>
+          </div>
+        </div>
+
+        <div class="proto-sidebar-section">
+          <h4>Code Templates</h4>
+          <div class="template-list" id="templateList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="proto-sidebar-section">
+          <h4>Design Log</h4>
+          <textarea style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.6); border-radius:8px; padding:10px; font-size:0.75rem; font-family:var(--font-body); resize:none; width:100%; line-height:1.5; outline:none;" rows="5" id="designLog" placeholder="Note your design decisions here. Why did you choose this approach? What did you try that didn't work?" oninput="saveState()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-nav" style="background:var(--ink); border-top:1px solid rgba(255,255,255,0.06);">
+    <button class="btn" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6);" onclick="goToPhase(3)">← Back</button>
+    <button class="btn" style="background:var(--accent); color:white;" onclick="goToPhase(5)">Continue to Reflection →</button>
+  </div>
+</section>
+
+<!-- ─── PHASE 5: REFLECTION ─── -->
+<section class="phase-view" id="phase-5">
+  <div class="phase-header" data-phase-num="5" style="--phase-color: var(--phase-5)">
+    <div class="phase-eyebrow">Phase 5</div>
+    <h1 class="phase-title">Reflection</h1>
+    <p class="phase-description">The prototype is not the end point. What did you learn? What worked? What didn't? What would you do differently? Documenting the journey is itself a learning outcome.</p>
+  </div>
+
+  <div class="phase-body">
+    <div class="reflection-grid">
+
+      <div class="reflection-card">
+        <h3>What did you build?</h3>
+        <p>Describe your prototype — not just what it does, but why you made the choices you did.</p>
+        <textarea id="ref1" rows="4" placeholder="What does your prototype do? What was the core idea?" oninput="saveState()"></textarea>
+      </div>
+
+      <div class="reflection-card">
+        <h3>What worked?</h3>
+        <p>What went better than expected? What did the technology enable that surprised you?</p>
+        <textarea id="ref2" rows="4" placeholder="Successes, surprises, moments where it clicked..." oninput="saveState()"></textarea>
+      </div>
+
+      <div class="reflection-card">
+        <h3>What didn't work?</h3>
+        <p>Where did you get stuck? What did you try that failed? What would you do differently?</p>
+        <textarea id="ref3" rows="4" placeholder="Failures, dead ends, things you'd change..." oninput="saveState()"></textarea>
+      </div>
+
+      <div class="reflection-card">
+        <h3>What did you learn about the challenge?</h3>
+        <p>Not the technology — the societal challenge you were addressing. Did your understanding change?</p>
+        <textarea id="ref4" rows="4" placeholder="New understanding of the problem, the people affected, the environment..." oninput="saveState()"></textarea>
+      </div>
+
+      <div class="reflection-card full-width">
+        <h3>What would you do next?</h3>
+        <p>If you had another week, another month, or access to any resources — what's the next step?</p>
+        <textarea id="ref5" rows="3" placeholder="Future iterations, people to involve, tests to run, questions to answer..." oninput="saveState()"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="phase-nav">
+    <button class="btn btn-secondary" onclick="goToPhase(4)">← Back</button>
+    <button class="btn btn-primary" onclick="buildShareView(); goToPhase(6)">See Your Journey →</button>
+  </div>
+</section>
+
+<!-- ─── PHASE 6: SHARING ─── -->
+<section class="phase-view" id="phase-6">
+  <div class="phase-header" data-phase-num="6" style="--phase-color: var(--phase-6)">
+    <div class="phase-eyebrow">Phase 6</div>
+    <h1 class="phase-title">Sharing</h1>
+    <p class="phase-description">Here is your complete journey — the scenario, the hypothesis, the investigation, the prototype, the reflection. This is what you present: not just what you built, but how and why.</p>
+  </div>
+
+  <div class="phase-body">
+
+    <div class="share-hero">
+      <div class="share-hero-title" id="shareTitle">Your Open Minds Project</div>
+      <div class="share-hero-sub" id="shareSubtitle">Completed journey</div>
+      <div class="share-formats">
+        <span class="format-chip">📊 Presentation</span>
+        <span class="format-chip">📹 Video</span>
+        <span class="format-chip">📝 Written case study</span>
+        <span class="format-chip">🎙️ Podcast</span>
+        <span class="format-chip">📌 Poster</span>
+        <span class="format-chip">💻 Live demo</span>
+      </div>
+    </div>
+
+    <div class="journey-timeline" id="journeyTimeline">
+      <!-- Populated by buildShareView() -->
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="text-align:center; padding: 20px 0;">
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print / Export</button>
+      <span style="margin: 0 12px; color: var(--muted);">·</span>
+      <button class="btn btn-secondary" onclick="resetJourney()">Start a new journey</button>
+    </div>
+  </div>
+
+  <div class="phase-nav">
+    <button class="btn btn-secondary" onclick="goToPhase(5)">← Back to Reflection</button>
+    <span class="badge badge-success">Journey complete ✓</span>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const STATE_KEY = 'openminds_journey';
+
+let state = {
+  currentPhase: 1,
+  completedPhases: [],
+  boardConnected: false,
+  serialPort: null,
+  exploredAffordances: [],
+  selectedHats: [],
+  drawnCards: { person: null, condition: null, environment: null },
+  hypothesis: '',
+  inv1: '', inv2: '', inv3: '', inv4: '',
+  verdict: null,
+  code: `# Open Minds Board — MicroPython
+# Your hypothesis: see the sidebar →
+#
+# Start here. What does your design need to do?
+# Which affordances are relevant to your challenge?
+
+import time
+
+# Example: a simple loop
+while True:
+    print("Board running...")
+    time.sleep(1)`,
+  designLog: '',
+  ref1: '', ref2: '', ref3: '', ref4: '', ref5: '',
+};
+
+function saveState() {
+  const fields = ['hypothesis','inv1','inv2','inv3','inv4','designLog','ref1','ref2','ref3','ref4','ref5'];
+  fields.forEach(f => { if (document.getElementById(f)) state[f] = document.getElementById(f).value; });
+  if (document.getElementById('codeEditor')) state.code = document.getElementById('codeEditor').value;
+  localStorage.setItem(STATE_KEY, JSON.stringify(state));
+  updateHypothesisEchoes();
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STATE_KEY);
+    if (saved) Object.assign(state, JSON.parse(saved));
+  } catch(e) {}
+  restoreFields();
+}
+
+function restoreFields() {
+  const fields = ['hypothesis','inv1','inv2','inv3','inv4','designLog','ref1','ref2','ref3','ref4','ref5'];
+  fields.forEach(f => { if (document.getElementById(f)) document.getElementById(f).value = state[f] || ''; });
+  if (document.getElementById('codeEditor') && state.code) document.getElementById('codeEditor').value = state.code;
+  state.drawnCards && Object.keys(state.drawnCards).forEach(type => {
+    if (state.drawnCards[type]) renderCard(type, state.drawnCards[type]);
+  });
+  updateScenarioDisplay();
+  updateHypothesisEchoes();
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function goToPhase(n) {
+  saveState();
+  state.currentPhase = n;
+  if (!state.completedPhases.includes(n-1) && n > 1) state.completedPhases.push(n-1);
+
+  document.querySelectorAll('.phase-view').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.phase-item').forEach(b => {
+    b.classList.remove('active');
+    const ph = parseInt(b.dataset.phase);
+    if (state.completedPhases.includes(ph)) b.classList.add('completed');
+  });
+
+  document.getElementById('phase-'+n).classList.add('active');
+  document.querySelector(`.phase-item[data-phase="${n}"]`).classList.add('active');
+
+  const progress = ((n - 1) / 5) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+
+  window.scrollTo(0, 0);
+  updateHypothesisEchoes();
+}
+
+// ═══════════════════════════════════════════════════════
+//  BOARD CONNECTION (Web Serial API)
+// ═══════════════════════════════════════════════════════
+async function connectBoard() {
+  if (!('serial' in navigator)) {
+    logOutput('Web Serial API not supported in this browser. Use Chrome or Edge.', 'err');
+    logOutput('Running in simulation mode.', 'sys');
+    return;
+  }
+  try {
+    const port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+    state.serialPort = port;
+    state.boardConnected = true;
+
+    document.getElementById('boardStatusDot').classList.add('connected');
+    document.getElementById('boardStatusTitle').textContent = 'Board connected';
+    document.getElementById('boardStatusSub').textContent = 'Open Minds Board via USB Serial';
+    document.getElementById('connectBoardBtn').textContent = 'Connected ✓';
+    document.getElementById('connectBoardBtn').disabled = true;
+    document.getElementById('sendBtn').disabled = false;
+
+    logOutput('Board connected successfully', 'sys');
+    readSerial(port);
+  } catch(e) {
+    if (e.name !== 'NotFoundError') logOutput('Connection failed: ' + e.message, 'err');
+  }
+}
+
+async function readSerial(port) {
+  const reader = port.readable.getReader();
+  let buffer = '';
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += new TextDecoder().decode(value);
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      lines.forEach(l => { if (l.trim()) logOutput(l.trim()); });
+    }
+  } catch(e) {
+    logOutput('Board disconnected', 'sys');
+    state.boardConnected = false;
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+async function sendToBoard() {
+  if (!state.serialPort) { logOutput('No board connected', 'err'); return; }
+  const code = document.getElementById('codeEditor').value;
+  try {
+    const writer = state.serialPort.writable.getWriter();
+    // Send Ctrl+C to stop, then Ctrl+D to soft reset, then paste code
+    await writer.write(new TextEncoder().encode('\x03\r\n'));
+    await new Promise(r => setTimeout(r, 300));
+    await writer.write(new TextEncoder().encode('\x05')); // raw paste mode
+    await writer.write(new TextEncoder().encode(code));
+    await writer.write(new TextEncoder().encode('\x04')); // execute
+    writer.releaseLock();
+    logOutput('Code sent to board', 'sys');
+  } catch(e) {
+    logOutput('Send failed: ' + e.message, 'err');
+  }
+}
+
+function runCode() {
+  const code = document.getElementById('codeEditor').value;
+  logOutput('--- Running simulation ---', 'sys');
+  // Basic simulation: show print statements
+  const printLines = [...code.matchAll(/print\(["'](.+?)["']\)/g)];
+  if (printLines.length > 0) {
+    printLines.forEach(m => logOutput(m[1]));
+  } else {
+    logOutput('Code parsed. Connect a board to run on hardware.', 'sys');
+  }
+  // Check for import errors
+  if (code.includes('import') && !code.includes('time')) {
+    logOutput('Note: hardware imports require a physical board', 'sys');
+  }
+}
+
+function logOutput(msg, type = 'out') {
+  const out = document.getElementById('editorOutput');
+  if (!out) return;
+  const line = document.createElement('div');
+  line.className = 'output-line ' + (type === 'err' ? 'err' : type === 'sys' ? 'sys' : '');
+  line.textContent = '> ' + msg;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════════════
+//  AFFORDANCE SYSTEM
+// ═══════════════════════════════════════════════════════
+const affordances = [
+  {
+    id: 'light-sense', icon: '☀️', name: 'Sensing Light',
+    desc: 'The board can detect how bright or dark an environment is.',
+    question: 'Cover the light sensor with your hand. What happens to the reading?',
+    sim: `
+      <div class="sim-label">Light Level</div>
+      <div class="sim-reading" id="lightReading">750 lux</div>
+      <input type="range" class="sim-slider" min="0" max="1000" value="750"
+        oninput="document.getElementById('lightReading').textContent = this.value + ' lux'">
+      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Move the slider — imagine covering the sensor</div>`,
+    insight: 'Affordance: detect when someone enters a room, when a light is left on, or when day becomes night.'
+  },
+  {
+    id: 'light-output', icon: '💡', name: 'Controlling Light',
+    desc: 'Produce any colour of light, fade it, flash it, animate it.',
+    question: 'What could you communicate with light that words cannot?',
+    sim: `
+      <div class="sim-label">LED Colour</div>
+      <div class="sim-led" id="ledRow">
+        ${Array.from({length:8},(_,i)=>`<div class="sim-led-dot" id="led${i}" style="--led-color:#ff4444" onclick="toggleLed(${i})"></div>`).join('')}
+      </div>
+      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+        ${[['#ff4444','Red'],['#44ff44','Green'],['#4488ff','Blue'],['#ffaa00','Amber'],['#ffffff','White']].map(([c,n])=>`<button onclick="setLedColor('${c}')" style="padding:4px 10px;border-radius:4px;background:${c};border:none;cursor:pointer;font-size:0.72rem;color:${c==='#ffffff'?'#000':'white'}">${n}</button>`).join('')}
+      </div>`,
+    insight: 'Affordance: visual alerts, status indicators, ambient notifications, accessible signals that don\'t rely on sound.'
+  },
+  {
+    id: 'sound-input', icon: '🎙️', name: 'Hearing Sound',
+    desc: 'Detect sound levels — claps, voices, ambient noise.',
+    question: 'What kinds of sounds would it be useful for a space to "hear"?',
+    sim: `
+      <div class="sim-label">Sound Level</div>
+      <div class="sim-reading" id="soundReading">42 dB</div>
+      <input type="range" class="sim-slider" min="20" max="100" value="42"
+        oninput="document.getElementById('soundReading').textContent = this.value + ' dB'">
+      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Simulate clapping, speaking, ambient noise</div>`,
+    insight: 'Affordance: detect when a room gets too noisy, trigger responses to sounds, enable clap or voice activation.'
+  },
+  {
+    id: 'sound-output', icon: '🔊', name: 'Making Sound',
+    desc: 'Produce tones, melodies, alerts — any audio output.',
+    question: 'What information could you communicate through sound to someone who can\'t see a screen?',
+    sim: `
+      <div class="sim-label">Tone Frequency</div>
+      <div class="sim-reading" id="toneReading">440 Hz</div>
+      <input type="range" class="sim-slider" min="100" max="2000" value="440"
+        oninput="playSimTone(this.value)">
+      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Drag to change pitch — click the slider area to simulate the sound</div>`,
+    insight: 'Affordance: audio alerts, navigation cues, accessible notifications for those who can\'t rely on vision.'
+  },
+  {
+    id: 'distance', icon: '📏', name: 'Sensing Distance',
+    desc: 'Measure how far away something is — from centimetres to metres.',
+    question: 'What becomes possible when a space knows how close you are?',
+    sim: `
+      <div class="sim-label">Distance</div>
+      <div class="sim-reading" id="distReading">85 cm</div>
+      <input type="range" class="sim-slider" min="2" max="200" value="85"
+        oninput="document.getElementById('distReading').textContent = this.value + ' cm'">
+      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Imagine approaching a door, a shelf, a machine</div>`,
+    insight: 'Affordance: proximity detection, obstacle awareness, automatic triggers when someone approaches.'
+  },
+  {
+    id: 'motion', icon: '🏃', name: 'Sensing Motion',
+    desc: 'Detect acceleration, orientation, gestures — is the board moving? Which way?',
+    question: 'If the board was attached to your body or a wheelchair, what could it understand?',
+    sim: `
+      <div class="sim-label">Acceleration (g)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:6px;">
+        <div><div class="sim-label">X</div><div class="sim-reading" id="accX" style="font-size:1.1rem">0.02</div></div>
+        <div><div class="sim-label">Y</div><div class="sim-reading" id="accY" style="font-size:1.1rem">0.98</div></div>
+        <div><div class="sim-label">Z</div><div class="sim-reading" id="accZ" style="font-size:1.1rem">0.05</div></div>
+      </div>
+      <button onclick="simulateShake()" style="margin-top:12px; padding:6px 16px; background:var(--accent); border:none; border-radius:6px; color:white; cursor:pointer; font-size:0.78rem;">Simulate shake</button>`,
+    insight: 'Affordance: detect falls, posture, gesture control, activity monitoring, orientation-aware interfaces.'
+  },
+  {
+    id: 'touch', icon: '👆', name: 'Touch Input',
+    desc: 'Eight capacitive touch pads — sense when something or someone makes contact.',
+    question: 'What if a surface could respond to touch without a screen?',
+    sim: `
+      <div class="sim-label">Touch Pads</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+        ${Array.from({length:8},(_,i)=>`<div id="tp${i}" onclick="touchPad(${i})" style="width:44px;height:44px;border-radius:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:rgba(255,255,255,0.4);transition:all 0.15s;">${i+1}</div>`).join('')}
+      </div>`,
+    insight: 'Affordance: custom interfaces on any surface, accessible buttons, pressure-sensitive control without needing a screen.'
+  },
+  {
+    id: 'motor', icon: '⚙️', name: 'Physical Motion',
+    desc: 'Drive motors, control servos — make things move in the physical world.',
+    question: 'What physical response to a sensor reading would make a real difference?',
+    sim: `
+      <div class="sim-label">Servo Angle</div>
+      <div class="sim-reading" id="servoReading">90°</div>
+      <input type="range" class="sim-slider" min="0" max="180" value="90"
+        oninput="document.getElementById('servoReading').textContent = this.value + '°'">
+      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Think: door latch, flag raiser, valve controller</div>`,
+    insight: 'Affordance: physical actuation — open doors, raise alerts, control mechanisms in response to sensing.'
+  }
+];
+
+function renderAffordances() {
+  const grid = document.getElementById('affordanceGrid');
+  grid.innerHTML = affordances.map(a => `
+    <div class="affordance-card ${state.exploredAffordances.includes(a.id) ? 'explored' : ''}"
+         id="acard-${a.id}" onclick="exploreAffordance('${a.id}')">
+      <span class="affordance-icon">${a.icon}</span>
+      <div class="affordance-name">${a.name}</div>
+      <div class="affordance-desc">${a.desc}</div>
+    </div>
+  `).join('');
+}
+
+function exploreAffordance(id) {
+  if (!state.exploredAffordances.includes(id)) {
+    state.exploredAffordances.push(id);
+    saveState();
+  }
+
+  // Update card
+  document.querySelectorAll('.affordance-card').forEach(c => c.classList.remove('ring'));
+  document.getElementById('acard-'+id).classList.add('explored');
+
+  // Show demo
+  const a = affordances.find(x => x.id === id);
+  const demo = document.getElementById('affordanceDemo');
+  demo.innerHTML = `
+    <div class="demo-title">${a.icon} ${a.name}</div>
+    <div class="demo-question">${a.question}</div>
+    <div class="demo-sim">${a.sim}</div>
+    <div class="demo-insight">${a.insight}</div>
+  `;
+  demo.classList.add('active');
+
+  // Update count
+  const count = state.exploredAffordances.length;
+  document.getElementById('exploredCount').textContent = count + ' / ' + affordances.length;
+  document.getElementById('exploredFill').style.width = (count / affordances.length * 100) + '%';
+}
+
+// Sim helpers
+function toggleLed(i) {
+  const el = document.getElementById('led'+i);
+  el.classList.toggle('on');
+}
+function setLedColor(c) {
+  document.querySelectorAll('.sim-led-dot').forEach(d => {
+    if (d.classList.contains('on')) { d.style.setProperty('--led-color', c); }
+  });
+  document.querySelectorAll('.sim-led-dot').forEach(d => {
+    d.style.setProperty('--led-color', c);
+    d.classList.add('on');
+  });
+}
+let audioCtx = null;
+function playSimTone(freq) {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.frequency.value = parseFloat(freq);
+  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+  document.getElementById('toneReading').textContent = Math.round(freq) + ' Hz';
+}
+function simulateShake() {
+  const vals = [
+    [1.2, 0.3, -0.8], [-0.9, 1.1, 0.6], [0.4, -1.3, 0.9],
+    [-0.2, 0.7, -1.1], [0.1, 0.98, 0.05]
+  ];
+  let i = 0;
+  const t = setInterval(() => {
+    if (i >= vals.length) { clearInterval(t); return; }
+    const [x,y,z] = vals[i++];
+    document.getElementById('accX').textContent = x.toFixed(2);
+    document.getElementById('accY').textContent = y.toFixed(2);
+    document.getElementById('accZ').textContent = z.toFixed(2);
+  }, 150);
+}
+function touchPad(i) {
+  const el = document.getElementById('tp'+i);
+  el.style.background = 'rgba(232,93,38,0.4)';
+  el.style.color = 'white';
+  setTimeout(() => {
+    el.style.background = 'rgba(255,255,255,0.1)';
+    el.style.color = 'rgba(255,255,255,0.4)';
+  }, 300);
+}
+
+// Hat selector
+const hats = [
+  { id: 'light', name: 'Light Hat', color: '#f0a500' },
+  { id: 'movement', name: 'Movement Hat', color: '#e85d26' },
+  { id: 'gesture', name: 'Gesture Hat', color: '#5c3d8f' },
+  { id: 'audio', name: 'Audio Hat', color: '#1a7a6e' },
+];
+
+function renderHatChips() {
+  const container = document.getElementById('hatChips');
+  container.innerHTML = hats.map(h => `
+    <div class="hat-chip ${state.selectedHats.includes(h.id) ? 'selected' : ''}"
+         style="color:${h.color}; background:${state.selectedHats.includes(h.id) ? h.color+'22' : 'transparent'}"
+         onclick="toggleHat('${h.id}', '${h.color}')">
+      ${h.name}
+    </div>
+  `).join('');
+  const count = state.selectedHats.length;
+  document.getElementById('hatCountBadge').textContent = count === 0 ? 'No hats selected' : count + ' hat' + (count !== 1 ? 's' : '') + ' selected';
+}
+
+function toggleHat(id, color) {
+  const idx = state.selectedHats.indexOf(id);
+  if (idx > -1) state.selectedHats.splice(idx, 1);
+  else state.selectedHats.push(id);
+  saveState();
+  renderHatChips();
+}
+
+// ═══════════════════════════════════════════════════════
+//  CARD GAME
+// ═══════════════════════════════════════════════════════
+const cardData = {
+  person: [
+    { title: 'Aisha, 15', body: 'Recently moved to the UK from Somalia. Speaks English as a third language. Bright, ambitious, loves maths. Navigating a new school system while supporting her family at home.' },
+    { title: 'Marcus, 67', body: 'Retired teacher. Lives alone since his wife passed. Sharp mind, independent spirit. Increasingly frustrated by technology that assumes you are young and fast.' },
+    { title: 'Priya, 8', body: 'Enthusiastic, imaginative. Has ADHD — finds it hard to sit still but deeply engaged when she can move and explore. Loves animals and building things.' },
+    { title: 'James, 42', body: 'Software engineer. Developed ME/CFS two years ago. Works from home when he can. Energy is unpredictable — a good day can be followed by three bad ones.' },
+    { title: 'Leila, 28', body: 'Deaf from birth, fluent in BSL. Works in a hospital as an administrator. Navigates a world built largely around spoken communication.' },
+    { title: 'Tomás, 19', body: 'First in his family to go to university. Studies engineering. Commutes 2 hours each way. No laptop at home, relies on university computers and phone.' },
+    { title: 'Nadia, 35', body: 'Architect and mother of twins. Has dyslexia — reads and processes written information more slowly. Highly capable, but forms and documentation create barriers.' },
+    { title: 'Samuel, 11', body: 'Has cerebral palsy affecting his left side. Attends mainstream school. Loves gaming, competitive and determined. Excluded from some PE activities.' },
+  ],
+  condition: [
+    { title: 'Uses a wheelchair for mobility', body: 'Full-time wheelchair user. Can self-propel over smooth surfaces. Steps, lips, narrow gaps, and poorly positioned handles create barriers.' },
+    { title: 'Experiences chronic pain', body: 'Pain that is constant, variable, and invisible. May not be apparent to others. Affects concentration, stamina, and ability to predict what a day will allow.' },
+    { title: 'Has significant anxiety in social situations', body: 'Crowded or unpredictable environments trigger fight-or-flight responses. Can\'t always communicate needs in the moment. Often misread as rude or disengaged.' },
+    { title: 'Is visually impaired', body: 'Partial sight — can see shapes and movement but not text without magnification. Not fully blind. Environments that rely on small print or colour coding create barriers.' },
+    { title: 'Has limited English language proficiency', body: 'Communicates fluently in three other languages. Navigating official systems, forms, and institutions in English creates significant friction.' },
+    { title: 'Has profound hearing loss', body: 'Relies on lip reading, signing, and visual information. Environments built around spoken announcements, alarms, or verbal instructions exclude them systematically.' },
+    { title: 'Experiences episodes of cognitive fog', body: 'Periods where concentration, memory, and processing speed are significantly impaired. Could be from medication, long-term illness, sleep deprivation, or other causes.' },
+    { title: 'Is temporarily immobilised', body: 'Broken leg — usually fully mobile. Has discovered that infrastructure she never noticed before is suddenly inaccessible. Her condition is temporary; the barriers are permanent.' },
+  ],
+  environment: [
+    { title: 'A secondary school with split-level buildings', body: 'Built in the 1960s. Three floors in some blocks, lifts present but unreliable. Toilets are not on every floor. Lesson changes happen quickly.' },
+    { title: 'A busy urban hospital A&E', body: 'Noisy, fast-moving, frequently understaffed. Information delivered verbally over a waiting room PA. Triage relies heavily on self-report at a reception desk.' },
+    { title: 'A public library in a market town', body: 'Old building, well-loved, limited budget. Used as a community hub. Has computers but they are old. Staff are helpful but stretched thin.' },
+    { title: 'An open-plan office in a tech company', body: 'Hot desks, lots of noise, collaborative culture. Assumes employees can navigate impromptu conversations, whiteboards, and video calls without difficulty.' },
+    { title: 'A GP surgery in a deprived urban area', body: 'High patient volume, appointment booking by phone. Translation services available in theory but not always in practice. Long waits. High staff turnover.' },
+    { title: 'A community sports centre', body: 'Pool, gym, football pitches. Changing rooms with narrow cubicles. Equipment assumes standard body size and mobility. Booking system is online only.' },
+    { title: 'A supermarket during peak hours', body: 'Busy, loud, visually complex. High shelves. Self-checkout as default. Products rearranged frequently. Cards-only at some checkouts.' },
+    { title: 'A university lecture hall', body: '200 seats. Slides displayed on a screen 15 metres from some seats. Lectures recorded but upload is inconsistent. Questions asked verbally to the room.' },
+  ]
+};
+
+function drawCard(type) {
+  const pool = cardData[type];
+  const card = pool[Math.floor(Math.random() * pool.length)];
+  state.drawnCards[type] = card;
+  renderCard(type, card);
+  updateScenarioDisplay();
+  saveState();
+}
+
+function renderCard(type, card) {
+  const content = document.getElementById('drawn' + type.charAt(0).toUpperCase() + type.slice(1));
+  const empty = document.getElementById(type + 'Empty');
+  document.getElementById(type + 'Title').textContent = card.title;
+  document.getElementById(type + 'Body').textContent = card.body;
+  content.classList.add('visible');
+  if (empty) empty.style.display = 'none';
+}
+
+function updateScenarioDisplay() {
+  const { person, condition, environment } = state.drawnCards;
+  const display = document.getElementById('scenarioDisplay');
+  if (!display) return;
+
+  if (!person && !condition && !environment) {
+    display.innerHTML = '<p class="scenario-prompt">Draw all three cards to see your scenario take shape here.</p>';
+    display.classList.remove('has-cards');
+    return;
+  }
+
+  display.classList.add('has-cards');
+  const personStr = person ? `<span class="card-highlight person">${person.title}</span>` : '(draw a person)';
+  const condStr = condition ? `<span class="card-highlight condition">${condition.title.toLowerCase()}</span>` : '(draw a condition)';
+  const envStr = environment ? `<span class="card-highlight environment">${environment.title.toLowerCase()}</span>` : '(draw an environment)';
+
+  display.innerHTML = `<div class="scenario-text">
+    ${personStr}${condition ? ' — who ' + condStr : ''} is navigating ${envStr}.
+    <br><br>
+    <span style="font-size:0.85rem; color:var(--muted); font-weight:300;">
+      ${person && condition && environment ? 'All three cards drawn. Discuss this scenario, then write your hypothesis below.' : 'Keep drawing cards to complete the scenario.'}
+    </span>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  INVESTIGATION
+// ═══════════════════════════════════════════════════════
+function setVerdict(v) {
+  state.verdict = v;
+  ['holds','revised','wrong'].forEach(k => {
+    document.getElementById('verdict-'+k).className = 'verdict-btn' + (k === v ? ' selected-'+k : '');
+  });
+  saveState();
+}
+
+// ═══════════════════════════════════════════════════════
+//  PROTOTYPING
+// ═══════════════════════════════════════════════════════
+const templates = [
+  {
+    name: 'Light alert',
+    desc: 'Flash LEDs when a threshold is crossed',
+    code: `# Light Alert Template
+# Flashes LEDs when light level drops below threshold
+import time
+
+# If you have the Light Hat:
+# from openminds import LightHat
+# hat = LightHat()
+
+THRESHOLD = 300  # Adjust this value
+
+while True:
+    # In real code: level = hat.get_light()
+    level = 500  # Replace with sensor reading
+    
+    if level < THRESHOLD:
+        print("Dark! Triggering alert...")
+        # hat.set_leds((255, 0, 0))  # Red
+    else:
+        print("Light OK: " + str(level))
+        # hat.set_leds((0, 255, 0))  # Green
+    
+    time.sleep(0.5)`
+  },
+  {
+    name: 'Proximity trigger',
+    desc: 'Respond when something gets close',
+    code: `# Proximity Trigger Template
+# Triggers an output when something approaches
+import time
+
+# If you have the Movement Hat:
+# from openminds import MovementHat
+# hat = MovementHat()
+
+DISTANCE_CM = 30  # Trigger distance
+
+while True:
+    # In real code: dist = hat.get_distance()
+    dist = 100  # Replace with sensor reading
+    
+    if dist < DISTANCE_CM:
+        print("Close! Distance: " + str(dist) + "cm")
+        # Trigger your response here
+        # e.g. hat.set_led((255, 128, 0))
+    else:
+        print("All clear: " + str(dist) + "cm")
+    
+    time.sleep(0.1)`
+  },
+  {
+    name: 'Sound response',
+    desc: 'React to sound level changes',
+    code: `# Sound Response Template
+# Triggers visual feedback based on sound level
+import time
+
+# If you have the Audio Hat:
+# from openminds import AudioHat
+# hat = AudioHat()
+
+NOISE_THRESHOLD = 600
+
+while True:
+    # In real code: level = hat.get_sound_level()
+    level = 400  # Replace with mic reading
+    
+    if level > NOISE_THRESHOLD:
+        print("Loud! Level: " + str(level))
+        # Quiet alert — visual not audio
+        # hat.set_leds((255, 0, 0))
+    else:
+        print("Quiet. Level: " + str(level))
+        # hat.set_leds((0, 0, 0))
+    
+    time.sleep(0.05)`
+  },
+  {
+    name: 'Touch interface',
+    desc: 'Custom buttons on any surface',
+    code: `# Touch Interface Template
+# Read touch pads and respond
+import time
+
+# from openminds import Board
+# board = Board()
+
+# 8 touch pads available
+PAD_COUNT = 8
+
+while True:
+    for i in range(PAD_COUNT):
+        # In real code: touched = board.touch(i)
+        touched = False  # Replace with actual reading
+        
+        if touched:
+            print("Pad " + str(i) + " touched!")
+            # Your response here
+            # e.g. play a tone, change LED colour
+    
+    time.sleep(0.01)`
+  },
+  {
+    name: 'Data logger',
+    desc: 'Record sensor readings over time',
+    code: `# Data Logger Template
+# Record sensor data to understand patterns
+import time
+
+readings = []
+START_TIME = time.monotonic()
+
+print("Logging started. Ctrl+C to stop.")
+
+while True:
+    elapsed = time.monotonic() - START_TIME
+    
+    # Replace with real sensor readings:
+    reading = 0  # e.g. hat.get_temperature()
+    
+    readings.append((elapsed, reading))
+    print(str(round(elapsed, 1)) + "s: " + str(reading))
+    
+    # Keep last 100 readings
+    if len(readings) > 100:
+        readings.pop(0)
+    
+    time.sleep(1)`
+  }
+];
+
+function renderTemplates() {
+  const list = document.getElementById('templateList');
+  if (!list) return;
+  list.innerHTML = templates.map((t, i) => `
+    <div class="template-item" onclick="loadTemplate(${i})">
+      <div class="template-name">${t.name}</div>
+      <div class="template-desc">${t.desc}</div>
+    </div>
+  `).join('');
+}
+
+function loadTemplate(i) {
+  document.getElementById('codeEditor').value = templates[i].code;
+  state.code = templates[i].code;
+  saveState();
+  logOutput('Template loaded: ' + templates[i].name, 'sys');
+}
+
+function showTemplates() {
+  const list = document.getElementById('templateList');
+  if (list) list.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ═══════════════════════════════════════════════════════
+//  HYPOTHESIS ECHOES
+// ═══════════════════════════════════════════════════════
+function updateHypothesisEchoes() {
+  const h = state.hypothesis || '';
+  const echo = document.getElementById('hypothesisEcho');
+  if (echo) echo.textContent = h || 'Your hypothesis will appear here once you\'ve written it in Phase 2.';
+  const protoH = document.getElementById('protoHypothesis');
+  if (protoH) protoH.textContent = h || 'Write your hypothesis in Phase 2, then come back here.';
+}
+
+// ═══════════════════════════════════════════════════════
+//  SHARING VIEW
+// ═══════════════════════════════════════════════════════
+function buildShareView() {
+  const { person, condition, environment } = state.drawnCards;
+  const cardSummary = [person?.title, condition?.title, environment?.title].filter(Boolean).join(' · ');
+
+  if (person) {
+    document.getElementById('shareTitle').textContent = 'Project: ' + (person.title || 'Open Minds');
+    document.getElementById('shareSubtitle').textContent = cardSummary;
+  }
+
+  const entries = [
+    { phase: '1 · Affordance Discovery', color: 'var(--phase-1)',
+      content: state.exploredAffordances.length > 0
+        ? `Explored ${state.exploredAffordances.length} affordance${state.exploredAffordances.length !== 1 ? 's' : ''}: ${state.exploredAffordances.join(', ')}. Selected hats: ${state.selectedHats.join(', ') || 'none'}.`
+        : null },
+    { phase: '2 · Scenario & Hypothesis', color: 'var(--phase-2)',
+      content: cardSummary ? `<strong>Scenario:</strong> ${cardSummary}<br><br><strong>Hypothesis:</strong> ${state.hypothesis || '(not written)'}` : null },
+    { phase: '3 · Investigation', color: 'var(--phase-3)',
+      content: state.inv1 || state.inv4
+        ? `${state.inv1 ? '<strong>Evidence:</strong> ' + state.inv1 + '<br><br>' : ''}${state.inv4 ? '<strong>Confirmed hypothesis:</strong> ' + state.inv4 : ''}`
+        : null },
+    { phase: '4 · Design & Prototype', color: 'var(--phase-4)',
+      content: state.designLog || '(design log not completed)' },
+    { phase: '5 · Reflection', color: 'var(--phase-5)',
+      content: state.ref1
+        ? `<strong>What we built:</strong> ${state.ref1}${state.ref2 ? '<br><br><strong>What worked:</strong> ' + state.ref2 : ''}${state.ref3 ? '<br><br><strong>What didn\'t:</strong> ' + state.ref3 : ''}`
+        : null },
+    { phase: '5 · Learning', color: 'var(--phase-5)',
+      content: state.ref4 || state.ref5
+        ? `${state.ref4 ? '<strong>About the challenge:</strong> ' + state.ref4 : ''}${state.ref5 ? '<br><br><strong>Next steps:</strong> ' + state.ref5 : ''}`
+        : null },
+  ];
+
+  const timeline = document.getElementById('journeyTimeline');
+  timeline.innerHTML = entries.map(e => `
+    <div class="journey-entry ${e.content ? '' : 'empty'}">
+      <div class="journey-entry-phase" style="color:${e.color}">${e.phase}</div>
+      <div class="journey-entry-content">
+        ${e.content || '<em>Not completed in this session.</em>'}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════════════════════
+function resetJourney() {
+  if (!confirm('Start a completely new journey? This will clear all your current work.')) return;
+  localStorage.removeItem(STATE_KEY);
+  location.reload();
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  renderAffordances();
+  renderHatChips();
+  renderTemplates();
+  goToPhase(state.currentPhase || 1);
+});
+</script>
+</body>
+</html>
