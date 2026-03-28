@@ -2512,6 +2512,51 @@ while True:
     time.sleep(0.01)`
   },
   {
+    name: 'NeoPixels — rainbow glow',
+    desc: 'Smooth cycling rainbow across all LEDs',
+    code: `# CircuitPython — NeoPixel Rainbow
+# Smooth rainbow that cycles continuously across all LEDs
+# Adjust SPEED and BRIGHTNESS to taste
+import board
+import time
+import neopixel
+
+# --- Settings ---
+NUM_PIXELS = 16       # Number of LEDs on your hat
+BRIGHTNESS = 0.3      # 0.0 (off) to 1.0 (full — gets hot, use sparingly)
+SPEED = 0.01          # Seconds between steps — smaller = faster
+
+pixels = neopixel.NeoPixel(board.GP0, NUM_PIXELS, brightness=BRIGHTNESS, auto_write=False)
+
+def wheel(pos):
+    # Convert a position 0-255 to an (R, G, B) colour
+    # Cycles smoothly through red → green → blue → red
+    pos = pos % 256
+    if pos < 85:
+        return (255 - pos * 3, pos * 3, 0)
+    if pos < 170:
+        pos -= 85
+        return (0, 255 - pos * 3, pos * 3)
+    pos -= 170
+    return (pos * 3, 0, 255 - pos * 3)
+
+def rainbow_cycle(offset):
+    # Spread the rainbow evenly across all pixels with an offset
+    for i in range(NUM_PIXELS):
+        pixel_index = (i * 256 // NUM_PIXELS) + offset
+        pixels[i] = wheel(pixel_index)
+    pixels.show()
+
+print("Rainbow running")
+
+offset = 0
+while True:
+    rainbow_cycle(offset)
+    offset = (offset + 1) % 256
+    time.sleep(SPEED)`
+  },
+
+  {
     name: 'Data logger — record over time',
     desc: 'Log sensor readings with timestamps to find patterns',
     code: `# CircuitPython — Data Logger
