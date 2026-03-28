@@ -2383,12 +2383,13 @@ function loadFromFile(event) {
 
 // ═══ INIT ═══
 document.addEventListener('DOMContentLoaded', () => {
+  const hasSavedSession = !!localStorage.getItem(STATE_KEY);
   loadState();
   renderAffordances();
   renderHatChips();
   renderTemplates();
-  // Show splash on first load, skip it if returning to a session
-  if (state.completedPhases.length > 0 || state.hypothesis) {
+  // Only skip splash if there is genuine saved progress
+  if (hasSavedSession && (state.completedPhases.length > 0 || state.hypothesis || state.drawnCards?.person)) {
     startJourney();
   }
   goToPhase(state.currentPhase || 1);
