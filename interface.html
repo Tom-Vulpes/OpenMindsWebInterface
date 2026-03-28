@@ -1713,7 +1713,7 @@ while True:
     <div class="divider"></div>
 
     <div style="text-align:center; padding: 16px 0;">
-      <button class="btn btn-primary" onclick="window.print()">🖨 Print / Export</button>
+      <button class="btn btn-primary" onclick="printJourney()">🖨 Print / Export PDF</button>
       <span style="margin:0 12px; color:var(--muted);">·</span>
       <button class="btn btn-secondary" onclick="resetJourney()">Start a new journey</button>
     </div>
@@ -2559,6 +2559,281 @@ function resetJourney() {
   if (!confirm('Start a new journey? This will clear all current work.')) return;
   localStorage.removeItem(STATE_KEY);
   location.reload();
+}
+
+// ═══ PRINT / EXPORT ═══
+function printJourney() {
+  saveState();
+  const { person, condition, environment } = state.drawnCards;
+  const cardSummary = [person?.title, condition?.title, environment?.title].filter(Boolean).join(' · ');
+  const projectTitle = person?.title ? 'Project: ' + person.title : 'Open Minds Project';
+  const dateStr = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+
+  function section(num, colour, title, rows) {
+    const content = rows
+      .filter(r => r.value)
+      .map(r => `
+        <div class="row">
+          <div class="row-label">${r.label}</div>
+          <div class="row-value">${r.value.replace(/\n/g, '<br>')}</div>
+        </div>`).join('');
+    if (!content) return '';
+    return `
+      <div class="section">
+        <div class="section-header" style="border-left-color:${colour}">
+          <span class="section-num" style="background:${colour}">${num}</span>
+          <span class="section-title">${title}</span>
+        </div>
+        ${content}
+      </div>`;
+  }
+
+  const codeVal = (state.code || '').trim();
+  const defaultCode = '# Open Minds Board';
+  const hasCode = codeVal && !codeVal.startsWith(defaultCode) || codeVal.split('\n').length > 8;
+
+  const body = [
+    section('1', '#e85d26', 'Scenario & Hypothesis', [
+      { label: 'Cards drawn',  value: cardSummary },
+      { label: 'Person',       value: person?.title + (person?.body ? ' — ' + person.body : '') },
+      { label: 'Condition',    value: condition?.title + (condition?.body ? ' — ' + condition.body : '') },
+      { label: 'Environment',  value: environment?.title + (environment?.body ? ' — ' + environment.body : '') },
+      { label: 'Hypothesis',   value: state.hypothesis },
+    ]),
+    section('2', '#f0a500', 'Investigation', [
+      { label: 'Is this true? Evidence found',   value: state.inv1 },
+      { label: 'Who experiences this?',           value: state.inv2 },
+      { label: 'What has already been tried?',    value: state.inv3 },
+      { label: 'Confirmed hypothesis',            value: state.inv4 },
+    ]),
+    section('3', '#1a7a6e', 'Design Approach', [
+      { label: 'Response idea', value: state.responseSketch },
+    ]),
+    section('4', '#5c3d8f', 'Prototype', [
+      { label: 'Design decisions & log', value: state.designLog },
+      { label: 'Code (code.py)',         value: hasCode ? codeVal : null },
+    ]),
+    section('5', '#c44d6e', 'Reflection', [
+      { label: 'What we built',                   value: state.ref1 },
+      { label: 'What happened when we tested it', value: state.ref2 },
+      { label: 'What didn\'t work',               value: state.ref3 },
+      { label: 'What we learned about the challenge', value: state.ref4 },
+      { label: 'What we would do next',           value: state.ref5 },
+    ]),
+  ].join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${projectTitle}</title>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Comfortaa', sans-serif;
+    font-size: 10.5pt;
+    color: #1a1a1a;
+    background: white;
+    padding: 0;
+  }
+
+  .cover {
+    background: #1a1a1a;
+    color: white;
+    padding: 48px 52px 40px;
+    position: relative;
+    page-break-after: always;
+  }
+
+  .cover-hex {
+    display: inline-block;
+    width: 18px; height: 18px;
+    background: #e85d26;
+    clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+    margin-right: 8px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  .cover-brand {
+    font-size: 13pt;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 40px;
+    letter-spacing: 0.02em;
+  }
+
+  .cover-title {
+    font-size: 26pt;
+    font-weight: 700;
+    color: white;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .cover-subtitle {
+    font-size: 11pt;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 48px;
+    line-height: 1.5;
+  }
+
+  .cover-meta {
+    font-size: 9pt;
+    font-weight: 300;
+    color: rgba(255,255,255,0.35);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 16px;
+  }
+
+  .content {
+    padding: 44px 52px;
+  }
+
+  .section {
+    margin-bottom: 32px;
+    page-break-inside: avoid;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 4px solid #e85d26;
+    padding-left: 14px;
+    margin-bottom: 16px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  .section-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+    background: #e85d26;
+    color: white;
+    font-size: 8pt;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.01em;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 10px 20px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ede9e0;
+  }
+
+  .row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .row-label {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #8a8580;
+    padding-top: 2px;
+    line-height: 1.4;
+  }
+
+  .row-value {
+    font-size: 10pt;
+    font-weight: 300;
+    color: #1a1a1a;
+    line-height: 1.7;
+  }
+
+  .row-value code, pre {
+    font-family: 'Courier New', monospace;
+    font-size: 8.5pt;
+    background: #f5f3ee;
+    padding: 10px 14px;
+    border-radius: 6px;
+    display: block;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: #2d3748;
+    border: 1px solid #e2ddd5;
+    margin-top: 4px;
+  }
+
+  .divider {
+    height: 1px;
+    background: #ede9e0;
+    margin: 24px 0;
+  }
+
+  .footer {
+    font-size: 8pt;
+    color: #b0a898;
+    text-align: center;
+    padding: 20px 0 32px;
+    border-top: 1px solid #ede9e0;
+    margin: 0 52px;
+  }
+
+  @media print {
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-brand"><span class="cover-hex"></span>Open Minds — Design for Radical Inclusion</div>
+  <div class="cover-title">${projectTitle}</div>
+  <div class="cover-subtitle">${cardSummary || 'Student journey'}</div>
+  <div class="cover-meta">Printed ${dateStr} &nbsp;·&nbsp; openminds.education</div>
+</div>
+
+<div class="content">
+  ${body || '<p style="color:#8a8580;font-style:italic;">No journey content to display yet — complete the phases and return here to print.</p>'}
+</div>
+
+<div class="footer">Open Minds · Design for Radical Inclusion · openminds.education</div>
+
+<script>
+  // Auto-print once fonts have loaded
+  document.fonts.ready.then(() => {
+    setTimeout(() => window.print(), 300);
+  });
+<\/script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  if (!win) {
+    alert('Pop-up blocked — please allow pop-ups for this page and try again.');
+    return;
+  }
+  win.document.write(html);
+  win.document.close();
 }
 
 // ═══ SAVE / LOAD FILE ═══
