@@ -31,16 +31,11 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-}
-
 body {
   font-family: var(--font);
   background: var(--paper);
   color: var(--ink);
-  display: flex;
+  min-height: 100vh;
 }
 
 /* ─── SPLASH ─── */
@@ -50,12 +45,23 @@ body {
   background: var(--ink);
   z-index: 200;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   flex-direction: column;
   text-align: center;
   padding: 40px;
+  overflow-y: auto;
   transition: opacity 0.5s ease;
+}
+
+.splash-inner {
+  margin: auto;
+  width: 100%;
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
 }
 
 .splash.hidden {
@@ -284,9 +290,7 @@ body {
 /* ─── MAIN ─── */
 .main {
   margin-left: var(--sidebar-w);
-  flex: 1;
-  height: 100vh;
-  overflow-y: auto;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -294,7 +298,7 @@ body {
 .phase-view {
   display: none;
   flex-direction: column;
-  min-height: 100%;
+  flex: 1;
   animation: fadeUp 0.32s ease forwards;
 }
 
@@ -1042,6 +1046,7 @@ label {
 
 <!-- ═══ SPLASH ═══ -->
 <div class="splash" id="splash">
+<div class="splash-inner">
   <div class="splash-logo">Open <span>Minds</span></div>
   <div class="splash-tagline">Design for Radical Inclusion</div>
 
@@ -1085,6 +1090,7 @@ label {
 
   <button class="splash-start-btn" onclick="startJourney()">Begin the journey →</button>
   <div class="splash-note">Your work is saved locally in this browser as you go</div>
+</div>
 </div>
 
 <!-- ═══ SIDEBAR ═══ -->
@@ -1677,8 +1683,7 @@ function goToPhase(n) {
   document.getElementById('phase-'+n).classList.add('active');
   document.querySelector(`.phase-item[data-phase="${n}"]`).classList.add('active');
   document.getElementById('progressBar').style.width = ((n-1)/5*100)+'%';
-  const mainEl = document.querySelector('.main');
-  if (mainEl) mainEl.scrollTop = 0;
+  window.scrollTo(0,0);
   updateHypothesisEchoes();
 }
 
@@ -1758,7 +1763,7 @@ const affordances = [
   { id:'sound-input', icon:'🎙️', name:'Hearing Sound', desc:'Detect sound levels — claps, voices, ambient noise.', question:'What kinds of sounds would it be useful for an environment to notice automatically?', sim:`<div class="sim-label">Sound Level</div><div class="sim-reading" id="soundReading">42 dB</div><input type="range" class="sim-slider" min="20" max="100" value="42" oninput="document.getElementById('soundReading').textContent=this.value+' dB'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Simulate clapping, speaking, ambient noise levels</div>`, insight:'Affordance: detect when a space is too loud, trigger responses, enable clap or sound activation.' },
   { id:'sound-output', icon:'🔊', name:'Making Sound', desc:'Produce tones, melodies, spoken alerts.', question:'What information could you communicate through sound to someone who cannot see a screen?', sim:`<div class="sim-label">Tone Frequency</div><div class="sim-reading" id="toneReading">440 Hz</div><input type="range" class="sim-slider" min="100" max="2000" value="440" oninput="playSimTone(this.value)"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Drag to change pitch — audio plays in browser</div>`, insight:'Affordance: audio alerts, navigation cues, accessible notifications for those who cannot see a screen.' },
   { id:'distance', icon:'📏', name:'Sensing Distance', desc:'Measure how far away something is — centimetres to metres.', question:'What becomes possible when a space knows how close you are — without you having to do anything?', sim:`<div class="sim-label">Distance</div><div class="sim-reading" id="distReading">85 cm</div><input type="range" class="sim-slider" min="2" max="200" value="85" oninput="document.getElementById('distReading').textContent=this.value+' cm'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Imagine approaching a door, a counter, a machine</div>`, insight:'Affordance: proximity alerts, contactless triggers, obstacle detection, automatic responses on approach.' },
-  { id:'motion', icon:'🏃', name:'Sensing Motion', desc:'Detect acceleration, orientation, gestures — is the board moving?', question:'If this board were attached to a wheelchair, a walking frame, or a person's body — what could it understand?', sim:`<div class="sim-label">Acceleration (g)</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:5px;"><div><div class="sim-label">X</div><div class="sim-reading" id="accX" style="font-size:1.1rem">0.02</div></div><div><div class="sim-label">Y</div><div class="sim-reading" id="accY" style="font-size:1.1rem">0.98</div></div><div><div class="sim-label">Z</div><div class="sim-reading" id="accZ" style="font-size:1.1rem">0.05</div></div></div><button onclick="simulateShake()" style="margin-top:10px;padding:5px 14px;background:var(--accent);border:none;border-radius:6px;color:white;cursor:pointer;font-size:0.72rem;font-family:var(--font);">Simulate shake</button>`, insight:'Affordance: fall detection, posture, gesture control, orientation-aware interfaces, activity monitoring.' },
+  { id:'motion', icon:'🏃', name:'Sensing Motion', desc:'Detect acceleration, orientation, gestures — is the board moving?', question:'If this board were attached to a wheelchair, a walking frame, or someone\'s body — what could it understand?', sim:`<div class="sim-label">Acceleration (g)</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:5px;"><div><div class="sim-label">X</div><div class="sim-reading" id="accX" style="font-size:1.1rem">0.02</div></div><div><div class="sim-label">Y</div><div class="sim-reading" id="accY" style="font-size:1.1rem">0.98</div></div><div><div class="sim-label">Z</div><div class="sim-reading" id="accZ" style="font-size:1.1rem">0.05</div></div></div><button onclick="simulateShake()" style="margin-top:10px;padding:5px 14px;background:var(--accent);border:none;border-radius:6px;color:white;cursor:pointer;font-size:0.72rem;font-family:var(--font);">Simulate shake</button>`, insight:'Affordance: fall detection, posture, gesture control, orientation-aware interfaces, activity monitoring.' },
   { id:'touch', icon:'👆', name:'Touch Input', desc:'Eight capacitive pads — sense contact on any conductive surface.', question:'What if a custom control panel could be made from any material — without a screen?', sim:`<div class="sim-label">Touch Pads</div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:5px;">${Array.from({length:8},(_,i)=>`<div id="tp${i}" onclick="touchPad(${i})" style="width:40px;height:40px;border-radius:7px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.72rem;color:rgba(255,255,255,0.35);transition:all 0.15s;font-family:var(--font);">${i+1}</div>`).join('')}</div>`, insight:'Affordance: custom interfaces on any surface, accessible buttons, no screen required.' },
   { id:'motor', icon:'⚙️', name:'Physical Motion', desc:'Drive motors, control servos — make things move in the world.', question:'What physical change in an environment would make a real difference for your person in your scenario?', sim:`<div class="sim-label">Servo Angle</div><div class="sim-reading" id="servoReading">90°</div><input type="range" class="sim-slider" min="0" max="180" value="90" oninput="document.getElementById('servoReading').textContent=this.value+'°'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Think: latch, gate, valve, indicator arm, flag</div>`, insight:'Affordance: physical actuation — open doors, move objects, control mechanisms in direct response to sensing.' },
 ];
