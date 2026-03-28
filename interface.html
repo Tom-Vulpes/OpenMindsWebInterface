@@ -1040,6 +1040,99 @@ label {
 .share-formats { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
 .format-chip { padding: 7px 16px; border-radius: 100px; font-size: 0.78rem; font-weight: 600; background: rgba(255,255,255,0.07); color: rgba(245,243,238,0.55); border: 1px solid rgba(255,255,255,0.09); }
 
+/* ─── HEXAGON BRANDING ─── */
+.hex-mark {
+  display: inline-block;
+  width: 28px; height: 28px;
+  background: var(--accent);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  flex-shrink: 0;
+}
+
+.hex-phase-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: rgba(255,255,255,0.06);
+  font-weight: 700;
+  font-size: 0.68rem;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+
+.phase-item.active .hex-phase-num {
+  background: var(--phase-accent, var(--accent));
+  color: white;
+}
+
+.phase-item.completed .hex-phase-num {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
+}
+
+.hex-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 28px 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.hex-divider::before, .hex-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.hex-divider-icon {
+  width: 14px; height: 14px;
+  background: var(--border);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  flex-shrink: 0;
+}
+
+/* ─── SAVE / LOAD ─── */
+.session-bar {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.session-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: var(--font);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--ink);
+  transition: all 0.15s;
+}
+
+.session-btn:hover { border-color: var(--ink); }
+.session-btn.save { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.session-btn.save:hover { background: #333; }
+
+#loadFileInput { display: none; }
+
 </style>
 </head>
 <body>
@@ -1096,33 +1189,33 @@ label {
 <!-- ═══ SIDEBAR ═══ -->
 <nav class="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-mark"><span class="logo-dot"></span> Open Minds</div>
-    <div class="logo-sub">Student Journey · Demo</div>
+    <div class="logo-mark"><span class="hex-mark"></span> Open Minds</div>
+    <div class="logo-sub">Design for Radical Inclusion</div>
   </div>
 
   <div class="sidebar-phases">
     <button class="phase-item active" data-phase="1" style="--phase-accent: var(--phase-1)" onclick="goToPhase(1)">
-      <div class="phase-num">1</div>
+      <div class="hex-phase-num">1</div>
       <div class="phase-label"><strong>Ideation</strong>Cards, scenario, hypothesis</div>
     </button>
     <button class="phase-item" data-phase="2" style="--phase-accent: var(--phase-2)" onclick="goToPhase(2)">
-      <div class="phase-num">2</div>
+      <div class="hex-phase-num">2</div>
       <div class="phase-label"><strong>Investigation</strong>Test your hypothesis</div>
     </button>
     <button class="phase-item" data-phase="3" style="--phase-accent: var(--phase-3)" onclick="goToPhase(3)">
-      <div class="phase-num">3</div>
+      <div class="hex-phase-num">3</div>
       <div class="phase-label"><strong>Affordances</strong>What tools make possible</div>
     </button>
     <button class="phase-item" data-phase="4" style="--phase-accent: var(--phase-4)" onclick="goToPhase(4)">
-      <div class="phase-num">4</div>
+      <div class="hex-phase-num">4</div>
       <div class="phase-label"><strong>Prototyping</strong>Build &amp; respond</div>
     </button>
     <button class="phase-item" data-phase="5" style="--phase-accent: var(--phase-5)" onclick="goToPhase(5)">
-      <div class="phase-num">5</div>
+      <div class="hex-phase-num">5</div>
       <div class="phase-label"><strong>Reflection</strong>What did we learn?</div>
     </button>
     <button class="phase-item" data-phase="6" style="--phase-accent: var(--phase-6)" onclick="goToPhase(6)">
-      <div class="phase-num">6</div>
+      <div class="hex-phase-num">6</div>
       <div class="phase-label"><strong>Sharing</strong>Present your journey</div>
     </button>
   </div>
@@ -1137,6 +1230,13 @@ label {
 
 <!-- ═══ MAIN ═══ -->
 <main class="main">
+
+<div class="session-bar">
+  <span id="sessionStatus">Session saved locally</span>
+  <button class="session-btn save" onclick="saveToFile()">⬇ Save progress</button>
+  <button class="session-btn" onclick="document.getElementById('loadFileInput').click()">⬆ Load progress</button>
+  <input type="file" id="loadFileInput" accept=".json" onchange="loadFromFile(event)">
+</div>
 
 <!-- ─── PHASE 1: IDEATION ─── -->
 <section class="phase-view active" id="phase-1">
@@ -1233,11 +1333,12 @@ label {
       </div>
 
       <div class="hypothesis-section">
+        <div class="hex-divider"><span class="hex-divider-icon"></span>Your hypothesis<span class="hex-divider-icon"></span></div>
         <div class="hypothesis-label-row">
           <label>Your Hypothesis</label>
           <span class="hypothesis-hint">A theory about what is true — not a solution idea. "The environment causes difficulty because..." not "We should build..."</span>
         </div>
-        <textarea id="hypothesisText" rows="4" placeholder="e.g. The hospital creates barriers for Deaf patients because information is delivered primarily through verbal announcements and telephone systems — not because of deafness itself, but because of how the environment was designed." oninput="saveState()"></textarea>
+        <textarea id="hypothesis" rows="4" placeholder="e.g. The hospital creates barriers for Deaf patients because information is delivered primarily through verbal announcements and telephone systems — not because of deafness itself, but because of how the environment was designed." oninput="saveState(); updateHypothesisEchoes()"></textarea>
       </div>
 
     </div>
@@ -1933,94 +2034,249 @@ function setVerdict(v) {
 
 // ═══ TEMPLATES ═══
 const templates = [
-  { name:'Light alert', desc:'Flash LEDs when a threshold is crossed', code:`# Light Alert
+  {
+    name: 'Light Hat — respond to darkness',
+    desc: 'NeoPixels change colour when light level drops',
+    code: `# CircuitPython — Light Hat
+# Light sensor triggers NeoPixel colour change
+# Useful for: alerting when a space becomes dark, occupancy sensing
+import board
 import time
+import analogio
+import neopixel
 
-THRESHOLD = 300  # Adjust based on environment
+# Light Hat connections
+ldr = analogio.AnalogIn(board.GP28)       # Light sensor
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+
+DARK_THRESHOLD = 20000  # 0-65535, lower = darker
+
+def get_light_level():
+    return ldr.value
 
 while True:
-    # In real code: level = hat.get_light()
-    level = 500  # Replace with actual sensor reading
-    
-    if level < THRESHOLD:
-        print("Dark — trigger alert")
-        # hat.set_leds((255, 0, 0))  # Red for alert
+    level = get_light_level()
+    print("Light level:", level)
+
+    if level < DARK_THRESHOLD:
+        # It's dark — alert colour
+        pixels.fill((255, 60, 0))   # Amber
+        pixels.show()
+        print("Dark detected")
     else:
-        print("OK: " + str(level))
-        # hat.set_leds((0, 255, 0))  # Green for clear
-    
-    time.sleep(0.5)` },
-  { name:'Proximity trigger', desc:'Respond when someone approaches', code:`# Proximity Trigger
-import time
+        # Normal light
+        pixels.fill((0, 180, 80))   # Green
+        pixels.show()
 
-DISTANCE_CM = 40  # Trigger distance — adjust for context
+    time.sleep(0.3)`
+  },
+  {
+    name: 'Movement Hat — proximity alert',
+    desc: 'Distance sensor triggers a response when someone approaches',
+    code: `# CircuitPython — Movement Hat
+# Ultrasonic distance sensor — responds to proximity
+# Useful for: contactless triggers, obstacle awareness, counting entries
+import board
+import time
+import neopixel
+from hcsr04 import HCSR04   # Include hcsr04.py in your lib folder
+
+# Movement Hat connections
+sonar = HCSR04(trigger_pin=board.GP6, echo_pin=board.GP7)
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+
+TRIGGER_DISTANCE = 40  # cm — adjust for your context
 
 while True:
-    # In real code: dist = hat.get_distance()
-    dist = 100  # Replace with sensor reading
-    
-    if dist < DISTANCE_CM:
-        print("Approaching: " + str(dist) + "cm")
-        # Your response here
-    else:
-        print("Clear: " + str(dist) + "cm")
-    
-    time.sleep(0.1)` },
-  { name:'Sound response', desc:'React to ambient noise levels', code:`# Sound Response
-import time
+    try:
+        dist = sonar.dist_cm()
+        print("Distance:", dist, "cm")
 
-NOISE_THRESHOLD = 600
+        if dist is not None and dist < TRIGGER_DISTANCE:
+            pixels.fill((255, 0, 0))    # Red — someone is close
+            pixels.show()
+            print("Proximity triggered!")
+            time.sleep(0.5)
+        else:
+            pixels.fill((0, 0, 60))     # Dim blue — standby
+            pixels.show()
+
+    except Exception as e:
+        print("Sensor error:", e)
+
+    time.sleep(0.1)`
+  },
+  {
+    name: 'Gesture Hat — orientation aware',
+    desc: 'Accelerometer detects tilt, shake, or movement direction',
+    code: `# CircuitPython — Gesture Hat
+# Accelerometer (MPU6050) — reads orientation and detects shake
+# Useful for: gesture interfaces, fall detection, tilt-activated alerts
+import board
+import time
+import busio
+import adafruit_mpu6050
+
+# Gesture Hat uses I2C
+i2c = busio.I2C(board.GP15, board.GP14)
+mpu = adafruit_mpu6050.MPU6050(i2c)
+
+SHAKE_THRESHOLD = 15.0  # m/s² — adjust sensitivity
+
+def magnitude(x, y, z):
+    return (x**2 + y**2 + z**2) ** 0.5
 
 while True:
-    # In real code: level = hat.get_sound_level()
-    level = 400  # Replace with mic reading
-    
-    if level > NOISE_THRESHOLD:
-        print("Loud environment: " + str(level))
-        # Visual alert (not audio — avoid adding to the noise)
-        # hat.set_leds((255, 100, 0))
-    else:
-        print("Quiet: " + str(level))
-        # hat.set_leds((0, 0, 0))
-    
-    time.sleep(0.05)` },
-  { name:'Touch interface', desc:'Custom button panel on any surface', code:`# Touch Interface
-import time
+    accel = mpu.acceleration
+    mag = magnitude(*accel)
 
-# 8 capacitive touch pads available (GP2–GP5, GP18–GP21)
-# Each can trigger a different response
+    print("X:{:.2f} Y:{:.2f} Z:{:.2f} Total:{:.2f}".format(
+        accel[0], accel[1], accel[2], mag))
+
+    if mag > SHAKE_THRESHOLD:
+        print("Shake detected!")
+        # Add your response here
+
+    # Tilt detection — is it leaning forward?
+    if accel[0] > 5.0:
+        print("Tilted forward")
+    elif accel[0] < -5.0:
+        print("Tilted back")
+
+    time.sleep(0.1)`
+  },
+  {
+    name: 'Audio Hat — sound level monitor',
+    desc: 'Microphone detects noise and triggers a visual response',
+    code: `# CircuitPython — Audio Hat
+# Microphone monitors ambient sound — triggers NeoPixels
+# Useful for: noise alerts, clap activation, quiet zone monitors
+import board
+import time
+import analogio
+import neopixel
+
+# Audio Hat connections
+mic = analogio.AnalogIn(board.GP26)
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+
+NOISE_THRESHOLD = 35000  # 0-65535, adjust for environment
+SAMPLE_COUNT = 20
+
+def get_sound_level():
+    # Average multiple samples to smooth the reading
+    total = sum(abs(mic.value - 32768) for _ in range(SAMPLE_COUNT))
+    return total // SAMPLE_COUNT
 
 while True:
-    # In real code, read each pad:
-    # for i, pad in enumerate(touch_pads):
-    #     if pad.value:
-    #         handle_touch(i)
-    
-    # Placeholder:
-    print("Waiting for touch input...")
-    time.sleep(0.01)` },
-  { name:'Data logger', desc:'Record readings over time to find patterns', code:`# Data Logger
+    level = get_sound_level()
+    print("Sound level:", level)
+
+    # Map level to number of LEDs to light
+    lit = int((level / NOISE_THRESHOLD) * 16)
+    lit = min(lit, 16)
+
+    for i in range(16):
+        if i < lit:
+            # Colour shifts red as noise increases
+            r = min(255, lit * 16)
+            g = max(0, 255 - lit * 16)
+            pixels[i] = (r, g, 0)
+        else:
+            pixels[i] = (0, 0, 0)
+    pixels.show()
+
+    time.sleep(0.05)`
+  },
+  {
+    name: 'Touch pads — custom interface',
+    desc: '8 capacitive touch pads as a custom control surface',
+    code: `# CircuitPython — Touch Pads
+# 8 capacitive touch inputs — build any control surface
+# Useful for: accessible buttons, custom keyboards, interactive surfaces
+import board
 import time
+import touchio
+import neopixel
+
+# Touch pad pins (base board)
+touch_pins = [
+    board.GP2, board.GP3, board.GP4,  board.GP5,
+    board.GP18, board.GP19, board.GP20, board.GP21
+]
+
+pads = [touchio.TouchIn(pin) for pin in touch_pins]
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+
+# Assign a colour and action to each pad
+pad_colours = [
+    (255, 0, 0),    # Pad 1 — Red
+    (255, 80, 0),   # Pad 2 — Orange
+    (200, 200, 0),  # Pad 3 — Yellow
+    (0, 200, 0),    # Pad 4 — Green
+    (0, 180, 180),  # Pad 5 — Cyan
+    (0, 0, 255),    # Pad 6 — Blue
+    (100, 0, 200),  # Pad 7 — Purple
+    (200, 0, 200),  # Pad 8 — Pink
+]
+
+while True:
+    touched = False
+    for i, pad in enumerate(pads):
+        if pad.value:
+            pixels.fill(pad_colours[i])
+            pixels.show()
+            print("Pad", i + 1, "touched")
+            touched = True
+            time.sleep(0.2)
+
+    if not touched:
+        pixels.fill((0, 0, 0))
+        pixels.show()
+
+    time.sleep(0.01)`
+  },
+  {
+    name: 'Data logger — record over time',
+    desc: 'Log sensor readings with timestamps to find patterns',
+    code: `# CircuitPython — Data Logger
+# Records sensor readings with timestamps
+# Useful for: understanding a problem over time, building evidence
+import board
+import time
+import analogio
+
+# Change this to whichever sensor is relevant to your challenge
+sensor = analogio.AnalogIn(board.GP28)  # e.g. Light Hat LDR
 
 readings = []
-start = time.monotonic()
+start_time = time.monotonic()
 
-print("Logging started.")
+print("=== Open Minds Data Logger ===")
+print("Recording every 2 seconds. Ctrl+C to stop and review.")
+print("")
 
 while True:
-    elapsed = round(time.monotonic() - start, 1)
-    
-    # Replace with your sensor:
-    value = 0  # e.g. hat.get_distance()
-    
-    readings.append((elapsed, value))
-    print(str(elapsed) + "s: " + str(value))
-    
-    if len(readings) > 100:
+    elapsed = time.monotonic() - start_time
+    value = sensor.value
+
+    entry = {
+        "time_s": round(elapsed, 1),
+        "value": value
+    }
+    readings.append(entry)
+
+    # Print as CSV for easy copying
+    print("{:.1f},{}" .format(elapsed, value))
+
+    # Keep last 200 readings in memory
+    if len(readings) > 200:
         readings.pop(0)
-    
-    time.sleep(1)` },
+
+    time.sleep(2)`
+  },
 ];
+
 
 function renderTemplates() {
   const list = document.getElementById('templateList'); if (!list) return;
@@ -2071,6 +2327,58 @@ function resetJourney() {
   if (!confirm('Start a new journey? This will clear all current work.')) return;
   localStorage.removeItem(STATE_KEY);
   location.reload();
+}
+
+// ═══ SAVE / LOAD FILE ═══
+function saveToFile() {
+  saveState();
+  const exportData = {
+    version: 2,
+    savedAt: new Date().toISOString(),
+    project: state.drawnCards?.person?.title || 'Open Minds Project',
+    state: state
+  };
+  const json = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const name = (state.drawnCards?.person?.title || 'openminds').toLowerCase().replace(/\s+/g,'-');
+  a.href = url;
+  a.download = 'openminds-' + name + '-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  document.getElementById('sessionStatus').textContent = 'Progress saved to file ✓';
+  setTimeout(() => { document.getElementById('sessionStatus').textContent = 'Session saved locally'; }, 3000);
+}
+
+function loadFromFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.state) throw new Error('Invalid file format');
+      Object.assign(state, data.state);
+      // Re-serialise into DOM
+      FIELDS.forEach(f => { const el = document.getElementById(f); if (el) el.value = state[f] || ''; });
+      const ed = document.getElementById('codeEditor'); if (ed && state.code) ed.value = state.code;
+      if (state.drawnCards) Object.keys(state.drawnCards).forEach(type => { if (state.drawnCards[type]) renderCard(type, state.drawnCards[type]); });
+      updateScenarioDisplay();
+      updateHypothesisEchoes();
+      if (state.verdict) setVerdict(state.verdict);
+      renderAffordances();
+      renderHatChips();
+      goToPhase(state.currentPhase || 1);
+      localStorage.setItem(STATE_KEY, JSON.stringify(state));
+      document.getElementById('sessionStatus').textContent = 'Progress loaded from file ✓';
+      setTimeout(() => { document.getElementById('sessionStatus').textContent = 'Session saved locally'; }, 3000);
+    } catch(err) {
+      alert('Could not load file: ' + err.message + '\n\nMake sure you are loading an Open Minds progress file (.json).');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // Reset so same file can be reloaded
 }
 
 // ═══ INIT ═══
