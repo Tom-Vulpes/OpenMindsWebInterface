@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Open Minds — Student Journey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --ink: #1a1a1a;
@@ -24,20 +24,134 @@
   --phase-4: #5c3d8f;
   --phase-5: #c44d6e;
   --phase-6: #2b6cb0;
-  --sidebar-w: 260px;
+  --sidebar-w: 268px;
   --radius: 12px;
-  --font-head: 'Comfortaa', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font: 'Comfortaa', sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: var(--font-body);
+  font-family: var(--font);
   background: var(--paper);
   color: var(--ink);
   min-height: 100vh;
   display: flex;
+}
+
+/* ─── SPLASH ─── */
+.splash {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 40px;
+  transition: opacity 0.5s ease;
+}
+
+.splash.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-logo {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 3rem;
+  color: var(--paper);
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.splash-logo span { color: var(--accent); }
+
+.splash-tagline {
+  font-size: 1rem;
+  font-weight: 300;
+  color: rgba(245,243,238,0.5);
+  margin-bottom: 52px;
+  letter-spacing: 0.03em;
+}
+
+.splash-intro {
+  max-width: 560px;
+  margin: 0 auto 48px;
+}
+
+.splash-intro p {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: rgba(245,243,238,0.75);
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+
+.splash-principles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 48px;
+  max-width: 680px;
+}
+
+.splash-principle {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 18px 16px;
+  text-align: left;
+}
+
+.splash-principle-icon {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.splash-principle-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--paper);
+  margin-bottom: 6px;
+}
+
+.splash-principle-body {
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: rgba(245,243,238,0.45);
+  line-height: 1.55;
+}
+
+.splash-start-btn {
+  padding: 16px 48px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+
+.splash-start-btn:hover {
+  background: #d44e1e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(232,93,38,0.3);
+}
+
+.splash-note {
+  font-size: 0.75rem;
+  color: rgba(245,243,238,0.25);
+  margin-top: 16px;
+  font-weight: 300;
 }
 
 /* ─── SIDEBAR ─── */
@@ -51,19 +165,17 @@ body {
   position: fixed;
   left: 0; top: 0; bottom: 0;
   z-index: 100;
-  overflow: hidden;
 }
 
 .sidebar-logo {
-  padding: 28px 24px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 26px 22px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 
 .logo-mark {
-  font-family: var(--font-head);
-  font-weight: 800;
-  font-size: 1.4rem;
-  letter-spacing: -0.02em;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 1.25rem;
   color: var(--paper);
   display: flex;
   align-items: center;
@@ -71,46 +183,39 @@ body {
 }
 
 .logo-dot {
-  width: 10px; height: 10px;
+  width: 9px; height: 9px;
   border-radius: 50%;
   background: var(--accent);
   flex-shrink: 0;
 }
 
 .logo-sub {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 300;
   color: var(--muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-top: 4px;
 }
 
-.sidebar-phases {
-  flex: 1;
-  padding: 16px 0;
-  overflow-y: auto;
-}
+.sidebar-phases { flex: 1; padding: 12px 0; overflow-y: auto; }
 
 .phase-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 13px 20px 13px 24px;
+  gap: 12px;
+  padding: 12px 18px 12px 22px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.18s;
   position: relative;
   border: none;
   background: none;
   width: 100%;
   text-align: left;
-  color: rgba(245, 243, 238, 0.5);
+  color: rgba(245,243,238,0.4);
+  font-family: var(--font);
 }
 
-.phase-item:hover {
-  color: var(--paper);
-  background: rgba(255,255,255,0.04);
-}
+.phase-item:hover { color: var(--paper); background: rgba(255,255,255,0.04); }
 
 .phase-item.active {
   color: var(--paper);
@@ -122,59 +227,46 @@ body {
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 3px;
-  background: var(--phase-accent);
+  background: var(--phase-accent, var(--accent));
   border-radius: 0 2px 2px 0;
+}
+
+.phase-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+
+.phase-item.active .phase-num {
+  background: var(--phase-accent, var(--accent));
+  color: white;
 }
 
 .phase-item.completed .phase-num {
   background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
 }
 
-.phase-num {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.06);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 0.75rem;
-  flex-shrink: 0;
-  transition: all 0.2s;
-}
-
-.phase-item.active .phase-num {
-  background: var(--phase-accent);
-  color: white;
-}
-
-.phase-item.completed .phase-num::after {
-  content: '✓';
-}
-
-.phase-label {
-  font-size: 0.82rem;
-  font-weight: 400;
-  line-height: 1.3;
-}
-
-.phase-label strong {
-  display: block;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
+.phase-label { font-size: 0.78rem; font-weight: 400; line-height: 1.3; }
+.phase-label strong { display: block; font-weight: 700; font-size: 0.82rem; }
 
 .sidebar-footer {
-  padding: 20px 24px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  font-size: 0.72rem;
+  padding: 18px 22px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  font-size: 0.7rem;
   color: var(--muted);
 }
 
 .progress-bar-track {
   height: 3px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.07);
   border-radius: 2px;
-  margin-top: 10px;
+  margin-top: 8px;
   overflow: hidden;
 }
 
@@ -182,10 +274,10 @@ body {
   height: 100%;
   background: var(--accent);
   border-radius: 2px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
 }
 
-/* ─── MAIN CONTENT ─── */
+/* ─── MAIN ─── */
 .main {
   margin-left: var(--sidebar-w);
   flex: 1;
@@ -198,21 +290,19 @@ body {
   display: none;
   flex-direction: column;
   min-height: 100vh;
-  animation: fadeUp 0.35s ease forwards;
+  animation: fadeUp 0.32s ease forwards;
 }
 
-.phase-view.active {
-  display: flex;
-}
+.phase-view.active { display: flex; }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ─── PHASE HEADER ─── */
 .phase-header {
-  padding: 48px 60px 36px;
+  padding: 44px 56px 32px;
   border-bottom: 1px solid var(--border);
   background: var(--white);
   position: relative;
@@ -222,23 +312,23 @@ body {
 .phase-header::before {
   content: attr(data-phase-num);
   position: absolute;
-  right: 48px; top: -10px;
-  font-family: var(--font-head);
-  font-weight: 800;
-  font-size: 8rem;
-  color: var(--phase-color, #e85d26);
-  opacity: 0.06;
+  right: 44px; top: -10px;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 7.5rem;
+  color: var(--phase-color, var(--accent));
+  opacity: 0.055;
   line-height: 1;
   pointer-events: none;
   user-select: none;
 }
 
 .phase-eyebrow {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.68rem;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--phase-color, #e85d26);
+  color: var(--phase-color, var(--accent));
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -248,41 +338,37 @@ body {
 .phase-eyebrow::before {
   content: '';
   display: inline-block;
-  width: 24px; height: 2px;
+  width: 20px; height: 2px;
   background: currentColor;
   border-radius: 1px;
 }
 
 .phase-title {
-  font-family: var(--font-head);
-  font-weight: 800;
-  font-size: 2.4rem;
-  letter-spacing: -0.03em;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 2.2rem;
+  letter-spacing: -0.01em;
   color: var(--ink);
-  line-height: 1.1;
-  margin-bottom: 14px;
+  line-height: 1.15;
+  margin-bottom: 12px;
 }
 
 .phase-description {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 300;
   color: var(--muted);
-  max-width: 640px;
-  line-height: 1.65;
+  max-width: 620px;
+  line-height: 1.7;
 }
 
-/* ─── PHASE BODY ─── */
-.phase-body {
-  flex: 1;
-  padding: 48px 60px;
-}
+.phase-body { flex: 1; padding: 44px 56px; }
 
-/* ─── NAV CONTROLS ─── */
+/* ─── NAV ─── */
 .phase-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 28px 60px;
+  padding: 24px 56px;
   border-top: 1px solid var(--border);
   background: var(--white);
 }
@@ -291,70 +377,45 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 11px 22px;
   border-radius: var(--radius);
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  font-weight: 500;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   border: none;
   transition: all 0.18s;
-  text-decoration: none;
 }
 
-.btn-primary {
-  background: var(--ink);
-  color: var(--paper);
-}
+.btn-primary { background: var(--ink); color: var(--paper); }
 .btn-primary:hover { background: #333; transform: translateY(-1px); }
-
-.btn-secondary {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border);
-}
+.btn-secondary { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
 .btn-secondary:hover { color: var(--ink); border-color: var(--ink); }
-
-.btn-accent {
-  background: var(--accent);
-  color: white;
-}
+.btn-accent { background: var(--accent); color: white; }
 .btn-accent:hover { background: #d44e1e; transform: translateY(-1px); }
 
-.btn-ghost {
-  background: transparent;
-  color: var(--ink);
-  padding: 12px 0;
-}
-.btn-ghost:hover { color: var(--accent); }
-
-/* ─── CARDS / PANELS ─── */
+/* ─── PANELS / CARDS ─── */
 .panel {
   background: var(--white);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px;
-  margin-bottom: 20px;
+  padding: 24px;
+  margin-bottom: 18px;
 }
 
-.panel-accent {
-  border-left: 4px solid var(--phase-color, var(--accent));
-}
-
-/* ─── FORM ELEMENTS ─── */
 textarea, input[type="text"] {
   width: 100%;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-family: var(--font);
+  font-size: 0.88rem;
   font-weight: 300;
   color: var(--ink);
   background: var(--paper);
   border: 1.5px solid var(--border);
   border-radius: 8px;
-  padding: 14px 18px;
+  padding: 12px 16px;
   resize: vertical;
-  transition: border-color 0.2s;
-  line-height: 1.6;
+  transition: border-color 0.18s;
+  line-height: 1.65;
 }
 
 textarea:focus, input[type="text"]:focus {
@@ -364,75 +425,296 @@ textarea:focus, input[type="text"]:focus {
 
 label {
   display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
-/* ─── TAG / BADGE ─── */
 .badge {
   display: inline-flex;
   align-items: center;
   padding: 3px 10px;
   border-radius: 100px;
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font);
+}
+
+.badge-success { background: #d1fae5; color: #065f46; }
+.badge-warn    { background: #fef3c7; color: #92400e; }
+.badge-info    { background: #dbeafe; color: #1e40af; }
+
+.divider { height: 1px; background: var(--border); margin: 22px 0; }
+
+/* ═══════════════════════
+   PHASE 1 — IDEATION
+═══════════════════════ */
+.card-game-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.card-piles { display: flex; flex-direction: column; gap: 14px; }
+
+.card-pile {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.card-pile-header {
+  padding: 13px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-pile-label {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-.badge-success { background: #d1fae5; color: #065f46; }
-.badge-warn { background: #fef3c7; color: #92400e; }
-.badge-info { background: #dbeafe; color: #1e40af; }
+.pile-person      { color: #c44d6e; }
+.pile-condition   { color: #5c3d8f; }
+.pile-environment { color: #1a7a6e; }
 
-/* ─── TOOLTIP ─── */
-.tooltip {
-  position: relative;
+.pile-count { font-size: 0.72rem; color: var(--muted); font-weight: 300; }
+
+.drawn-card { padding: 18px; min-height: 76px; display: flex; align-items: center; }
+
+.drawn-card-content { display: none; }
+.drawn-card-content.visible {
+  display: block;
+  animation: cardReveal 0.38s cubic-bezier(0.34,1.56,0.64,1);
 }
-.tooltip:hover::after {
-  content: attr(data-tip);
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: scale(0.92) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.card-empty { color: var(--muted); font-size: 0.82rem; font-style: italic; font-weight: 300; }
+.card-title { font-weight: 700; font-size: 0.92rem; color: var(--ink); margin-bottom: 5px; }
+.card-body  { font-size: 0.8rem; font-weight: 300; color: var(--muted); line-height: 1.5; }
+
+.draw-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: var(--cream);
+  color: var(--ink);
+  border-top: 1px solid var(--border);
+  transition: all 0.15s;
+  text-align: center;
+}
+.draw-btn:hover { background: var(--border); }
+
+.scenario-panel { display: flex; flex-direction: column; gap: 14px; }
+
+.scenario-display {
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1.5px solid var(--border);
+  min-height: 110px;
+}
+
+.scenario-display.has-cards { background: white; border-color: var(--phase-1); }
+
+.scenario-prompt { font-size: 0.82rem; font-weight: 300; color: var(--muted); font-style: italic; }
+
+.scenario-text { font-size: 0.92rem; font-weight: 400; color: var(--ink); line-height: 1.65; }
+
+.scenario-text .card-highlight { font-weight: 700; }
+.scenario-text .card-highlight.person      { color: #c44d6e; }
+.scenario-text .card-highlight.condition   { color: #5c3d8f; }
+.scenario-text .card-highlight.environment { color: #1a7a6e; }
+
+.discussion-prompts {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.discussion-prompts h3 {
+  font-family: var(--font);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.discussion-prompts ol { padding-left: 16px; }
+
+.discussion-prompts li {
+  font-size: 0.84rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.6;
+  margin-bottom: 5px;
+}
+
+.hypothesis-section {
+  grid-column: 1 / -1;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.hypothesis-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.hypothesis-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+  max-width: 420px;
+  line-height: 1.4;
+  font-weight: 300;
+}
+
+/* ═══════════════════════
+   PHASE 2 — INVESTIGATION
+═══════════════════════ */
+.investigation-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+}
+
+.investigation-form { display: flex; flex-direction: column; gap: 18px; }
+
+.form-group {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.form-group h3 {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.form-group p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 300;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.hypothesis-echo {
+  background: var(--cream);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 0.88rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ink);
+  border-left: 3px solid var(--phase-2);
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+
+.investigation-sidebar { display: flex; flex-direction: column; gap: 14px; }
+
+.sidebar-hint {
   background: var(--ink);
   color: var(--paper);
-  font-size: 0.75rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 50;
+  border-radius: var(--radius);
+  padding: 18px;
 }
 
+.sidebar-hint h4 {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  color: var(--paper);
+}
+
+.sidebar-hint p {
+  font-size: 0.77rem;
+  font-weight: 300;
+  color: rgba(245,243,238,0.55);
+  line-height: 1.6;
+}
+
+.verdict-options { display: flex; gap: 7px; margin-top: 12px; }
+
+.verdict-btn {
+  flex: 1;
+  padding: 9px 6px;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--ink);
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.verdict-btn:hover { border-color: var(--ink); }
+.verdict-btn.selected-holds   { background: #d1fae5; border-color: #059669; color: #065f46; }
+.verdict-btn.selected-revised { background: #fef3c7; border-color: #d97706; color: #92400e; }
+.verdict-btn.selected-wrong   { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+
 /* ═══════════════════════════════
-   PHASE 1 — AFFORDANCE DISCOVERY
+   PHASE 3 — AFFORDANCE DISCOVERY
 ═══════════════════════════════ */
 .affordance-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
 .affordance-card {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.18s;
   position: relative;
   overflow: hidden;
 }
 
 .affordance-card:hover {
-  border-color: var(--phase-1);
+  border-color: var(--phase-3);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(232,93,38,0.12);
+  box-shadow: 0 6px 20px rgba(26,122,110,0.1);
 }
 
 .affordance-card.explored {
@@ -443,510 +725,108 @@ label {
 .affordance-card.explored::after {
   content: '✓';
   position: absolute;
-  top: 14px; right: 16px;
-  width: 22px; height: 22px;
+  top: 12px; right: 14px;
+  width: 20px; height: 20px;
   background: var(--accent-teal);
   color: white;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
+  line-height: 20px;
+  text-align: center;
 }
 
-.affordance-icon {
-  font-size: 2.4rem;
-  margin-bottom: 14px;
-  display: block;
-}
-
-.affordance-name {
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 6px;
-  color: var(--ink);
-}
-
-.affordance-desc {
-  font-size: 0.82rem;
-  font-weight: 300;
-  color: var(--muted);
-  line-height: 1.5;
-}
+.affordance-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+.affordance-name { font-weight: 700; font-size: 0.88rem; margin-bottom: 5px; color: var(--ink); }
+.affordance-desc { font-size: 0.76rem; font-weight: 300; color: var(--muted); line-height: 1.5; }
 
 .affordance-demo {
   background: var(--ink);
   color: var(--paper);
   border-radius: var(--radius);
-  padding: 28px;
-  margin-top: 24px;
+  padding: 24px;
+  margin-bottom: 24px;
   display: none;
 }
 
-.affordance-demo.active {
-  display: block;
-  animation: fadeUp 0.3s ease;
-}
+.affordance-demo.active { display: block; animation: fadeUp 0.28s ease; }
 
-.demo-title {
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-  color: var(--paper);
-}
+.demo-title   { font-weight: 700; font-size: 1rem; margin-bottom: 6px; color: var(--paper); }
+.demo-question { font-size: 0.9rem; font-weight: 300; color: rgba(245,243,238,0.65); margin-bottom: 18px; line-height: 1.6; }
+.demo-sim { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 18px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.08); }
+.demo-insight { font-size: 0.8rem; color: rgba(245,243,238,0.5); font-style: italic; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 12px; }
 
-.demo-question {
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: rgba(245,243,238,0.7);
-  margin-bottom: 20px;
-  line-height: 1.6;
-}
-
-.demo-sim {
-  background: rgba(255,255,255,0.06);
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 16px;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.demo-insight {
-  font-size: 0.85rem;
-  color: rgba(245,243,238,0.6);
-  font-style: italic;
-  line-height: 1.5;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  padding-top: 14px;
-  margin-top: 14px;
-}
-
-.sim-led {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.sim-led-dot {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: #333;
-  transition: all 0.3s;
-  cursor: pointer;
-}
-
-.sim-led-dot.on { background: var(--led-color, #ff4444); box-shadow: 0 0 12px var(--led-color, #ff4444); }
+.sim-led { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 10px; }
+.sim-led-dot { width: 22px; height: 22px; border-radius: 50%; background: #333; transition: all 0.3s; cursor: pointer; }
+.sim-led-dot.on { background: var(--led-color, #ff4444); box-shadow: 0 0 10px var(--led-color, #ff4444); }
 
 .sim-slider {
   width: 100%;
   -webkit-appearance: none;
   height: 4px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.12);
   border-radius: 2px;
   outline: none;
   margin: 8px 0;
 }
 .sim-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px; height: 20px;
+  width: 18px; height: 18px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
 }
 
-.sim-reading {
-  font-family: monospace;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--accent);
-  margin: 8px 0;
-}
-
-.sim-label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(245,243,238,0.4);
-  margin-bottom: 4px;
-}
+.sim-reading { font-family: 'Courier New', monospace; font-size: 1.6rem; font-weight: 700; color: var(--accent); margin: 6px 0; }
+.sim-label   { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(245,243,238,0.35); margin-bottom: 3px; }
 
 .board-connect-banner {
   background: linear-gradient(135deg, var(--ink) 0%, #2d3748 100%);
   border-radius: var(--radius);
-  padding: 20px 24px;
+  padding: 18px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 28px;
-  gap: 16px;
-}
-
-.board-connect-info {
-  display: flex;
-  align-items: center;
+  margin-bottom: 24px;
   gap: 14px;
 }
 
-.board-status-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: #ef4444;
-  flex-shrink: 0;
-}
+.board-connect-info { display: flex; align-items: center; gap: 12px; }
 
-.board-status-dot.connected {
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
-  animation: pulse 2s infinite;
-}
+.board-status-dot { width: 9px; height: 9px; border-radius: 50%; background: #ef4444; flex-shrink: 0; }
+.board-status-dot.connected { background: #10b981; box-shadow: 0 0 8px #10b981; animation: pulse 2s infinite; }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.55; } }
 
-.board-status-text {
-  color: var(--paper);
-  font-size: 0.85rem;
-  font-weight: 400;
-}
-.board-status-text strong { display: block; font-weight: 600; font-size: 0.9rem; }
+.board-status-text { color: var(--paper); font-size: 0.82rem; font-weight: 300; }
+.board-status-text strong { display: block; font-weight: 700; font-size: 0.88rem; }
 
-.hat-chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-}
+.hat-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 14px; }
 
 .hat-chip {
-  padding: 6px 14px;
+  padding: 6px 13px;
   border-radius: 100px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   cursor: pointer;
   border: 1.5px solid transparent;
-  transition: all 0.2s;
-}
-
-.hat-chip.selected {
-  border-color: currentColor;
-}
-
-/* ═══════════════════════════
-   PHASE 2 — IDEATION / CARDS
-═══════════════════════════ */
-.card-game-area {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-}
-
-.card-piles {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.card-pile {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.card-pile-header {
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-}
-
-.card-pile-label {
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.pile-person { color: #c44d6e; }
-.pile-condition { color: #5c3d8f; }
-.pile-environment { color: #1a7a6e; }
-
-.pile-count {
-  font-size: 0.75rem;
-  color: var(--muted);
-  font-weight: 300;
-}
-
-.drawn-card {
-  padding: 20px;
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-}
-
-.drawn-card-content {
-  display: none;
-}
-
-.drawn-card-content.visible {
-  display: block;
-  animation: cardReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes cardReveal {
-  from { opacity: 0; transform: scale(0.92) translateY(8px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.card-empty {
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-style: italic;
-  font-weight: 300;
-}
-
-.card-title {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--ink);
-  margin-bottom: 6px;
-}
-
-.card-body {
-  font-size: 0.82rem;
-  font-weight: 300;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.draw-btn {
-  display: block;
-  width: 100%;
-  padding: 10px 16px;
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  background: var(--cream);
-  color: var(--ink);
-  border-top: 1px solid var(--border);
   transition: all 0.18s;
-  text-align: center;
+  font-family: var(--font);
 }
-.draw-btn:hover { background: var(--border); }
+.hat-chip.selected { border-color: currentColor; }
 
-.scenario-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+.completeness-meter { margin-top: 18px; }
+.completeness-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-bottom: 5px; }
+.completeness-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.completeness-fill  { height: 100%; background: var(--accent-teal); border-radius: 2px; transition: width 0.5s ease; }
 
-.scenario-display {
-  background: var(--cream);
-  border-radius: var(--radius);
-  padding: 24px;
-  border: 1.5px solid var(--border);
-  min-height: 120px;
-}
-
-.scenario-display.has-cards {
-  background: white;
-  border-color: var(--phase-2);
-}
-
-.scenario-prompt {
-  font-size: 0.82rem;
-  font-weight: 300;
-  color: var(--muted);
-  font-style: italic;
-}
-
-.scenario-text {
-  font-size: 0.95rem;
-  font-weight: 400;
-  color: var(--ink);
-  line-height: 1.65;
-}
-
-.scenario-text .card-highlight {
-  font-weight: 600;
-}
-
-.scenario-text .card-highlight.person { color: #c44d6e; }
-.scenario-text .card-highlight.condition { color: #5c3d8f; }
-.scenario-text .card-highlight.environment { color: #1a7a6e; }
-
-.discussion-prompts {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-}
-
-.discussion-prompts h3 {
-  font-family: var(--font-head);
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-
-.discussion-prompts ol {
-  padding-left: 16px;
-}
-
-.discussion-prompts li {
-  font-size: 0.88rem;
-  font-weight: 300;
-  color: var(--ink);
-  line-height: 1.6;
-  margin-bottom: 6px;
-}
-
-.hypothesis-section {
-  grid-column: 1 / -1;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-}
-
-.hypothesis-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.hypothesis-hint {
-  font-size: 0.78rem;
-  color: var(--muted);
-  font-style: italic;
-  max-width: 400px;
-  line-height: 1.4;
-}
-
-/* ═══════════════════════════
-   PHASE 3 — INVESTIGATION
-═══════════════════════════ */
-.investigation-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 28px;
-}
-
-.investigation-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px;
-}
-
-.form-group h3 {
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--ink);
-  margin-bottom: 4px;
-}
-
-.form-group p {
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-weight: 300;
-  margin-bottom: 14px;
-  line-height: 1.5;
-}
-
-.hypothesis-echo {
-  background: var(--cream);
-  border-radius: 8px;
-  padding: 16px 20px;
-  font-size: 0.9rem;
-  font-weight: 400;
-  font-style: italic;
-  color: var(--ink);
-  border-left: 3px solid var(--phase-2);
-  margin-bottom: 20px;
-  line-height: 1.6;
-}
-
-.investigation-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.sidebar-hint {
-  background: var(--ink);
-  color: var(--paper);
-  border-radius: var(--radius);
-  padding: 20px;
-}
-
-.sidebar-hint h4 {
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 0.85rem;
-  margin-bottom: 10px;
-  color: var(--paper);
-}
-
-.sidebar-hint p {
-  font-size: 0.8rem;
-  font-weight: 300;
-  color: rgba(245,243,238,0.6);
-  line-height: 1.6;
-}
-
-.verdict-options {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.verdict-btn {
-  flex: 1;
-  padding: 10px 8px;
-  border-radius: 8px;
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: 1.5px solid var(--border);
-  background: var(--white);
-  color: var(--ink);
-  transition: all 0.18s;
-  text-align: center;
-}
-
-.verdict-btn:hover { border-color: var(--ink); }
-.verdict-btn.selected-holds { background: #d1fae5; border-color: #059669; color: #065f46; }
-.verdict-btn.selected-revised { background: #fef3c7; border-color: #d97706; color: #92400e; }
-.verdict-btn.selected-wrong { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
-
-/* ═══════════════════════════
+/* ═══════════════════════
    PHASE 4 — PROTOTYPING
-═══════════════════════════ */
+═══════════════════════ */
 .proto-layout {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 0;
+  grid-template-columns: 1fr 360px;
   min-height: calc(100vh - 280px);
   background: var(--ink);
   border-radius: var(--radius);
@@ -954,80 +834,66 @@ label {
   border: 1.5px solid var(--border);
 }
 
-.code-editor-area {
-  display: flex;
-  flex-direction: column;
-}
+.code-editor-area { display: flex; flex-direction: column; }
 
 .editor-toolbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
+  gap: 10px;
+  padding: 11px 18px;
   background: #1a1a2e;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.editor-dot { width: 12px; height: 12px; border-radius: 50%; }
-.ed-red { background: #ff5f57; }
-.ed-yellow { background: #ffbd2e; }
-.ed-green { background: #28c840; }
+.editor-dot { width: 11px; height: 11px; border-radius: 50%; }
+.ed-red { background: #ff5f57; } .ed-yellow { background: #ffbd2e; } .ed-green { background: #28c840; }
 
-.editor-filename {
-  font-family: 'Courier New', monospace;
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.4);
-  margin-left: 8px;
-}
+.editor-filename { font-family: 'Courier New', monospace; font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-left: 6px; }
 
-.editor-actions {
-  margin-left: auto;
-  display: flex;
-  gap: 8px;
-}
+.editor-actions { margin-left: auto; display: flex; gap: 7px; }
 
 .editor-btn {
-  padding: 5px 14px;
+  padding: 5px 12px;
   border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font);
   cursor: pointer;
   border: none;
-  transition: all 0.18s;
+  transition: all 0.15s;
 }
 
-.editor-btn-run { background: #10b981; color: white; }
+.editor-btn-run      { background: #10b981; color: white; }
 .editor-btn-run:hover { background: #059669; }
-.editor-btn-template { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
-.editor-btn-template:hover { background: rgba(255,255,255,0.14); }
-.editor-btn-send { background: #3b82f6; color: white; }
+.editor-btn-template { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.55); }
+.editor-btn-template:hover { background: rgba(255,255,255,0.12); }
+.editor-btn-send      { background: #3b82f6; color: white; }
 .editor-btn-send:hover { background: #2563eb; }
 
 .code-editor {
   flex: 1;
   background: #1e1e2e;
-  padding: 20px;
+  padding: 18px;
   font-family: 'Courier New', monospace;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: #cdd6f4;
   border: none;
   resize: none;
   line-height: 1.7;
   outline: none;
-  min-height: 380px;
+  min-height: 360px;
   tab-size: 4;
 }
 
 .editor-output {
   background: #11111b;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 14px 20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 12px 18px;
   font-family: 'Courier New', monospace;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: #a6e3a1;
-  min-height: 80px;
-  max-height: 120px;
+  min-height: 75px;
+  max-height: 110px;
   overflow-y: auto;
 }
 
@@ -1037,125 +903,84 @@ label {
 
 .proto-sidebar {
   background: #16213e;
-  border-left: 1px solid rgba(255,255,255,0.06);
+  border-left: 1px solid rgba(255,255,255,0.05);
   display: flex;
   flex-direction: column;
 }
 
 .proto-sidebar-section {
-  padding: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .proto-sidebar-section h4 {
-  font-family: var(--font-head);
+  font-family: var(--font);
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.3);
-  margin-bottom: 12px;
+  color: rgba(255,255,255,0.25);
+  margin-bottom: 10px;
 }
 
-.template-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.template-list { display: flex; flex-direction: column; gap: 5px; }
 
 .template-item {
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: 8px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.06);
   cursor: pointer;
-  transition: all 0.18s;
+  transition: all 0.15s;
 }
 
-.template-item:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.12);
-}
+.template-item:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); }
 
-.template-name {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 2px;
-}
-
-.template-desc {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.3);
-  line-height: 1.4;
-}
+.template-name { font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.65); margin-bottom: 2px; }
+.template-desc { font-size: 0.7rem; color: rgba(255,255,255,0.28); line-height: 1.4; }
 
 .challenge-reminder {
-  padding: 16px;
-  background: rgba(232,93,38,0.1);
+  padding: 14px;
+  background: rgba(232,93,38,0.09);
   border-radius: 8px;
-  border: 1px solid rgba(232,93,38,0.2);
+  border: 1px solid rgba(232,93,38,0.18);
 }
 
 .challenge-reminder h5 {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.68rem;
+  font-weight: 700;
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
-.challenge-reminder p {
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.45);
-  line-height: 1.5;
-}
+.challenge-reminder p { font-size: 0.75rem; color: rgba(255,255,255,0.4); line-height: 1.5; }
 
-/* ═══════════════════════════
+/* ═══════════════════════
    PHASE 5 — REFLECTION
-═══════════════════════════ */
-.reflection-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
+═══════════════════════ */
+.reflection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
 .reflection-card {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 22px;
+  padding: 20px;
 }
 
-.reflection-card h3 {
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--ink);
-  margin-bottom: 4px;
-}
+.reflection-card h3 { font-family: var(--font); font-weight: 700; font-size: 0.92rem; color: var(--ink); margin-bottom: 4px; }
+.reflection-card p  { font-size: 0.78rem; color: var(--muted); font-weight: 300; margin-bottom: 10px; line-height: 1.5; }
+.reflection-card.full-width { grid-column: 1 / -1; }
 
-.reflection-card p {
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-weight: 300;
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-.reflection-card.full-width {
-  grid-column: 1 / -1;
-}
-
-/* ═══════════════════════════
+/* ═══════════════════════
    PHASE 6 — SHARING
-═══════════════════════════ */
+═══════════════════════ */
 .share-hero {
   background: var(--ink);
   border-radius: var(--radius);
-  padding: 40px;
-  margin-bottom: 28px;
+  padding: 36px;
+  margin-bottom: 24px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -1163,127 +988,101 @@ label {
 
 .share-hero::before {
   content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 70% 50%, rgba(232,93,38,0.15) 0%, transparent 60%);
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 70% 50%, rgba(232,93,38,0.12) 0%, transparent 60%);
 }
 
 .share-hero-title {
-  font-family: var(--font-head);
-  font-size: 1.8rem;
-  font-weight: 800;
+  font-family: var(--font);
+  font-size: 1.6rem;
+  font-weight: 700;
   color: var(--paper);
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
 .share-hero-sub {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 300;
-  color: rgba(245,243,238,0.55);
-  margin-bottom: 28px;
+  color: rgba(245,243,238,0.45);
+  margin-bottom: 24px;
 }
 
-.journey-timeline {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
+.journey-timeline { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
 
 .journey-entry {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 22px;
-  position: relative;
+  padding: 20px;
 }
 
 .journey-entry-phase {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.68rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
   opacity: 0.7;
 }
 
-.journey-entry-content {
-  font-size: 0.88rem;
-  color: var(--ink);
-  font-weight: 400;
-  line-height: 1.55;
-}
+.journey-entry-content { font-size: 0.85rem; color: var(--ink); line-height: 1.55; }
+.journey-entry.empty .journey-entry-content { color: var(--muted); font-style: italic; font-weight: 300; }
 
-.journey-entry-content em {
-  color: var(--muted);
-  font-style: italic;
-  font-weight: 300;
-}
-
-.journey-entry.empty .journey-entry-content {
-  color: var(--muted);
-  font-style: italic;
-  font-weight: 300;
-}
-
-.share-formats {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-  justify-content: center;
-}
-
-.format-chip {
-  padding: 8px 18px;
-  border-radius: 100px;
-  font-size: 0.82rem;
-  font-weight: 500;
-  background: rgba(255,255,255,0.08);
-  color: rgba(245,243,238,0.6);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* ─── UTILITY ─── */
-.divider { height: 1px; background: var(--border); margin: 24px 0; }
-.spacer-sm { height: 12px; }
-.spacer { height: 24px; }
-.text-muted { color: var(--muted); }
-.text-sm { font-size: 0.85rem; }
-.font-head { font-family: var(--font-head); }
-.fw-bold { font-weight: 700; }
-
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-
-.completeness-meter {
-  margin-top: 20px;
-}
-.completeness-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-.completeness-track {
-  height: 4px;
-  background: var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.completeness-fill {
-  height: 100%;
-  background: var(--accent-teal);
-  border-radius: 2px;
-  transition: width 0.5s ease;
-}
+.share-formats { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+.format-chip { padding: 7px 16px; border-radius: 100px; font-size: 0.78rem; font-weight: 600; background: rgba(255,255,255,0.07); color: rgba(245,243,238,0.55); border: 1px solid rgba(255,255,255,0.09); }
 
 </style>
 </head>
 <body>
 
-<!-- ═══════ SIDEBAR ═══════ -->
+<!-- ═══ SPLASH ═══ -->
+<div class="splash" id="splash">
+  <div class="splash-logo">Open <span>Minds</span></div>
+  <div class="splash-tagline">Design for Radical Inclusion</div>
+
+  <div class="splash-intro">
+    <p>A challenge worth solving comes before any tool worth using. This platform walks you through a process of understanding a real human challenge — then designing a response to it.</p>
+    <p>Technology is one option. Sometimes the best design has no technology in it at all. When we do use technology here, it's to build a working prototype — something you can put in someone's hands and learn from.</p>
+  </div>
+
+  <div class="splash-principles">
+    <div class="splash-principle">
+      <span class="splash-principle-icon">🧩</span>
+      <div class="splash-principle-title">Purpose before skill</div>
+      <div class="splash-principle-body">Start with a real challenge. Technical skills are learned because the design needs them — not the other way around.</div>
+    </div>
+    <div class="splash-principle">
+      <span class="splash-principle-icon">👥</span>
+      <div class="splash-principle-title">Multiple perspectives</div>
+      <div class="splash-principle-body">You cannot change the person. You cannot change the condition. But you can redesign the environment.</div>
+    </div>
+    <div class="splash-principle">
+      <span class="splash-principle-icon">🔬</span>
+      <div class="splash-principle-title">Hypothesis first</div>
+      <div class="splash-principle-body">No jumping from scenario to solution. Investigate whether your theory about the challenge is actually true.</div>
+    </div>
+    <div class="splash-principle">
+      <span class="splash-principle-icon">🛠️</span>
+      <div class="splash-principle-title">Prototype to learn</div>
+      <div class="splash-principle-body">A prototype is not a finished product. It's a way to find out what works — with real people, in a real context.</div>
+    </div>
+    <div class="splash-principle">
+      <span class="splash-principle-icon">🔄</span>
+      <div class="splash-principle-title">Iterate and reflect</div>
+      <div class="splash-principle-body">The process is the learning. Document the dead ends as well as the breakthroughs — both matter.</div>
+    </div>
+    <div class="splash-principle">
+      <span class="splash-principle-icon">📢</span>
+      <div class="splash-principle-title">Share the journey</div>
+      <div class="splash-principle-body">Present not just what you built but how and why — the scenario, the investigation, the decisions, the surprises.</div>
+    </div>
+  </div>
+
+  <button class="splash-start-btn" onclick="startJourney()">Begin the journey →</button>
+  <div class="splash-note">Your work is saved locally in this browser as you go</div>
+</div>
+
+<!-- ═══ SIDEBAR ═══ -->
 <nav class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark"><span class="logo-dot"></span> Open Minds</div>
@@ -1293,19 +1092,19 @@ label {
   <div class="sidebar-phases">
     <button class="phase-item active" data-phase="1" style="--phase-accent: var(--phase-1)" onclick="goToPhase(1)">
       <div class="phase-num">1</div>
-      <div class="phase-label"><strong>Affordance Discovery</strong>Explore the toolkit</div>
+      <div class="phase-label"><strong>Ideation</strong>Cards, scenario, hypothesis</div>
     </button>
     <button class="phase-item" data-phase="2" style="--phase-accent: var(--phase-2)" onclick="goToPhase(2)">
       <div class="phase-num">2</div>
-      <div class="phase-label"><strong>Ideation</strong>Draw cards, form a hypothesis</div>
+      <div class="phase-label"><strong>Investigation</strong>Test your hypothesis</div>
     </button>
     <button class="phase-item" data-phase="3" style="--phase-accent: var(--phase-3)" onclick="goToPhase(3)">
       <div class="phase-num">3</div>
-      <div class="phase-label"><strong>Investigation</strong>Test your hypothesis</div>
+      <div class="phase-label"><strong>Affordances</strong>What tools make possible</div>
     </button>
     <button class="phase-item" data-phase="4" style="--phase-accent: var(--phase-4)" onclick="goToPhase(4)">
       <div class="phase-num">4</div>
-      <div class="phase-label"><strong>Prototyping</strong>Build with the board</div>
+      <div class="phase-label"><strong>Prototyping</strong>Build &amp; respond</div>
     </button>
     <button class="phase-item" data-phase="5" style="--phase-accent: var(--phase-5)" onclick="goToPhase(5)">
       <div class="phase-num">5</div>
@@ -1325,78 +1124,32 @@ label {
   </div>
 </nav>
 
-<!-- ═══════ MAIN CONTENT ═══════ -->
+<!-- ═══ MAIN ═══ -->
 <main class="main">
 
-<!-- ─── PHASE 1: AFFORDANCE DISCOVERY ─── -->
+<!-- ─── PHASE 1: IDEATION ─── -->
 <section class="phase-view active" id="phase-1">
   <div class="phase-header" data-phase-num="1" style="--phase-color: var(--phase-1)">
     <div class="phase-eyebrow">Phase 1</div>
-    <h1 class="phase-title">Affordance Discovery</h1>
-    <p class="phase-description">Before you can imagine solutions, you need to understand what your tools make possible. Explore what the Open Minds board can sense and do — not to follow instructions, but to expand your sense of what's possible.</p>
-  </div>
-
-  <div class="phase-body">
-
-    <div class="board-connect-banner">
-      <div class="board-connect-info">
-        <div class="board-status-dot" id="boardStatusDot"></div>
-        <div class="board-status-text">
-          <strong id="boardStatusTitle">No board connected</strong>
-          <span id="boardStatusSub">You can explore simulated affordances below, or connect a board to try the real thing</span>
-        </div>
-      </div>
-      <button class="btn btn-primary" id="connectBoardBtn" onclick="connectBoard()">Connect Board</button>
-    </div>
-
-    <p style="font-size:0.85rem; color:var(--muted); font-weight:300; margin-bottom:20px;">Click each affordance to explore it. What does the board make possible?</p>
-
-    <div class="affordance-grid" id="affordanceGrid">
-      <!-- Populated by JS -->
-    </div>
-
-    <div class="affordance-demo" id="affordanceDemo">
-      <!-- Populated by JS -->
-    </div>
-
-    <div class="divider"></div>
-
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-      <h3 style="font-family:var(--font-head); font-weight:700; font-size:1rem;">Your hats & toolkit</h3>
-      <span class="badge badge-info" id="hatCountBadge">No hats selected</span>
-    </div>
-    <p style="font-size:0.82rem; color:var(--muted); font-weight:300; margin-bottom:16px;">Select the hats you have available. Each one changes what you can build.</p>
-
-    <div class="hat-chips" id="hatChips">
-      <!-- Populated by JS -->
-    </div>
-
-    <div class="completeness-meter">
-      <div class="completeness-label">
-        <span>Affordances explored</span>
-        <span id="exploredCount">0 / 8</span>
-      </div>
-      <div class="completeness-track">
-        <div class="completeness-fill" id="exploredFill" style="width:0%"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="phase-nav">
-    <span class="text-sm text-muted">Explore at least 3 affordances to continue</span>
-    <button class="btn btn-primary" onclick="goToPhase(2)">Continue to Ideation →</button>
-  </div>
-</section>
-
-<!-- ─── PHASE 2: IDEATION ─── -->
-<section class="phase-view" id="phase-2">
-  <div class="phase-header" data-phase-num="2" style="--phase-color: var(--phase-2)">
-    <div class="phase-eyebrow">Phase 2</div>
     <h1 class="phase-title">Ideation</h1>
-    <p class="phase-description">Draw three cards — a Person, a Condition, an Environment. Together they create a scenario. Your task isn't to jump to a solution. It's to form a hypothesis: a theory about what is true in this situation.</p>
+    <p class="phase-description">Draw three cards — a Person, a Condition, a Disabling Environment. Together they create a scenario. Don't jump to solutions. Form a hypothesis: a theory about what is true in this situation and why the environment is creating difficulty.</p>
   </div>
 
   <div class="phase-body">
+
+    <div style="background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:13px 17px; margin-bottom:22px; display:flex; align-items:flex-start; gap:12px;">
+      <span style="font-size:1rem; flex-shrink:0; margin-top:1px;">🃏</span>
+      <div>
+        <span style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);">Card set</span>
+        <p style="font-size:0.8rem; color:var(--ink); font-weight:300; line-height:1.5; margin-top:2px;">
+          Based on the <strong>Open Minds Card Set</strong> — Erasmus+ project by MTF Labs.
+          <a href="https://mtflabs.net/openminds/cards/" target="_blank" style="color:var(--accent-teal); text-decoration:none; font-weight:600;">Download print files ↗</a>
+          &nbsp;·&nbsp;
+          <a href="https://users.metropolia.fi/~taneltu/openminds/" target="_blank" style="color:var(--accent-teal); text-decoration:none; font-weight:600;">Interactive generator ↗</a>
+        </p>
+      </div>
+    </div>
+
     <div class="card-game-area">
 
       <div class="card-piles">
@@ -1448,63 +1201,64 @@ label {
 
       <div class="scenario-panel">
         <div class="scenario-display" id="scenarioDisplay">
-          <p class="scenario-prompt">Draw all three cards to see your scenario take shape here.</p>
+          <p class="scenario-prompt">Draw all three cards to see your scenario here.</p>
         </div>
 
         <div class="discussion-prompts">
           <h3>Discussion questions</h3>
           <ol>
-            <li>Who is this person, really? What's their life like beyond this one card?</li>
+            <li>Who is this person, really? What's their life like beyond the card?</li>
             <li>What does this condition mean for them day to day?</li>
-            <li>What is it about this environment that might cause difficulty?</li>
+            <li>What is it about this <em>environment</em> that creates the difficulty?</li>
             <li>Is this actually a real challenge, or an assumption?</li>
-            <li>What can't be changed about this situation? What can?</li>
+            <li>What can't be changed? What <em>can</em> be changed?</li>
           </ol>
         </div>
 
-        <div class="panel" style="background:var(--cream);">
-          <p style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:8px;">Remember</p>
-          <p style="font-size:0.85rem; font-weight:300; color:var(--ink); line-height:1.6;">You cannot change the person. You cannot change the condition. But you can design the environment differently.</p>
+        <div class="panel" style="background:var(--cream); border-color:var(--border);">
+          <p style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:7px;">The key principle</p>
+          <p style="font-size:0.82rem; font-weight:300; color:var(--ink); line-height:1.65;">You cannot change the person. You cannot change the condition. But you can design the environment differently.</p>
         </div>
       </div>
 
       <div class="hypothesis-section">
         <div class="hypothesis-label-row">
           <label>Your Hypothesis</label>
-          <span class="hypothesis-hint">A theory about what is true — not an idea for a solution. "The environment is causing difficulty because..." not "We should build..."</span>
+          <span class="hypothesis-hint">A theory about what is true — not a solution idea. "The environment causes difficulty because..." not "We should build..."</span>
         </div>
-        <textarea id="hypothesisText" rows="4" placeholder="e.g. The school environment excludes Aisha from activities on upper floors because the building was designed without considering wheelchair access. The challenge is not Aisha's condition — it's that nobody considered diverse mobility needs when the building was designed." oninput="saveState()"></textarea>
+        <textarea id="hypothesisText" rows="4" placeholder="e.g. The hospital creates barriers for Deaf patients because information is delivered primarily through verbal announcements and telephone systems — not because of deafness itself, but because of how the environment was designed." oninput="saveState()"></textarea>
       </div>
 
     </div>
   </div>
 
   <div class="phase-nav">
-    <button class="btn btn-secondary" onclick="goToPhase(1)">← Back</button>
-    <button class="btn btn-primary" onclick="goToPhase(3)">Continue to Investigation →</button>
+    <button class="btn btn-secondary" onclick="showSplash()">← Back to intro</button>
+    <button class="btn btn-primary" onclick="goToPhase(2)">Continue to Investigation →</button>
   </div>
 </section>
 
-<!-- ─── PHASE 3: INVESTIGATION ─── -->
-<section class="phase-view" id="phase-3">
-  <div class="phase-header" data-phase-num="3" style="--phase-color: var(--phase-3)">
-    <div class="phase-eyebrow">Phase 3</div>
+<!-- ─── PHASE 2: INVESTIGATION ─── -->
+<section class="phase-view" id="phase-2">
+  <div class="phase-header" data-phase-num="2" style="--phase-color: var(--phase-2)">
+    <div class="phase-eyebrow">Phase 2</div>
     <h1 class="phase-title">Investigation</h1>
-    <p class="phase-description">Before you build anything, test your hypothesis against reality. Is this actually true? Who experiences this? What has already been tried? Intellectual honesty happens here.</p>
+    <p class="phase-description">Before you design anything, test your hypothesis against reality. Is this challenge real? Who experiences it? What has already been tried? Intellectual honesty lives here.</p>
   </div>
 
   <div class="phase-body">
     <div class="investigation-layout">
+
       <div class="investigation-form">
 
         <div class="hypothesis-echo" id="hypothesisEcho">
-          Your hypothesis will appear here once you've written it in Phase 2.
+          Your hypothesis will appear here once you've written it in Phase 1.
         </div>
 
         <div class="form-group">
           <h3>Is this actually true?</h3>
           <p>What evidence can you find that this challenge is real? What do people who live with it say?</p>
-          <textarea id="inv1" rows="4" placeholder="Research, observations, quotes from affected people, statistics..." oninput="saveState()"></textarea>
+          <textarea id="inv1" rows="4" placeholder="Research, observations, quotes from affected people, statistics, reports..." oninput="saveState()"></textarea>
         </div>
 
         <div class="form-group">
@@ -1515,21 +1269,21 @@ label {
 
         <div class="form-group">
           <h3>What has already been tried?</h3>
-          <p>What existing solutions, technologies, or approaches exist? What worked? What didn't, and why?</p>
-          <textarea id="inv3" rows="3" placeholder="Existing approaches, products, policies, workarounds..." oninput="saveState()"></textarea>
+          <p>What existing solutions, technologies, or approaches exist? What worked? What didn't — and why?</p>
+          <textarea id="inv3" rows="3" placeholder="Existing products, policies, workarounds, why they fall short..." oninput="saveState()"></textarea>
         </div>
 
         <div class="form-group">
           <h3>Does your hypothesis hold up?</h3>
           <p>After investigating, what's your verdict?</p>
           <div class="verdict-options">
-            <button class="verdict-btn" id="verdict-holds" onclick="setVerdict('holds')">✓ Holds up</button>
+            <button class="verdict-btn" id="verdict-holds"   onclick="setVerdict('holds')">✓ Holds up</button>
             <button class="verdict-btn" id="verdict-revised" onclick="setVerdict('revised')">~ Needs revising</button>
-            <button class="verdict-btn" id="verdict-wrong" onclick="setVerdict('wrong')">✗ Wrong track</button>
+            <button class="verdict-btn" id="verdict-wrong"   onclick="setVerdict('wrong')">✗ Wrong track</button>
           </div>
-          <div class="spacer-sm"></div>
-          <label>Revised or confirmed hypothesis</label>
-          <textarea id="inv4" rows="3" placeholder="Your final, investigation-tested hypothesis to carry into prototyping..." oninput="saveState()"></textarea>
+          <div style="height:12px;"></div>
+          <label>Confirmed or revised hypothesis — carry this into prototyping</label>
+          <textarea id="inv4" rows="3" placeholder="Your investigation-tested hypothesis. This is your brief." oninput="saveState()"></textarea>
         </div>
 
       </div>
@@ -1537,26 +1291,123 @@ label {
       <div class="investigation-sidebar">
         <div class="sidebar-hint">
           <h4>Why this phase matters</h4>
-          <p>The most common failure in design is solving the wrong problem brilliantly. Investigation is what separates a real response from a clever gadget nobody needs.</p>
+          <p>The most common design failure is solving the wrong problem brilliantly. Investigation is what separates a genuine response from a clever gadget nobody needs.</p>
         </div>
 
-        <div class="panel" style="border-color: var(--phase-3);">
-          <p class="text-sm fw-bold font-head" style="margin-bottom:8px;">Research strategies</p>
-          <ul style="font-size:0.8rem; color:var(--muted); font-weight:300; line-height:1.8; padding-left:16px;">
+        <div class="panel" style="border-color: var(--phase-2);">
+          <p style="font-size:0.78rem; font-weight:700; margin-bottom:8px;">Research strategies</p>
+          <ul style="font-size:0.77rem; color:var(--muted); font-weight:300; line-height:1.85; padding-left:15px;">
             <li>Talk to people who are directly affected</li>
-            <li>Search for existing research or reports</li>
+            <li>Search for existing research and reports</li>
             <li>Look for organisations working on this</li>
-            <li>Consider what stakeholders haven't been considered</li>
-            <li>Ask: who profits from this staying unsolved?</li>
+            <li>Ask who benefits from this staying unsolved</li>
+            <li>Check what's failed before, and why</li>
           </ul>
         </div>
 
         <div class="panel" style="background:var(--cream);">
-          <p style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:8px;">On AI use here</p>
-          <p style="font-size:0.82rem; color:var(--ink); font-weight:300; line-height:1.6;">AI can help you find sources and explore existing knowledge — but you must evaluate what it returns. Don't accept AI summaries uncritically. Verify. Follow citations. Talk to actual people.</p>
+          <p style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:7px;">On using AI here</p>
+          <p style="font-size:0.79rem; color:var(--ink); font-weight:300; line-height:1.6;">AI can help find sources and explore existing knowledge — but evaluate what it returns. Verify. Follow citations. Prioritise talking to actual people over AI summaries.</p>
         </div>
       </div>
+
     </div>
+  </div>
+
+  <div class="phase-nav">
+    <button class="btn btn-secondary" onclick="goToPhase(1)">← Back</button>
+    <button class="btn btn-primary" onclick="goToPhase(3)">Continue to Affordances →</button>
+  </div>
+</section>
+
+<!-- ─── PHASE 3: AFFORDANCE DISCOVERY ─── -->
+<section class="phase-view" id="phase-3">
+  <div class="phase-header" data-phase-num="3" style="--phase-color: var(--phase-3)">
+    <div class="phase-eyebrow">Phase 3</div>
+    <h1 class="phase-title">What tools make possible</h1>
+    <p class="phase-description">Now that you understand the challenge, think about what a response could look like. Technology is one option — sometimes the right prototype has no technology at all. If you do use tech, explore what it actually makes possible before you commit to a direction.</p>
+  </div>
+
+  <div class="phase-body">
+
+    <!-- No-tech reminder -->
+    <div style="background:var(--ink); border-radius:var(--radius); padding:22px 26px; margin-bottom:28px; display:flex; align-items:flex-start; gap:18px;">
+      <span style="font-size:1.6rem; flex-shrink:0;">💡</span>
+      <div>
+        <div style="font-family:var(--font); font-weight:700; font-size:0.95rem; color:var(--paper); margin-bottom:7px;">Technology is a tool, not the answer</div>
+        <p style="font-size:0.82rem; font-weight:300; color:rgba(245,243,238,0.6); line-height:1.65; max-width:620px;">The best response to a challenge might be a policy change, a piece of signage, a different layout, a trained person, or a simple mechanical solution. A working prototype built with the Open Minds board is a fast, responsive way to test whether a technology-based approach adds real value — not a commitment to tech for its own sake.</p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 300px; gap:24px; margin-bottom:28px;">
+
+      <div>
+        <h3 style="font-family:var(--font); font-weight:700; font-size:1rem; margin-bottom:6px;">What could a response look like?</h3>
+        <p style="font-size:0.82rem; color:var(--muted); font-weight:300; margin-bottom:14px;">Think about your confirmed hypothesis. What kind of response would actually help? Sketch the idea before choosing any tools.</p>
+        <textarea id="responseSketch" rows="5" placeholder="Describe the response idea. What does it do? Who uses it? How does it change the environment? Does it need technology at all — or would a simpler approach work better?" oninput="saveState()"></textarea>
+      </div>
+
+      <div style="background:var(--ink); border-radius:var(--radius); padding:20px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span style="font-size:1.3rem;">⬡</span>
+          <div>
+            <div style="font-family:var(--font); font-weight:700; font-size:0.85rem; color:var(--paper);">Board Configurator</div>
+            <div style="font-size:0.68rem; color:rgba(245,243,238,0.35);">Separate tool</div>
+          </div>
+        </div>
+        <p style="font-size:0.77rem; color:rgba(245,243,238,0.5); font-weight:300; line-height:1.6; margin-bottom:14px;">If you're using the Open Minds board, use the Board Configurator to plan which hats to stack, check for pin conflicts, and generate starter code.</p>
+        <button onclick="alert('Open openminds-board-config.html in a separate tab alongside this prototype.')"
+          style="width:100%; padding:9px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:rgba(245,243,238,0.65); font-family:var(--font); font-size:0.78rem; font-weight:600; cursor:pointer;"
+          onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">
+          Open Board Configurator ↗
+        </button>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="margin-bottom:16px;">
+      <h3 style="font-family:var(--font); font-weight:700; font-size:1rem; margin-bottom:4px;">If you're using the board — explore what it can do</h3>
+      <p style="font-size:0.82rem; color:var(--muted); font-weight:300;">Click each affordance to see what's possible. Which of these could be relevant to your design response?</p>
+    </div>
+
+    <div class="board-connect-banner">
+      <div class="board-connect-info">
+        <div class="board-status-dot" id="boardStatusDot"></div>
+        <div class="board-status-text">
+          <strong id="boardStatusTitle">No board connected</strong>
+          <span id="boardStatusSub">Explore simulated affordances below, or connect a board to try the real thing</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="connectBoardBtn" onclick="connectBoard()">Connect Board</button>
+    </div>
+
+    <div class="affordance-grid" id="affordanceGrid"></div>
+
+    <div class="affordance-demo" id="affordanceDemo"></div>
+
+    <div style="display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; margin-top:20px;">
+      <div style="flex:1; min-width:260px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <p style="font-size:0.82rem; font-weight:700; color:var(--ink);">Which hats do you have?</p>
+          <span class="badge badge-info" id="hatCountBadge">None selected</span>
+        </div>
+        <p style="font-size:0.78rem; color:var(--muted); font-weight:300; margin-bottom:12px;">Select what's available to your group — this carries through to the prototyping phase.</p>
+        <div class="hat-chips" id="hatChips"></div>
+      </div>
+    </div>
+
+    <div class="completeness-meter">
+      <div class="completeness-label">
+        <span>Affordances explored</span>
+        <span id="exploredCount">0 / 8</span>
+      </div>
+      <div class="completeness-track">
+        <div class="completeness-fill" id="exploredFill" style="width:0%"></div>
+      </div>
+    </div>
+
   </div>
 
   <div class="phase-nav">
@@ -1569,8 +1420,8 @@ label {
 <section class="phase-view" id="phase-4">
   <div class="phase-header" data-phase-num="4" style="--phase-color: var(--phase-4)">
     <div class="phase-eyebrow">Phase 4</div>
-    <h1 class="phase-title">Design & Prototyping</h1>
-    <p class="phase-description">Now build. Your hypothesis and investigation findings are your brief. What affordances are relevant? What could the board do that would make a difference in this environment?</p>
+    <h1 class="phase-title">Design &amp; Prototyping</h1>
+    <p class="phase-description">Build a working prototype of your response — something you can put in someone's hands. The goal isn't a finished product. It's something responsive enough to test with real people and learn from.</p>
   </div>
 
   <div class="phase-body" style="padding:0; background:var(--ink);">
@@ -1591,8 +1442,9 @@ label {
         <textarea class="code-editor" id="codeEditor" spellcheck="false" oninput="saveState()"># Open Minds Board — MicroPython
 # Your hypothesis: see the sidebar →
 #
-# Start here. What does your design need to do?
-# Which affordances are relevant to your challenge?
+# Start by describing what your prototype needs to do.
+# Which affordances are relevant to your design response?
+# Remember: the code serves the challenge, not the other way around.
 
 import time
 
@@ -1602,8 +1454,8 @@ while True:
     time.sleep(1)
 </textarea>
         <div class="editor-output" id="editorOutput">
-          <div class="output-line sys">// Output will appear here when you run or connect a board</div>
-          <div class="output-line sys">// In simulation mode, code runs locally in the browser</div>
+          <div class="output-line sys">// Output appears here when you run or connect a board</div>
+          <div class="output-line sys">// In simulation mode, print() statements execute in the browser</div>
         </div>
       </div>
 
@@ -1612,27 +1464,26 @@ while True:
           <h4>Your Challenge</h4>
           <div class="challenge-reminder">
             <h5>Hypothesis</h5>
-            <p id="protoHypothesis">Write your hypothesis in Phase 2, then come back here.</p>
+            <p id="protoHypothesis">Complete Phase 1 and 2 to see your hypothesis here.</p>
           </div>
         </div>
 
         <div class="proto-sidebar-section">
           <h4>Code Templates</h4>
-          <div class="template-list" id="templateList">
-            <!-- Populated by JS -->
-          </div>
+          <div class="template-list" id="templateList"></div>
         </div>
 
         <div class="proto-sidebar-section">
           <h4>Design Log</h4>
-          <textarea style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.6); border-radius:8px; padding:10px; font-size:0.75rem; font-family:var(--font-body); resize:none; width:100%; line-height:1.5; outline:none;" rows="5" id="designLog" placeholder="Note your design decisions here. Why did you choose this approach? What did you try that didn't work?" oninput="saveState()"></textarea>
+          <textarea style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); color:rgba(255,255,255,0.55); border-radius:8px; padding:10px; font-size:0.72rem; font-family:var(--font); resize:none; width:100%; line-height:1.55; outline:none;" rows="5" id="designLog" placeholder="Why this approach? What have you tried? What didn't work?" oninput="saveState()"></textarea>
         </div>
       </div>
+
     </div>
   </div>
 
-  <div class="phase-nav" style="background:var(--ink); border-top:1px solid rgba(255,255,255,0.06);">
-    <button class="btn" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6);" onclick="goToPhase(3)">← Back</button>
+  <div class="phase-nav" style="background:var(--ink); border-top:1px solid rgba(255,255,255,0.05);">
+    <button class="btn" style="background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.55);" onclick="goToPhase(3)">← Back</button>
     <button class="btn" style="background:var(--accent); color:white;" onclick="goToPhase(5)">Continue to Reflection →</button>
   </div>
 </section>
@@ -1642,7 +1493,7 @@ while True:
   <div class="phase-header" data-phase-num="5" style="--phase-color: var(--phase-5)">
     <div class="phase-eyebrow">Phase 5</div>
     <h1 class="phase-title">Reflection</h1>
-    <p class="phase-description">The prototype is not the end point. What did you learn? What worked? What didn't? What would you do differently? Documenting the journey is itself a learning outcome.</p>
+    <p class="phase-description">The prototype isn't the end. What did you learn? What worked? What didn't? Did testing with real people change your understanding of the challenge? Documenting the journey is part of the learning.</p>
   </div>
 
   <div class="phase-body">
@@ -1650,32 +1501,32 @@ while True:
 
       <div class="reflection-card">
         <h3>What did you build?</h3>
-        <p>Describe your prototype — not just what it does, but why you made the choices you did.</p>
-        <textarea id="ref1" rows="4" placeholder="What does your prototype do? What was the core idea?" oninput="saveState()"></textarea>
+        <p>Describe your prototype. What does it do, and why did you make the choices you made?</p>
+        <textarea id="ref1" rows="4" placeholder="What does your prototype do? What was the core design decision?" oninput="saveState()"></textarea>
       </div>
 
       <div class="reflection-card">
-        <h3>What worked?</h3>
-        <p>What went better than expected? What did the technology enable that surprised you?</p>
-        <textarea id="ref2" rows="4" placeholder="Successes, surprises, moments where it clicked..." oninput="saveState()"></textarea>
+        <h3>What happened when you tested it?</h3>
+        <p>Did you put it in front of real people? What did you observe or hear?</p>
+        <textarea id="ref2" rows="4" placeholder="Testing observations, user feedback, surprises..." oninput="saveState()"></textarea>
       </div>
 
       <div class="reflection-card">
         <h3>What didn't work?</h3>
         <p>Where did you get stuck? What did you try that failed? What would you do differently?</p>
-        <textarea id="ref3" rows="4" placeholder="Failures, dead ends, things you'd change..." oninput="saveState()"></textarea>
+        <textarea id="ref3" rows="4" placeholder="Failures, dead ends, things you'd change next time..." oninput="saveState()"></textarea>
       </div>
 
       <div class="reflection-card">
         <h3>What did you learn about the challenge?</h3>
-        <p>Not the technology — the societal challenge you were addressing. Did your understanding change?</p>
+        <p>Not the technology — the actual human challenge. Did your understanding shift?</p>
         <textarea id="ref4" rows="4" placeholder="New understanding of the problem, the people affected, the environment..." oninput="saveState()"></textarea>
       </div>
 
       <div class="reflection-card full-width">
         <h3>What would you do next?</h3>
-        <p>If you had another week, another month, or access to any resources — what's the next step?</p>
-        <textarea id="ref5" rows="3" placeholder="Future iterations, people to involve, tests to run, questions to answer..." oninput="saveState()"></textarea>
+        <p>Another week, more resources, a real partner organisation. What's the next step?</p>
+        <textarea id="ref5" rows="3" placeholder="Next iterations, people to involve, questions still to answer..." oninput="saveState()"></textarea>
       </div>
 
     </div>
@@ -1683,7 +1534,7 @@ while True:
 
   <div class="phase-nav">
     <button class="btn btn-secondary" onclick="goToPhase(4)">← Back</button>
-    <button class="btn btn-primary" onclick="buildShareView(); goToPhase(6)">See Your Journey →</button>
+    <button class="btn btn-primary" onclick="buildShareView(); goToPhase(6)">See your journey →</button>
   </div>
 </section>
 
@@ -1692,14 +1543,14 @@ while True:
   <div class="phase-header" data-phase-num="6" style="--phase-color: var(--phase-6)">
     <div class="phase-eyebrow">Phase 6</div>
     <h1 class="phase-title">Sharing</h1>
-    <p class="phase-description">Here is your complete journey — the scenario, the hypothesis, the investigation, the prototype, the reflection. This is what you present: not just what you built, but how and why.</p>
+    <p class="phase-description">Here is your complete journey — the scenario, the hypothesis, the investigation, the prototype, the reflection. Present not just what you built, but how and why you got there.</p>
   </div>
 
   <div class="phase-body">
 
     <div class="share-hero">
       <div class="share-hero-title" id="shareTitle">Your Open Minds Project</div>
-      <div class="share-hero-sub" id="shareSubtitle">Completed journey</div>
+      <div class="share-hero-sub" id="shareSubtitle">Complete journey</div>
       <div class="share-formats">
         <span class="format-chip">📊 Presentation</span>
         <span class="format-chip">📹 Video</span>
@@ -1710,17 +1561,16 @@ while True:
       </div>
     </div>
 
-    <div class="journey-timeline" id="journeyTimeline">
-      <!-- Populated by buildShareView() -->
-    </div>
+    <div class="journey-timeline" id="journeyTimeline"></div>
 
     <div class="divider"></div>
 
-    <div style="text-align:center; padding: 20px 0;">
+    <div style="text-align:center; padding: 16px 0;">
       <button class="btn btn-primary" onclick="window.print()">🖨 Print / Export</button>
-      <span style="margin: 0 12px; color: var(--muted);">·</span>
+      <span style="margin:0 12px; color:var(--muted);">·</span>
       <button class="btn btn-secondary" onclick="resetJourney()">Start a new journey</button>
     </div>
+
   </div>
 
   <div class="phase-nav">
@@ -1732,10 +1582,8 @@ while True:
 </main>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════
-const STATE_KEY = 'openminds_journey';
+// ═══ STATE ═══
+const STATE_KEY = 'openminds_v2';
 
 let state = {
   currentPhase: 1,
@@ -1748,11 +1596,13 @@ let state = {
   hypothesis: '',
   inv1: '', inv2: '', inv3: '', inv4: '',
   verdict: null,
+  responseSketch: '',
   code: `# Open Minds Board — MicroPython
 # Your hypothesis: see the sidebar →
 #
-# Start here. What does your design need to do?
-# Which affordances are relevant to your challenge?
+# Start by describing what your prototype needs to do.
+# Which affordances are relevant to your design response?
+# Remember: the code serves the challenge, not the other way around.
 
 import time
 
@@ -1764,105 +1614,103 @@ while True:
   ref1: '', ref2: '', ref3: '', ref4: '', ref5: '',
 };
 
+const FIELDS = ['hypothesis','inv1','inv2','inv3','inv4','responseSketch','designLog','ref1','ref2','ref3','ref4','ref5'];
+
 function saveState() {
-  const fields = ['hypothesis','inv1','inv2','inv3','inv4','designLog','ref1','ref2','ref3','ref4','ref5'];
-  fields.forEach(f => { if (document.getElementById(f)) state[f] = document.getElementById(f).value; });
-  if (document.getElementById('codeEditor')) state.code = document.getElementById('codeEditor').value;
+  FIELDS.forEach(f => { const el = document.getElementById(f); if (el) state[f] = el.value; });
+  const ed = document.getElementById('codeEditor'); if (ed) state.code = ed.value;
   localStorage.setItem(STATE_KEY, JSON.stringify(state));
   updateHypothesisEchoes();
 }
 
 function loadState() {
-  try {
-    const saved = localStorage.getItem(STATE_KEY);
-    if (saved) Object.assign(state, JSON.parse(saved));
-  } catch(e) {}
-  restoreFields();
-}
-
-function restoreFields() {
-  const fields = ['hypothesis','inv1','inv2','inv3','inv4','designLog','ref1','ref2','ref3','ref4','ref5'];
-  fields.forEach(f => { if (document.getElementById(f)) document.getElementById(f).value = state[f] || ''; });
-  if (document.getElementById('codeEditor') && state.code) document.getElementById('codeEditor').value = state.code;
-  state.drawnCards && Object.keys(state.drawnCards).forEach(type => {
-    if (state.drawnCards[type]) renderCard(type, state.drawnCards[type]);
-  });
+  try { const s = localStorage.getItem(STATE_KEY); if (s) Object.assign(state, JSON.parse(s)); } catch(e) {}
+  FIELDS.forEach(f => { const el = document.getElementById(f); if (el) el.value = state[f] || ''; });
+  const ed = document.getElementById('codeEditor'); if (ed && state.code) ed.value = state.code;
+  if (state.drawnCards) {
+    Object.keys(state.drawnCards).forEach(type => {
+      if (state.drawnCards[type]) renderCard(type, state.drawnCards[type]);
+    });
+  }
   updateScenarioDisplay();
   updateHypothesisEchoes();
+  if (state.verdict) setVerdict(state.verdict);
+  if (state.exploredAffordances.length > 0) {
+    const count = state.exploredAffordances.length;
+    const el = document.getElementById('exploredCount');
+    if (el) el.textContent = count + ' / 8';
+    const fill = document.getElementById('exploredFill');
+    if (fill) fill.style.width = (count/8*100)+'%';
+  }
 }
 
-// ═══════════════════════════════════════════════════════
-//  NAVIGATION
-// ═══════════════════════════════════════════════════════
+// ═══ SPLASH ═══
+function startJourney() {
+  document.getElementById('splash').classList.add('hidden');
+  setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 500);
+}
+
+function showSplash() {
+  const s = document.getElementById('splash');
+  s.style.display = 'flex';
+  setTimeout(() => s.classList.remove('hidden'), 10);
+}
+
+// ═══ NAVIGATION ═══
 function goToPhase(n) {
   saveState();
   state.currentPhase = n;
-  if (!state.completedPhases.includes(n-1) && n > 1) state.completedPhases.push(n-1);
+  if (n > 1 && !state.completedPhases.includes(n-1)) state.completedPhases.push(n-1);
 
   document.querySelectorAll('.phase-view').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.phase-item').forEach(b => {
     b.classList.remove('active');
-    const ph = parseInt(b.dataset.phase);
-    if (state.completedPhases.includes(ph)) b.classList.add('completed');
+    if (state.completedPhases.includes(parseInt(b.dataset.phase))) b.classList.add('completed');
+    else b.classList.remove('completed');
   });
 
   document.getElementById('phase-'+n).classList.add('active');
   document.querySelector(`.phase-item[data-phase="${n}"]`).classList.add('active');
-
-  const progress = ((n - 1) / 5) * 100;
-  document.getElementById('progressBar').style.width = progress + '%';
-
-  window.scrollTo(0, 0);
+  document.getElementById('progressBar').style.width = ((n-1)/5*100)+'%';
+  window.scrollTo(0,0);
   updateHypothesisEchoes();
 }
 
-// ═══════════════════════════════════════════════════════
-//  BOARD CONNECTION (Web Serial API)
-// ═══════════════════════════════════════════════════════
+// ═══ BOARD ═══
 async function connectBoard() {
   if (!('serial' in navigator)) {
-    logOutput('Web Serial API not supported in this browser. Use Chrome or Edge.', 'err');
+    logOutput('Web Serial not supported. Use Chrome or Edge.', 'err');
     logOutput('Running in simulation mode.', 'sys');
     return;
   }
   try {
     const port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 });
-    state.serialPort = port;
-    state.boardConnected = true;
-
+    state.serialPort = port; state.boardConnected = true;
     document.getElementById('boardStatusDot').classList.add('connected');
     document.getElementById('boardStatusTitle').textContent = 'Board connected';
-    document.getElementById('boardStatusSub').textContent = 'Open Minds Board via USB Serial';
+    document.getElementById('boardStatusSub').textContent = 'Open Minds Board via USB';
     document.getElementById('connectBoardBtn').textContent = 'Connected ✓';
     document.getElementById('connectBoardBtn').disabled = true;
     document.getElementById('sendBtn').disabled = false;
-
-    logOutput('Board connected successfully', 'sys');
+    logOutput('Board connected', 'sys');
     readSerial(port);
-  } catch(e) {
-    if (e.name !== 'NotFoundError') logOutput('Connection failed: ' + e.message, 'err');
-  }
+  } catch(e) { if (e.name !== 'NotFoundError') logOutput('Connection failed: '+e.message, 'err'); }
 }
 
 async function readSerial(port) {
   const reader = port.readable.getReader();
-  let buffer = '';
+  let buf = '';
   try {
-    while (true) {
+    while(true) {
       const { value, done } = await reader.read();
       if (done) break;
-      buffer += new TextDecoder().decode(value);
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
+      buf += new TextDecoder().decode(value);
+      const lines = buf.split('\n'); buf = lines.pop();
       lines.forEach(l => { if (l.trim()) logOutput(l.trim()); });
     }
-  } catch(e) {
-    logOutput('Board disconnected', 'sys');
-    state.boardConnected = false;
-  } finally {
-    reader.releaseLock();
-  }
+  } catch(e) { logOutput('Board disconnected', 'sys'); state.boardConnected = false; }
+  finally { reader.releaseLock(); }
 }
 
 async function sendToBoard() {
@@ -1870,307 +1718,170 @@ async function sendToBoard() {
   const code = document.getElementById('codeEditor').value;
   try {
     const writer = state.serialPort.writable.getWriter();
-    // Send Ctrl+C to stop, then Ctrl+D to soft reset, then paste code
     await writer.write(new TextEncoder().encode('\x03\r\n'));
     await new Promise(r => setTimeout(r, 300));
-    await writer.write(new TextEncoder().encode('\x05')); // raw paste mode
+    await writer.write(new TextEncoder().encode('\x05'));
     await writer.write(new TextEncoder().encode(code));
-    await writer.write(new TextEncoder().encode('\x04')); // execute
+    await writer.write(new TextEncoder().encode('\x04'));
     writer.releaseLock();
     logOutput('Code sent to board', 'sys');
-  } catch(e) {
-    logOutput('Send failed: ' + e.message, 'err');
-  }
+  } catch(e) { logOutput('Send failed: '+e.message, 'err'); }
 }
 
 function runCode() {
   const code = document.getElementById('codeEditor').value;
-  logOutput('--- Running simulation ---', 'sys');
-  // Basic simulation: show print statements
-  const printLines = [...code.matchAll(/print\(["'](.+?)["']\)/g)];
-  if (printLines.length > 0) {
-    printLines.forEach(m => logOutput(m[1]));
-  } else {
-    logOutput('Code parsed. Connect a board to run on hardware.', 'sys');
-  }
-  // Check for import errors
-  if (code.includes('import') && !code.includes('time')) {
-    logOutput('Note: hardware imports require a physical board', 'sys');
-  }
+  logOutput('--- Simulation ---', 'sys');
+  const prints = [...code.matchAll(/print\(["'](.+?)["']\)/g)];
+  if (prints.length > 0) prints.forEach(m => logOutput(m[1]));
+  else logOutput('Code parsed. Connect a board to run on hardware.', 'sys');
 }
 
-function logOutput(msg, type = 'out') {
-  const out = document.getElementById('editorOutput');
-  if (!out) return;
+function logOutput(msg, type='out') {
+  const out = document.getElementById('editorOutput'); if (!out) return;
   const line = document.createElement('div');
-  line.className = 'output-line ' + (type === 'err' ? 'err' : type === 'sys' ? 'sys' : '');
+  line.className = 'output-line' + (type==='err' ? ' err' : type==='sys' ? ' sys' : '');
   line.textContent = '> ' + msg;
   out.appendChild(line);
   out.scrollTop = out.scrollHeight;
 }
 
-// ═══════════════════════════════════════════════════════
-//  AFFORDANCE SYSTEM
-// ═══════════════════════════════════════════════════════
+// ═══ AFFORDANCES ═══
 const affordances = [
-  {
-    id: 'light-sense', icon: '☀️', name: 'Sensing Light',
-    desc: 'The board can detect how bright or dark an environment is.',
-    question: 'Cover the light sensor with your hand. What happens to the reading?',
-    sim: `
-      <div class="sim-label">Light Level</div>
-      <div class="sim-reading" id="lightReading">750 lux</div>
-      <input type="range" class="sim-slider" min="0" max="1000" value="750"
-        oninput="document.getElementById('lightReading').textContent = this.value + ' lux'">
-      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Move the slider — imagine covering the sensor</div>`,
-    insight: 'Affordance: detect when someone enters a room, when a light is left on, or when day becomes night.'
-  },
-  {
-    id: 'light-output', icon: '💡', name: 'Controlling Light',
-    desc: 'Produce any colour of light, fade it, flash it, animate it.',
-    question: 'What could you communicate with light that words cannot?',
-    sim: `
-      <div class="sim-label">LED Colour</div>
-      <div class="sim-led" id="ledRow">
-        ${Array.from({length:8},(_,i)=>`<div class="sim-led-dot" id="led${i}" style="--led-color:#ff4444" onclick="toggleLed(${i})"></div>`).join('')}
-      </div>
-      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-        ${[['#ff4444','Red'],['#44ff44','Green'],['#4488ff','Blue'],['#ffaa00','Amber'],['#ffffff','White']].map(([c,n])=>`<button onclick="setLedColor('${c}')" style="padding:4px 10px;border-radius:4px;background:${c};border:none;cursor:pointer;font-size:0.72rem;color:${c==='#ffffff'?'#000':'white'}">${n}</button>`).join('')}
-      </div>`,
-    insight: 'Affordance: visual alerts, status indicators, ambient notifications, accessible signals that don\'t rely on sound.'
-  },
-  {
-    id: 'sound-input', icon: '🎙️', name: 'Hearing Sound',
-    desc: 'Detect sound levels — claps, voices, ambient noise.',
-    question: 'What kinds of sounds would it be useful for a space to "hear"?',
-    sim: `
-      <div class="sim-label">Sound Level</div>
-      <div class="sim-reading" id="soundReading">42 dB</div>
-      <input type="range" class="sim-slider" min="20" max="100" value="42"
-        oninput="document.getElementById('soundReading').textContent = this.value + ' dB'">
-      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Simulate clapping, speaking, ambient noise</div>`,
-    insight: 'Affordance: detect when a room gets too noisy, trigger responses to sounds, enable clap or voice activation.'
-  },
-  {
-    id: 'sound-output', icon: '🔊', name: 'Making Sound',
-    desc: 'Produce tones, melodies, alerts — any audio output.',
-    question: 'What information could you communicate through sound to someone who can\'t see a screen?',
-    sim: `
-      <div class="sim-label">Tone Frequency</div>
-      <div class="sim-reading" id="toneReading">440 Hz</div>
-      <input type="range" class="sim-slider" min="100" max="2000" value="440"
-        oninput="playSimTone(this.value)">
-      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Drag to change pitch — click the slider area to simulate the sound</div>`,
-    insight: 'Affordance: audio alerts, navigation cues, accessible notifications for those who can\'t rely on vision.'
-  },
-  {
-    id: 'distance', icon: '📏', name: 'Sensing Distance',
-    desc: 'Measure how far away something is — from centimetres to metres.',
-    question: 'What becomes possible when a space knows how close you are?',
-    sim: `
-      <div class="sim-label">Distance</div>
-      <div class="sim-reading" id="distReading">85 cm</div>
-      <input type="range" class="sim-slider" min="2" max="200" value="85"
-        oninput="document.getElementById('distReading').textContent = this.value + ' cm'">
-      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Imagine approaching a door, a shelf, a machine</div>`,
-    insight: 'Affordance: proximity detection, obstacle awareness, automatic triggers when someone approaches.'
-  },
-  {
-    id: 'motion', icon: '🏃', name: 'Sensing Motion',
-    desc: 'Detect acceleration, orientation, gestures — is the board moving? Which way?',
-    question: 'If the board was attached to your body or a wheelchair, what could it understand?',
-    sim: `
-      <div class="sim-label">Acceleration (g)</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:6px;">
-        <div><div class="sim-label">X</div><div class="sim-reading" id="accX" style="font-size:1.1rem">0.02</div></div>
-        <div><div class="sim-label">Y</div><div class="sim-reading" id="accY" style="font-size:1.1rem">0.98</div></div>
-        <div><div class="sim-label">Z</div><div class="sim-reading" id="accZ" style="font-size:1.1rem">0.05</div></div>
-      </div>
-      <button onclick="simulateShake()" style="margin-top:12px; padding:6px 16px; background:var(--accent); border:none; border-radius:6px; color:white; cursor:pointer; font-size:0.78rem;">Simulate shake</button>`,
-    insight: 'Affordance: detect falls, posture, gesture control, activity monitoring, orientation-aware interfaces.'
-  },
-  {
-    id: 'touch', icon: '👆', name: 'Touch Input',
-    desc: 'Eight capacitive touch pads — sense when something or someone makes contact.',
-    question: 'What if a surface could respond to touch without a screen?',
-    sim: `
-      <div class="sim-label">Touch Pads</div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
-        ${Array.from({length:8},(_,i)=>`<div id="tp${i}" onclick="touchPad(${i})" style="width:44px;height:44px;border-radius:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:rgba(255,255,255,0.4);transition:all 0.15s;">${i+1}</div>`).join('')}
-      </div>`,
-    insight: 'Affordance: custom interfaces on any surface, accessible buttons, pressure-sensitive control without needing a screen.'
-  },
-  {
-    id: 'motor', icon: '⚙️', name: 'Physical Motion',
-    desc: 'Drive motors, control servos — make things move in the physical world.',
-    question: 'What physical response to a sensor reading would make a real difference?',
-    sim: `
-      <div class="sim-label">Servo Angle</div>
-      <div class="sim-reading" id="servoReading">90°</div>
-      <input type="range" class="sim-slider" min="0" max="180" value="90"
-        oninput="document.getElementById('servoReading').textContent = this.value + '°'">
-      <div style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-top:8px;">Think: door latch, flag raiser, valve controller</div>`,
-    insight: 'Affordance: physical actuation — open doors, raise alerts, control mechanisms in response to sensing.'
-  }
+  { id:'light-sense', icon:'☀️', name:'Sensing Light', desc:'Detect how bright or dark an environment is.', question:'Cover the sensor — what should happen in the design response when the space goes dark?', sim:`<div class="sim-label">Light Level</div><div class="sim-reading" id="lightReading">750 lux</div><input type="range" class="sim-slider" min="0" max="1000" value="750" oninput="document.getElementById('lightReading').textContent=this.value+' lux'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Drag to simulate day/dark/covered sensor</div>`, insight:'Affordance: detect occupancy, daylight changes, lights left on — without any manual interaction.' },
+  { id:'light-output', icon:'💡', name:'Controlling Light', desc:'Produce any colour of light — fade, flash, animate.', question:'What could you communicate with light that words cannot — especially for someone who cannot rely on sound?', sim:`<div class="sim-label">LED Colour</div><div class="sim-led" id="ledRow">${Array.from({length:8},(_,i)=>`<div class="sim-led-dot" id="led${i}" style="--led-color:#ff4444" onclick="toggleLed(${i})"></div>`).join('')}</div><div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;">${[['#ff4444','Red'],['#44ff44','Green'],['#4488ff','Blue'],['#ffaa00','Amber'],['#ffffff','White']].map(([c,n])=>`<button onclick="setLedColor('${c}')" style="padding:3px 9px;border-radius:4px;background:${c};border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:${c==='#ffffff'?'#000':'white'}">${n}</button>`).join('')}</div>`, insight:'Affordance: visual alerts, status indicators, ambient signals that do not rely on sound or reading.' },
+  { id:'sound-input', icon:'🎙️', name:'Hearing Sound', desc:'Detect sound levels — claps, voices, ambient noise.', question:'What kinds of sounds would it be useful for an environment to notice automatically?', sim:`<div class="sim-label">Sound Level</div><div class="sim-reading" id="soundReading">42 dB</div><input type="range" class="sim-slider" min="20" max="100" value="42" oninput="document.getElementById('soundReading').textContent=this.value+' dB'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Simulate clapping, speaking, ambient noise levels</div>`, insight:'Affordance: detect when a space is too loud, trigger responses, enable clap or sound activation.' },
+  { id:'sound-output', icon:'🔊', name:'Making Sound', desc:'Produce tones, melodies, spoken alerts.', question:'What information could you communicate through sound to someone who cannot see a screen?', sim:`<div class="sim-label">Tone Frequency</div><div class="sim-reading" id="toneReading">440 Hz</div><input type="range" class="sim-slider" min="100" max="2000" value="440" oninput="playSimTone(this.value)"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Drag to change pitch — audio plays in browser</div>`, insight:'Affordance: audio alerts, navigation cues, accessible notifications for those who cannot see a screen.' },
+  { id:'distance', icon:'📏', name:'Sensing Distance', desc:'Measure how far away something is — centimetres to metres.', question:'What becomes possible when a space knows how close you are — without you having to do anything?', sim:`<div class="sim-label">Distance</div><div class="sim-reading" id="distReading">85 cm</div><input type="range" class="sim-slider" min="2" max="200" value="85" oninput="document.getElementById('distReading').textContent=this.value+' cm'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Imagine approaching a door, a counter, a machine</div>`, insight:'Affordance: proximity alerts, contactless triggers, obstacle detection, automatic responses on approach.' },
+  { id:'motion', icon:'🏃', name:'Sensing Motion', desc:'Detect acceleration, orientation, gestures — is the board moving?', question:'If this board were attached to a wheelchair, a walking frame, or a person's body — what could it understand?', sim:`<div class="sim-label">Acceleration (g)</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:5px;"><div><div class="sim-label">X</div><div class="sim-reading" id="accX" style="font-size:1.1rem">0.02</div></div><div><div class="sim-label">Y</div><div class="sim-reading" id="accY" style="font-size:1.1rem">0.98</div></div><div><div class="sim-label">Z</div><div class="sim-reading" id="accZ" style="font-size:1.1rem">0.05</div></div></div><button onclick="simulateShake()" style="margin-top:10px;padding:5px 14px;background:var(--accent);border:none;border-radius:6px;color:white;cursor:pointer;font-size:0.72rem;font-family:var(--font);">Simulate shake</button>`, insight:'Affordance: fall detection, posture, gesture control, orientation-aware interfaces, activity monitoring.' },
+  { id:'touch', icon:'👆', name:'Touch Input', desc:'Eight capacitive pads — sense contact on any conductive surface.', question:'What if a custom control panel could be made from any material — without a screen?', sim:`<div class="sim-label">Touch Pads</div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:5px;">${Array.from({length:8},(_,i)=>`<div id="tp${i}" onclick="touchPad(${i})" style="width:40px;height:40px;border-radius:7px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.72rem;color:rgba(255,255,255,0.35);transition:all 0.15s;font-family:var(--font);">${i+1}</div>`).join('')}</div>`, insight:'Affordance: custom interfaces on any surface, accessible buttons, no screen required.' },
+  { id:'motor', icon:'⚙️', name:'Physical Motion', desc:'Drive motors, control servos — make things move in the world.', question:'What physical change in an environment would make a real difference for your person in your scenario?', sim:`<div class="sim-label">Servo Angle</div><div class="sim-reading" id="servoReading">90°</div><input type="range" class="sim-slider" min="0" max="180" value="90" oninput="document.getElementById('servoReading').textContent=this.value+'°'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Think: latch, gate, valve, indicator arm, flag</div>`, insight:'Affordance: physical actuation — open doors, move objects, control mechanisms in direct response to sensing.' },
 ];
 
 function renderAffordances() {
-  const grid = document.getElementById('affordanceGrid');
+  const grid = document.getElementById('affordanceGrid'); if (!grid) return;
   grid.innerHTML = affordances.map(a => `
-    <div class="affordance-card ${state.exploredAffordances.includes(a.id) ? 'explored' : ''}"
+    <div class="affordance-card ${state.exploredAffordances.includes(a.id)?'explored':''}"
          id="acard-${a.id}" onclick="exploreAffordance('${a.id}')">
       <span class="affordance-icon">${a.icon}</span>
       <div class="affordance-name">${a.name}</div>
       <div class="affordance-desc">${a.desc}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function exploreAffordance(id) {
-  if (!state.exploredAffordances.includes(id)) {
-    state.exploredAffordances.push(id);
-    saveState();
-  }
-
-  // Update card
-  document.querySelectorAll('.affordance-card').forEach(c => c.classList.remove('ring'));
+  if (!state.exploredAffordances.includes(id)) { state.exploredAffordances.push(id); saveState(); }
   document.getElementById('acard-'+id).classList.add('explored');
-
-  // Show demo
   const a = affordances.find(x => x.id === id);
   const demo = document.getElementById('affordanceDemo');
-  demo.innerHTML = `
-    <div class="demo-title">${a.icon} ${a.name}</div>
-    <div class="demo-question">${a.question}</div>
-    <div class="demo-sim">${a.sim}</div>
-    <div class="demo-insight">${a.insight}</div>
-  `;
+  demo.innerHTML = `<div class="demo-title">${a.icon} ${a.name}</div><div class="demo-question">${a.question}</div><div class="demo-sim">${a.sim}</div><div class="demo-insight">${a.insight}</div>`;
   demo.classList.add('active');
-
-  // Update count
   const count = state.exploredAffordances.length;
-  document.getElementById('exploredCount').textContent = count + ' / ' + affordances.length;
-  document.getElementById('exploredFill').style.width = (count / affordances.length * 100) + '%';
+  document.getElementById('exploredCount').textContent = count + ' / 8';
+  document.getElementById('exploredFill').style.width = (count/8*100)+'%';
 }
 
 // Sim helpers
-function toggleLed(i) {
-  const el = document.getElementById('led'+i);
-  el.classList.toggle('on');
-}
-function setLedColor(c) {
-  document.querySelectorAll('.sim-led-dot').forEach(d => {
-    if (d.classList.contains('on')) { d.style.setProperty('--led-color', c); }
-  });
-  document.querySelectorAll('.sim-led-dot').forEach(d => {
-    d.style.setProperty('--led-color', c);
-    d.classList.add('on');
-  });
-}
+function toggleLed(i) { document.getElementById('led'+i).classList.toggle('on'); }
+function setLedColor(c) { document.querySelectorAll('.sim-led-dot').forEach(d => { d.style.setProperty('--led-color',c); d.classList.add('on'); }); }
 let audioCtx = null;
 function playSimTone(freq) {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
+  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
   osc.connect(gain); gain.connect(audioCtx.destination);
   osc.frequency.value = parseFloat(freq);
-  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-  osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-  document.getElementById('toneReading').textContent = Math.round(freq) + ' Hz';
+  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.3);
+  osc.start(); osc.stop(audioCtx.currentTime+0.3);
+  document.getElementById('toneReading').textContent = Math.round(freq)+' Hz';
 }
 function simulateShake() {
-  const vals = [
-    [1.2, 0.3, -0.8], [-0.9, 1.1, 0.6], [0.4, -1.3, 0.9],
-    [-0.2, 0.7, -1.1], [0.1, 0.98, 0.05]
-  ];
-  let i = 0;
-  const t = setInterval(() => {
-    if (i >= vals.length) { clearInterval(t); return; }
-    const [x,y,z] = vals[i++];
-    document.getElementById('accX').textContent = x.toFixed(2);
-    document.getElementById('accY').textContent = y.toFixed(2);
-    document.getElementById('accZ').textContent = z.toFixed(2);
-  }, 150);
+  const vals = [[1.2,0.3,-0.8],[-0.9,1.1,0.6],[0.4,-1.3,0.9],[-0.2,0.7,-1.1],[0.1,0.98,0.05]];
+  let i=0; const t=setInterval(()=>{
+    if(i>=vals.length){clearInterval(t);return;}
+    const[x,y,z]=vals[i++];
+    document.getElementById('accX').textContent=x.toFixed(2);
+    document.getElementById('accY').textContent=y.toFixed(2);
+    document.getElementById('accZ').textContent=z.toFixed(2);
+  },150);
 }
 function touchPad(i) {
-  const el = document.getElementById('tp'+i);
-  el.style.background = 'rgba(232,93,38,0.4)';
-  el.style.color = 'white';
-  setTimeout(() => {
-    el.style.background = 'rgba(255,255,255,0.1)';
-    el.style.color = 'rgba(255,255,255,0.4)';
-  }, 300);
+  const el=document.getElementById('tp'+i);
+  el.style.background='rgba(232,93,38,0.4)'; el.style.color='white';
+  setTimeout(()=>{el.style.background='rgba(255,255,255,0.08)';el.style.color='rgba(255,255,255,0.35)'},300);
 }
 
-// Hat selector
+// ═══ HATS ═══
 const hats = [
-  { id: 'light', name: 'Light Hat', color: '#f0a500' },
-  { id: 'movement', name: 'Movement Hat', color: '#e85d26' },
-  { id: 'gesture', name: 'Gesture Hat', color: '#5c3d8f' },
-  { id: 'audio', name: 'Audio Hat', color: '#1a7a6e' },
+  { id:'light',    name:'Light Hat',    color:'#f0a500' },
+  { id:'movement', name:'Movement Hat', color:'#e85d26' },
+  { id:'gesture',  name:'Gesture Hat',  color:'#5c3d8f' },
+  { id:'audio',    name:'Audio Hat',    color:'#1a7a6e' },
 ];
 
 function renderHatChips() {
-  const container = document.getElementById('hatChips');
-  container.innerHTML = hats.map(h => `
-    <div class="hat-chip ${state.selectedHats.includes(h.id) ? 'selected' : ''}"
-         style="color:${h.color}; background:${state.selectedHats.includes(h.id) ? h.color+'22' : 'transparent'}"
-         onclick="toggleHat('${h.id}', '${h.color}')">
-      ${h.name}
-    </div>
-  `).join('');
-  const count = state.selectedHats.length;
-  document.getElementById('hatCountBadge').textContent = count === 0 ? 'No hats selected' : count + ' hat' + (count !== 1 ? 's' : '') + ' selected';
+  const c = document.getElementById('hatChips'); if (!c) return;
+  c.innerHTML = hats.map(h => `<div class="hat-chip ${state.selectedHats.includes(h.id)?'selected':''}" style="color:${h.color};background:${state.selectedHats.includes(h.id)?h.color+'22':'transparent'}" onclick="toggleHat('${h.id}')">${h.name}</div>`).join('');
+  const n = state.selectedHats.length;
+  document.getElementById('hatCountBadge').textContent = n===0 ? 'None selected' : n+' hat'+(n!==1?'s':'')+' selected';
 }
 
-function toggleHat(id, color) {
-  const idx = state.selectedHats.indexOf(id);
-  if (idx > -1) state.selectedHats.splice(idx, 1);
-  else state.selectedHats.push(id);
-  saveState();
-  renderHatChips();
+function toggleHat(id) {
+  const idx=state.selectedHats.indexOf(id);
+  if(idx>-1) state.selectedHats.splice(idx,1); else state.selectedHats.push(id);
+  saveState(); renderHatChips();
 }
 
-// ═══════════════════════════════════════════════════════
-//  CARD GAME
-// ═══════════════════════════════════════════════════════
+// ═══ CARDS ═══
+// ─────────────────────────────────────────────────────────────────
+//  OPEN MINDS CARD DATA
+//  Source: Open Minds Erasmus+ project, MTF Labs
+//  Print files: https://drive.google.com/drive/folders/11U0yScpRSwnimxtPVhPfqAoj9Lc0yhnk
+//  Interactive reference: https://users.metropolia.fi/~taneltu/openminds/
+//
+//  Replace { title, body } content below with text from the print files.
+// ─────────────────────────────────────────────────────────────────
 const cardData = {
   person: [
-    { title: 'Aisha, 15', body: 'Recently moved to the UK from Somalia. Speaks English as a third language. Bright, ambitious, loves maths. Navigating a new school system while supporting her family at home.' },
-    { title: 'Marcus, 67', body: 'Retired teacher. Lives alone since his wife passed. Sharp mind, independent spirit. Increasingly frustrated by technology that assumes you are young and fast.' },
-    { title: 'Priya, 8', body: 'Enthusiastic, imaginative. Has ADHD — finds it hard to sit still but deeply engaged when she can move and explore. Loves animals and building things.' },
-    { title: 'James, 42', body: 'Software engineer. Developed ME/CFS two years ago. Works from home when he can. Energy is unpredictable — a good day can be followed by three bad ones.' },
-    { title: 'Leila, 28', body: 'Deaf from birth, fluent in BSL. Works in a hospital as an administrator. Navigates a world built largely around spoken communication.' },
-    { title: 'Tomás, 19', body: 'First in his family to go to university. Studies engineering. Commutes 2 hours each way. No laptop at home, relies on university computers and phone.' },
-    { title: 'Nadia, 35', body: 'Architect and mother of twins. Has dyslexia — reads and processes written information more slowly. Highly capable, but forms and documentation create barriers.' },
-    { title: 'Samuel, 11', body: 'Has cerebral palsy affecting his left side. Attends mainstream school. Loves gaming, competitive and determined. Excluded from some PE activities.' },
+    { title:'Maria', body:'Maria is a 24-year-old graphic design student in her final year at university. She is creative, sociable and hardworking, and is looking forward to starting her career.' },
+    { title:'Johan', body:'Johan is a 67-year-old retired engineer who lives with his wife in the house they have shared for 35 years. He enjoys gardening, cooking and spending time with his grandchildren.' },
+    { title:'Aiko', body:'Aiko is a 38-year-old software developer and mother of two young children. She works full-time and is passionate about open-source technology and community organising.' },
+    { title:'Samuel', body:'Samuel is a 16-year-old secondary school student who loves football, music production and spending time with friends. He is ambitious and wants to study medicine.' },
+    { title:'Fatima', body:'Fatima is a 52-year-old nurse who has worked in the same hospital for twenty years. She is respected by colleagues and patients alike and is training the next generation of staff.' },
+    { title:'Erik', body:'Erik is a 29-year-old freelance photographer who travels frequently for work. He is independent and resourceful, and has built a career doing what he loves.' },
+    { title:'Priya', body:'Priya is a 45-year-old secondary school teacher of mathematics. She is dedicated to her students and has been recognised for her innovative teaching methods.' },
+    { title:'Leon', body:'Leon is a 19-year-old who has recently moved away from home for the first time to study at a further education college in a different city.' },
+    { title:'Anna', body:'Anna is a 73-year-old former librarian who has lived in the same neighbourhood for most of her adult life. She is intellectually active and engaged with her community.' },
+    { title:'Kofi', body:'Kofi is a 33-year-old architect working for a firm in the city centre. He commutes by bicycle and is passionate about urban design and sustainable cities.' },
   ],
   condition: [
-    { title: 'Uses a wheelchair for mobility', body: 'Full-time wheelchair user. Can self-propel over smooth surfaces. Steps, lips, narrow gaps, and poorly positioned handles create barriers.' },
-    { title: 'Experiences chronic pain', body: 'Pain that is constant, variable, and invisible. May not be apparent to others. Affects concentration, stamina, and ability to predict what a day will allow.' },
-    { title: 'Has significant anxiety in social situations', body: 'Crowded or unpredictable environments trigger fight-or-flight responses. Can\'t always communicate needs in the moment. Often misread as rude or disengaged.' },
-    { title: 'Is visually impaired', body: 'Partial sight — can see shapes and movement but not text without magnification. Not fully blind. Environments that rely on small print or colour coding create barriers.' },
-    { title: 'Has limited English language proficiency', body: 'Communicates fluently in three other languages. Navigating official systems, forms, and institutions in English creates significant friction.' },
-    { title: 'Has profound hearing loss', body: 'Relies on lip reading, signing, and visual information. Environments built around spoken announcements, alarms, or verbal instructions exclude them systematically.' },
-    { title: 'Experiences episodes of cognitive fog', body: 'Periods where concentration, memory, and processing speed are significantly impaired. Could be from medication, long-term illness, sleep deprivation, or other causes.' },
-    { title: 'Is temporarily immobilised', body: 'Broken leg — usually fully mobile. Has discovered that infrastructure she never noticed before is suddenly inaccessible. Her condition is temporary; the barriers are permanent.' },
+    { title:'Uses a wheelchair', body:'Uses a manual wheelchair for mobility. Independent and active, but the design of physical environments frequently creates barriers to full participation.' },
+    { title:'Is blind', body:'Has no functional vision. Navigates using a combination of a white cane, screen readers and spatial memory. Most digital and physical environments assume sighted users.' },
+    { title:'Is Deaf', body:'Has been Deaf since birth and communicates primarily in sign language. Oral communication, telephone systems and audio-only environments create significant barriers.' },
+    { title:'Has depression', body:'Experiences persistent low mood, fatigue and difficulty concentrating. Symptoms fluctuate and are often invisible to others. Some days are significantly harder than others.' },
+    { title:'Has anxiety', body:'Experiences intense anxiety in certain situations, particularly crowded or unpredictable environments. This can make everyday activities feel difficult or overwhelming.' },
+    { title:'Has a broken arm', body:'Has recently broken their dominant arm and is wearing a cast. This is a temporary condition, but many everyday tools and environments suddenly require two functioning hands.' },
+    { title:'Is pregnant', body:'Is in the later stages of pregnancy. Mobility is reduced and fatigue is significant. Some environments and systems were not designed with pregnant people in mind.' },
+    { title:'Has dyslexia', body:'Has dyslexia, which affects the processing of written text. Highly capable in many areas, but text-heavy systems, forms and written instructions can create barriers.' },
+    { title:'Has ADHD', body:'Has attention deficit hyperactivity disorder. Is creative, energetic and highly capable, but environments requiring sustained concentration or rigid procedures can be challenging.' },
+    { title:'Does not speak the local language', body:'Has recently moved to a new country and does not yet speak the local language fluently. Systems that rely entirely on written or spoken local language create barriers.' },
   ],
   environment: [
-    { title: 'A secondary school with split-level buildings', body: 'Built in the 1960s. Three floors in some blocks, lifts present but unreliable. Toilets are not on every floor. Lesson changes happen quickly.' },
-    { title: 'A busy urban hospital A&E', body: 'Noisy, fast-moving, frequently understaffed. Information delivered verbally over a waiting room PA. Triage relies heavily on self-report at a reception desk.' },
-    { title: 'A public library in a market town', body: 'Old building, well-loved, limited budget. Used as a community hub. Has computers but they are old. Staff are helpful but stretched thin.' },
-    { title: 'An open-plan office in a tech company', body: 'Hot desks, lots of noise, collaborative culture. Assumes employees can navigate impromptu conversations, whiteboards, and video calls without difficulty.' },
-    { title: 'A GP surgery in a deprived urban area', body: 'High patient volume, appointment booking by phone. Translation services available in theory but not always in practice. Long waits. High staff turnover.' },
-    { title: 'A community sports centre', body: 'Pool, gym, football pitches. Changing rooms with narrow cubicles. Equipment assumes standard body size and mobility. Booking system is online only.' },
-    { title: 'A supermarket during peak hours', body: 'Busy, loud, visually complex. High shelves. Self-checkout as default. Products rearranged frequently. Cards-only at some checkouts.' },
-    { title: 'A university lecture hall', body: '200 seats. Slides displayed on a screen 15 metres from some seats. Lectures recorded but upload is inconsistent. Questions asked verbally to the room.' },
+    { title:'A hospital', body:'A large general hospital. Busy, complex and often stressful. Navigation relies on signs, announcements and verbal communication. Fast-paced with many simultaneous demands on staff.' },
+    { title:'A public library', body:'A municipal library in a mid-sized town. Valued community resource with a reduced budget. Some areas are accessible; others less so. Mix of old and new technology.' },
+    { title:'A university campus', body:'A university with buildings from different eras. Some modern accessible buildings; some older ones with steps, narrow doorways and lifts frequently out of service.' },
+    { title:'A supermarket', body:'A large supermarket. Self-checkout is the default. Products are frequently moved. Some aisles are narrow. Lighting is bright and noise levels are high at busy times.' },
+    { title:'A workplace', body:'An open-plan office. Hot-desking is standard. Many impromptu meetings and conversations. Communication is a mix of in-person, video calls and messaging.' },
+    { title:'A public park', body:'A municipal park used by a wide range of people. Paths, open grass areas, a café and a play area. Well-used but maintenance funding is limited.' },
+    { title:'A train station', body:'A busy urban station. Trains are announced verbally and on digital boards. Steps between platforms. Lifts are available but occasionally out of service.' },
+    { title:'A school', body:'A secondary school with multiple buildings on a split-level site. Built over several decades. Some areas have been renovated; others have not. 900 students, 80 staff.' },
+    { title:'A sports centre', body:'A community leisure centre with a swimming pool, gym and sports hall. Changing facilities are standard design. Booking is done online or by telephone.' },
+    { title:'A government website', body:'An official website used to access public services and complete forms. Designed for the average user; not always tested with diverse users in mind.' },
   ]
 };
 
 function drawCard(type) {
   const pool = cardData[type];
-  const card = pool[Math.floor(Math.random() * pool.length)];
+  const card = pool[Math.floor(Math.random()*pool.length)];
   state.drawnCards[type] = card;
   renderCard(type, card);
   updateScenarioDisplay();
@@ -2178,116 +1889,74 @@ function drawCard(type) {
 }
 
 function renderCard(type, card) {
-  const content = document.getElementById('drawn' + type.charAt(0).toUpperCase() + type.slice(1));
-  const empty = document.getElementById(type + 'Empty');
-  document.getElementById(type + 'Title').textContent = card.title;
-  document.getElementById(type + 'Body').textContent = card.body;
+  const cap = type.charAt(0).toUpperCase()+type.slice(1);
+  const content = document.getElementById('drawn'+cap);
+  const empty   = document.getElementById(type+'Empty');
+  document.getElementById(type+'Title').textContent = card.title;
+  document.getElementById(type+'Body').textContent  = card.body;
   content.classList.add('visible');
   if (empty) empty.style.display = 'none';
 }
 
 function updateScenarioDisplay() {
   const { person, condition, environment } = state.drawnCards;
-  const display = document.getElementById('scenarioDisplay');
-  if (!display) return;
-
+  const display = document.getElementById('scenarioDisplay'); if (!display) return;
   if (!person && !condition && !environment) {
-    display.innerHTML = '<p class="scenario-prompt">Draw all three cards to see your scenario take shape here.</p>';
-    display.classList.remove('has-cards');
-    return;
+    display.innerHTML = '<p class="scenario-prompt">Draw all three cards to see your scenario here.</p>';
+    display.classList.remove('has-cards'); return;
   }
-
   display.classList.add('has-cards');
-  const personStr = person ? `<span class="card-highlight person">${person.title}</span>` : '(draw a person)';
-  const condStr = condition ? `<span class="card-highlight condition">${condition.title.toLowerCase()}</span>` : '(draw a condition)';
-  const envStr = environment ? `<span class="card-highlight environment">${environment.title.toLowerCase()}</span>` : '(draw an environment)';
-
-  display.innerHTML = `<div class="scenario-text">
-    ${personStr}${condition ? ' — who ' + condStr : ''} is navigating ${envStr}.
-    <br><br>
-    <span style="font-size:0.85rem; color:var(--muted); font-weight:300;">
-      ${person && condition && environment ? 'All three cards drawn. Discuss this scenario, then write your hypothesis below.' : 'Keep drawing cards to complete the scenario.'}
-    </span>
-  </div>`;
+  const p = person      ? `<span class="card-highlight person">${person.title}</span>` : '(draw a person)';
+  const c = condition   ? `<span class="card-highlight condition">${condition.title.toLowerCase()}</span>` : '(draw a condition)';
+  const e = environment ? `<span class="card-highlight environment">${environment.title.toLowerCase()}</span>` : '(draw an environment)';
+  display.innerHTML = `<div class="scenario-text">${p}${condition?' — '+c:''} is navigating ${e}.<br><br><span style="font-size:0.82rem;color:var(--muted);font-weight:300;">${person&&condition&&environment?'All three cards drawn. Discuss, then write your hypothesis below.':'Keep drawing to complete the scenario.'}</span></div>`;
 }
 
-// ═══════════════════════════════════════════════════════
-//  INVESTIGATION
-// ═══════════════════════════════════════════════════════
+// ═══ INVESTIGATION ═══
 function setVerdict(v) {
-  state.verdict = v;
+  state.verdict = v; saveState();
   ['holds','revised','wrong'].forEach(k => {
-    document.getElementById('verdict-'+k).className = 'verdict-btn' + (k === v ? ' selected-'+k : '');
+    document.getElementById('verdict-'+k).className = 'verdict-btn'+(k===v?' selected-'+k:'');
   });
-  saveState();
 }
 
-// ═══════════════════════════════════════════════════════
-//  PROTOTYPING
-// ═══════════════════════════════════════════════════════
+// ═══ TEMPLATES ═══
 const templates = [
-  {
-    name: 'Light alert',
-    desc: 'Flash LEDs when a threshold is crossed',
-    code: `# Light Alert Template
-# Flashes LEDs when light level drops below threshold
+  { name:'Light alert', desc:'Flash LEDs when a threshold is crossed', code:`# Light Alert
 import time
 
-# If you have the Light Hat:
-# from openminds import LightHat
-# hat = LightHat()
-
-THRESHOLD = 300  # Adjust this value
+THRESHOLD = 300  # Adjust based on environment
 
 while True:
     # In real code: level = hat.get_light()
-    level = 500  # Replace with sensor reading
+    level = 500  # Replace with actual sensor reading
     
     if level < THRESHOLD:
-        print("Dark! Triggering alert...")
-        # hat.set_leds((255, 0, 0))  # Red
+        print("Dark — trigger alert")
+        # hat.set_leds((255, 0, 0))  # Red for alert
     else:
-        print("Light OK: " + str(level))
-        # hat.set_leds((0, 255, 0))  # Green
+        print("OK: " + str(level))
+        # hat.set_leds((0, 255, 0))  # Green for clear
     
-    time.sleep(0.5)`
-  },
-  {
-    name: 'Proximity trigger',
-    desc: 'Respond when something gets close',
-    code: `# Proximity Trigger Template
-# Triggers an output when something approaches
+    time.sleep(0.5)` },
+  { name:'Proximity trigger', desc:'Respond when someone approaches', code:`# Proximity Trigger
 import time
 
-# If you have the Movement Hat:
-# from openminds import MovementHat
-# hat = MovementHat()
-
-DISTANCE_CM = 30  # Trigger distance
+DISTANCE_CM = 40  # Trigger distance — adjust for context
 
 while True:
     # In real code: dist = hat.get_distance()
     dist = 100  # Replace with sensor reading
     
     if dist < DISTANCE_CM:
-        print("Close! Distance: " + str(dist) + "cm")
-        # Trigger your response here
-        # e.g. hat.set_led((255, 128, 0))
+        print("Approaching: " + str(dist) + "cm")
+        # Your response here
     else:
-        print("All clear: " + str(dist) + "cm")
+        print("Clear: " + str(dist) + "cm")
     
-    time.sleep(0.1)`
-  },
-  {
-    name: 'Sound response',
-    desc: 'React to sound level changes',
-    code: `# Sound Response Template
-# Triggers visual feedback based on sound level
+    time.sleep(0.1)` },
+  { name:'Sound response', desc:'React to ambient noise levels', code:`# Sound Response
 import time
-
-# If you have the Audio Hat:
-# from openminds import AudioHat
-# hat = AudioHat()
 
 NOISE_THRESHOLD = 600
 
@@ -2296,166 +1965,113 @@ while True:
     level = 400  # Replace with mic reading
     
     if level > NOISE_THRESHOLD:
-        print("Loud! Level: " + str(level))
-        # Quiet alert — visual not audio
-        # hat.set_leds((255, 0, 0))
+        print("Loud environment: " + str(level))
+        # Visual alert (not audio — avoid adding to the noise)
+        # hat.set_leds((255, 100, 0))
     else:
-        print("Quiet. Level: " + str(level))
+        print("Quiet: " + str(level))
         # hat.set_leds((0, 0, 0))
     
-    time.sleep(0.05)`
-  },
-  {
-    name: 'Touch interface',
-    desc: 'Custom buttons on any surface',
-    code: `# Touch Interface Template
-# Read touch pads and respond
+    time.sleep(0.05)` },
+  { name:'Touch interface', desc:'Custom button panel on any surface', code:`# Touch Interface
 import time
 
-# from openminds import Board
-# board = Board()
-
-# 8 touch pads available
-PAD_COUNT = 8
+# 8 capacitive touch pads available (GP2–GP5, GP18–GP21)
+# Each can trigger a different response
 
 while True:
-    for i in range(PAD_COUNT):
-        # In real code: touched = board.touch(i)
-        touched = False  # Replace with actual reading
-        
-        if touched:
-            print("Pad " + str(i) + " touched!")
-            # Your response here
-            # e.g. play a tone, change LED colour
+    # In real code, read each pad:
+    # for i, pad in enumerate(touch_pads):
+    #     if pad.value:
+    #         handle_touch(i)
     
-    time.sleep(0.01)`
-  },
-  {
-    name: 'Data logger',
-    desc: 'Record sensor readings over time',
-    code: `# Data Logger Template
-# Record sensor data to understand patterns
+    # Placeholder:
+    print("Waiting for touch input...")
+    time.sleep(0.01)` },
+  { name:'Data logger', desc:'Record readings over time to find patterns', code:`# Data Logger
 import time
 
 readings = []
-START_TIME = time.monotonic()
+start = time.monotonic()
 
-print("Logging started. Ctrl+C to stop.")
+print("Logging started.")
 
 while True:
-    elapsed = time.monotonic() - START_TIME
+    elapsed = round(time.monotonic() - start, 1)
     
-    # Replace with real sensor readings:
-    reading = 0  # e.g. hat.get_temperature()
+    # Replace with your sensor:
+    value = 0  # e.g. hat.get_distance()
     
-    readings.append((elapsed, reading))
-    print(str(round(elapsed, 1)) + "s: " + str(reading))
+    readings.append((elapsed, value))
+    print(str(elapsed) + "s: " + str(value))
     
-    # Keep last 100 readings
     if len(readings) > 100:
         readings.pop(0)
     
-    time.sleep(1)`
-  }
+    time.sleep(1)` },
 ];
 
 function renderTemplates() {
-  const list = document.getElementById('templateList');
-  if (!list) return;
-  list.innerHTML = templates.map((t, i) => `
-    <div class="template-item" onclick="loadTemplate(${i})">
-      <div class="template-name">${t.name}</div>
-      <div class="template-desc">${t.desc}</div>
-    </div>
-  `).join('');
+  const list = document.getElementById('templateList'); if (!list) return;
+  list.innerHTML = templates.map((t,i) => `<div class="template-item" onclick="loadTemplate(${i})"><div class="template-name">${t.name}</div><div class="template-desc">${t.desc}</div></div>`).join('');
 }
 
 function loadTemplate(i) {
   document.getElementById('codeEditor').value = templates[i].code;
-  state.code = templates[i].code;
-  saveState();
-  logOutput('Template loaded: ' + templates[i].name, 'sys');
+  state.code = templates[i].code; saveState();
+  logOutput('Template loaded: '+templates[i].name, 'sys');
 }
 
 function showTemplates() {
   const list = document.getElementById('templateList');
-  if (list) list.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (list) list.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
-// ═══════════════════════════════════════════════════════
-//  HYPOTHESIS ECHOES
-// ═══════════════════════════════════════════════════════
+// ═══ HYPOTHESIS ECHOES ═══
 function updateHypothesisEchoes() {
-  const h = state.hypothesis || '';
+  const h = state.inv4 || state.hypothesis || '';
   const echo = document.getElementById('hypothesisEcho');
-  if (echo) echo.textContent = h || 'Your hypothesis will appear here once you\'ve written it in Phase 2.';
-  const protoH = document.getElementById('protoHypothesis');
-  if (protoH) protoH.textContent = h || 'Write your hypothesis in Phase 2, then come back here.';
+  if (echo) echo.textContent = h || 'Your hypothesis will appear here once you\'ve written it in Phase 1.';
+  const proto = document.getElementById('protoHypothesis');
+  if (proto) proto.textContent = h || 'Complete Phase 1 and 2 to see your hypothesis here.';
 }
 
-// ═══════════════════════════════════════════════════════
-//  SHARING VIEW
-// ═══════════════════════════════════════════════════════
+// ═══ SHARING ═══
 function buildShareView() {
   const { person, condition, environment } = state.drawnCards;
   const cardSummary = [person?.title, condition?.title, environment?.title].filter(Boolean).join(' · ');
-
   if (person) {
-    document.getElementById('shareTitle').textContent = 'Project: ' + (person.title || 'Open Minds');
+    document.getElementById('shareTitle').textContent = 'Project: '+(person.title||'Open Minds');
     document.getElementById('shareSubtitle').textContent = cardSummary;
   }
-
   const entries = [
-    { phase: '1 · Affordance Discovery', color: 'var(--phase-1)',
-      content: state.exploredAffordances.length > 0
-        ? `Explored ${state.exploredAffordances.length} affordance${state.exploredAffordances.length !== 1 ? 's' : ''}: ${state.exploredAffordances.join(', ')}. Selected hats: ${state.selectedHats.join(', ') || 'none'}.`
-        : null },
-    { phase: '2 · Scenario & Hypothesis', color: 'var(--phase-2)',
-      content: cardSummary ? `<strong>Scenario:</strong> ${cardSummary}<br><br><strong>Hypothesis:</strong> ${state.hypothesis || '(not written)'}` : null },
-    { phase: '3 · Investigation', color: 'var(--phase-3)',
-      content: state.inv1 || state.inv4
-        ? `${state.inv1 ? '<strong>Evidence:</strong> ' + state.inv1 + '<br><br>' : ''}${state.inv4 ? '<strong>Confirmed hypothesis:</strong> ' + state.inv4 : ''}`
-        : null },
-    { phase: '4 · Design & Prototype', color: 'var(--phase-4)',
-      content: state.designLog || '(design log not completed)' },
-    { phase: '5 · Reflection', color: 'var(--phase-5)',
-      content: state.ref1
-        ? `<strong>What we built:</strong> ${state.ref1}${state.ref2 ? '<br><br><strong>What worked:</strong> ' + state.ref2 : ''}${state.ref3 ? '<br><br><strong>What didn\'t:</strong> ' + state.ref3 : ''}`
-        : null },
-    { phase: '5 · Learning', color: 'var(--phase-5)',
-      content: state.ref4 || state.ref5
-        ? `${state.ref4 ? '<strong>About the challenge:</strong> ' + state.ref4 : ''}${state.ref5 ? '<br><br><strong>Next steps:</strong> ' + state.ref5 : ''}`
-        : null },
+    { phase:'1 · Scenario & Hypothesis', color:'var(--phase-1)', content: cardSummary ? `<strong>Scenario:</strong> ${cardSummary}<br><br><strong>Hypothesis:</strong> ${state.hypothesis||'(not written)'}` : null },
+    { phase:'2 · Investigation', color:'var(--phase-2)', content: state.inv1||state.inv4 ? `${state.inv1?'<strong>Evidence:</strong> '+state.inv1+'<br><br>':''}${state.inv4?'<strong>Confirmed hypothesis:</strong> '+state.inv4:''}` : null },
+    { phase:'3 · Design approach', color:'var(--phase-3)', content: state.responseSketch||null },
+    { phase:'4 · Prototype', color:'var(--phase-4)', content: state.designLog||null },
+    { phase:'5 · What we built', color:'var(--phase-5)', content: state.ref1?`<strong>The prototype:</strong> ${state.ref1}${state.ref2?'<br><br><strong>Testing:</strong> '+state.ref2:''}`:null },
+    { phase:'5 · Learning', color:'var(--phase-5)', content: state.ref4||state.ref5?`${state.ref4?'<strong>About the challenge:</strong> '+state.ref4:''}${state.ref5?'<br><br><strong>Next steps:</strong> '+state.ref5:''}`:null },
   ];
-
-  const timeline = document.getElementById('journeyTimeline');
-  timeline.innerHTML = entries.map(e => `
-    <div class="journey-entry ${e.content ? '' : 'empty'}">
-      <div class="journey-entry-phase" style="color:${e.color}">${e.phase}</div>
-      <div class="journey-entry-content">
-        ${e.content || '<em>Not completed in this session.</em>'}
-      </div>
-    </div>
-  `).join('');
+  document.getElementById('journeyTimeline').innerHTML = entries.map(e => `<div class="journey-entry${e.content?'':' empty'}"><div class="journey-entry-phase" style="color:${e.color}">${e.phase}</div><div class="journey-entry-content">${e.content||'<em>Not completed in this session.</em>'}</div></div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-//  RESET
-// ═══════════════════════════════════════════════════════
+// ═══ RESET ═══
 function resetJourney() {
-  if (!confirm('Start a completely new journey? This will clear all your current work.')) return;
+  if (!confirm('Start a new journey? This will clear all current work.')) return;
   localStorage.removeItem(STATE_KEY);
   location.reload();
 }
 
-// ═══════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════
+// ═══ INIT ═══
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   renderAffordances();
   renderHatChips();
   renderTemplates();
+  // Show splash on first load, skip it if returning to a session
+  if (state.completedPhases.length > 0 || state.hypothesis) {
+    startJourney();
+  }
   goToPhase(state.currentPhase || 1);
 });
 </script>
