@@ -848,21 +848,22 @@ label {
 .editor-toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 11px 18px;
-  background: #1a1a2e;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  gap: 8px;
+  padding: 10px 16px;
+  background: #12121e;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-wrap: wrap;
 }
 
-.editor-dot { width: 11px; height: 11px; border-radius: 50%; }
-.ed-red { background: #ff5f57; } .ed-yellow { background: #ffbd2e; } .ed-green { background: #28c840; }
-
-.editor-filename { font-family: 'Courier New', monospace; font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-left: 6px; }
-
-.editor-actions { margin-left: auto; display: flex; gap: 7px; }
+.editor-filename {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+  margin-right: auto;
+}
 
 .editor-btn {
-  padding: 5px 12px;
+  padding: 6px 13px;
   border-radius: 6px;
   font-size: 0.72rem;
   font-weight: 700;
@@ -870,14 +871,47 @@ label {
   cursor: pointer;
   border: none;
   transition: all 0.15s;
+  white-space: nowrap;
 }
 
+.editor-btn-connect      { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.12); }
+.editor-btn-connect:hover { background: rgba(255,255,255,0.14); }
+.editor-btn-connect.connected { background: rgba(16,185,129,0.2); color: #6ee7b7; border-color: rgba(16,185,129,0.3); }
 .editor-btn-run      { background: #10b981; color: white; }
 .editor-btn-run:hover { background: #059669; }
-.editor-btn-template { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.55); }
-.editor-btn-template:hover { background: rgba(255,255,255,0.12); }
+.editor-btn-stop      { background: #ef4444; color: white; display: none; }
+.editor-btn-stop:hover { background: #dc2626; }
+.editor-btn-template { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.09); }
+.editor-btn-template:hover { background: rgba(255,255,255,0.11); }
 .editor-btn-send      { background: #3b82f6; color: white; }
 .editor-btn-send:hover { background: #2563eb; }
+.editor-btn-send:disabled { opacity: 0.35; cursor: not-allowed; }
+.editor-btn-send:disabled:hover { background: #3b82f6; }
+
+.board-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.3);
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
+}
+
+.board-indicator-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #4b5563;
+  flex-shrink: 0;
+}
+
+.board-indicator-dot.on {
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
 
 .code-editor {
   flex: 1;
@@ -1541,17 +1575,18 @@ label {
 
       <div class="code-editor-area">
         <div class="editor-toolbar">
-          <div class="editor-dot ed-red"></div>
-          <div class="editor-dot ed-yellow"></div>
-          <div class="editor-dot ed-green"></div>
-          <span class="editor-filename">code.py — MicroPython</span>
-          <div class="editor-actions">
-            <button class="editor-btn editor-btn-template" onclick="showTemplates()">Templates</button>
-            <button class="editor-btn editor-btn-run" onclick="runCode()">▶ Run</button>
-            <button class="editor-btn editor-btn-send" id="sendBtn" onclick="sendToBoard()" disabled>↑ Send to Board</button>
+          <span class="editor-filename">code.py — CircuitPython</span>
+          <div class="board-indicator" id="boardIndicator">
+            <div class="board-indicator-dot" id="boardIndicatorDot"></div>
+            <span id="boardIndicatorLabel">No board</span>
           </div>
+          <button class="editor-btn editor-btn-connect" id="connectBoardBtn2" onclick="connectBoard()">⬡ Connect board</button>
+          <button class="editor-btn editor-btn-template" onclick="showTemplates()">Templates</button>
+          <button class="editor-btn editor-btn-run" id="runBtn" onclick="runCode()">▶ Run</button>
+          <button class="editor-btn editor-btn-stop" id="stopBtn" onclick="stopCode()">■ Stop</button>
+          <button class="editor-btn editor-btn-send" id="sendBtn" onclick="sendToBoard()" disabled>↑ Send to board</button>
         </div>
-        <textarea class="code-editor" id="codeEditor" spellcheck="false" oninput="saveState()"># Open Minds Board — MicroPython
+        <textarea class="code-editor" id="codeEditor" spellcheck="false" oninput="saveState()"># Open Minds Board — CircuitPython
 # Your hypothesis: see the sidebar →
 #
 # Start by describing what your prototype needs to do.
@@ -1709,7 +1744,7 @@ let state = {
   inv1: '', inv2: '', inv3: '', inv4: '',
   verdict: null,
   responseSketch: '',
-  code: `# Open Minds Board — MicroPython
+  code: `# Open Minds Board — CircuitPython
 # Your hypothesis: see the sidebar →
 #
 # Start by describing what your prototype needs to do.
@@ -1789,25 +1824,52 @@ function goToPhase(n) {
 }
 
 // ═══ BOARD ═══
+let isRunning = false;
+let simInterval = null;
+
 async function connectBoard() {
   if (!('serial' in navigator)) {
-    logOutput('Web Serial not supported. Use Chrome or Edge.', 'err');
-    logOutput('Running in simulation mode.', 'sys');
+    logOutput('Web Serial not supported in this browser — use Chrome or Edge.', 'err');
+    logOutput('You can still write and test code in simulation mode.', 'sys');
     return;
   }
   try {
     const port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 });
     state.serialPort = port; state.boardConnected = true;
-    document.getElementById('boardStatusDot').classList.add('connected');
-    document.getElementById('boardStatusTitle').textContent = 'Board connected';
-    document.getElementById('boardStatusSub').textContent = 'Open Minds Board via USB';
-    document.getElementById('connectBoardBtn').textContent = 'Connected ✓';
-    document.getElementById('connectBoardBtn').disabled = true;
-    document.getElementById('sendBtn').disabled = false;
-    logOutput('Board connected', 'sys');
+
+    // Update affordance phase banner
+    const dot = document.getElementById('boardStatusDot');
+    if (dot) dot.classList.add('connected');
+    const title = document.getElementById('boardStatusTitle');
+    if (title) title.textContent = 'Board connected';
+    const sub = document.getElementById('boardStatusSub');
+    if (sub) sub.textContent = 'Open Minds Board via USB';
+
+    // Update IDE toolbar indicator
+    setBoardConnected(true);
+
+    logOutput('Board connected successfully', 'sys');
+    logOutput('Use "Send to board" to upload your code', 'sys');
     readSerial(port);
-  } catch(e) { if (e.name !== 'NotFoundError') logOutput('Connection failed: '+e.message, 'err'); }
+  } catch(e) {
+    if (e.name !== 'NotFoundError') logOutput('Connection failed: ' + e.message, 'err');
+  }
+}
+
+function setBoardConnected(connected) {
+  const dot = document.getElementById('boardIndicatorDot');
+  const label = document.getElementById('boardIndicatorLabel');
+  const connectBtn = document.getElementById('connectBoardBtn2');
+  const sendBtn = document.getElementById('sendBtn');
+  if (dot) dot.classList.toggle('on', connected);
+  if (label) label.textContent = connected ? 'Board connected' : 'No board';
+  if (connectBtn) {
+    connectBtn.textContent = connected ? '⬡ Connected' : '⬡ Connect board';
+    connectBtn.classList.toggle('connected', connected);
+    connectBtn.disabled = connected;
+  }
+  if (sendBtn) sendBtn.disabled = !connected;
 }
 
 async function readSerial(port) {
@@ -1821,31 +1883,85 @@ async function readSerial(port) {
       const lines = buf.split('\n'); buf = lines.pop();
       lines.forEach(l => { if (l.trim()) logOutput(l.trim()); });
     }
-  } catch(e) { logOutput('Board disconnected', 'sys'); state.boardConnected = false; }
-  finally { reader.releaseLock(); }
+  } catch(e) {
+    logOutput('Board disconnected', 'sys');
+    state.boardConnected = false;
+    setBoardConnected(false);
+  } finally {
+    reader.releaseLock();
+  }
 }
 
 async function sendToBoard() {
-  if (!state.serialPort) { logOutput('No board connected', 'err'); return; }
+  if (!state.serialPort) { logOutput('No board connected — click "Connect board" first', 'err'); return; }
   const code = document.getElementById('codeEditor').value;
   try {
     const writer = state.serialPort.writable.getWriter();
-    await writer.write(new TextEncoder().encode('\x03\r\n'));
-    await new Promise(r => setTimeout(r, 300));
-    await writer.write(new TextEncoder().encode('\x05'));
+    await writer.write(new TextEncoder().encode('\x03\r\n')); // Ctrl+C stop
+    await new Promise(r => setTimeout(r, 400));
+    await writer.write(new TextEncoder().encode('\x05'));     // raw paste mode
     await writer.write(new TextEncoder().encode(code));
-    await writer.write(new TextEncoder().encode('\x04'));
+    await writer.write(new TextEncoder().encode('\x04'));     // execute
     writer.releaseLock();
-    logOutput('Code sent to board', 'sys');
-  } catch(e) { logOutput('Send failed: '+e.message, 'err'); }
+    logOutput('Code sent to board — running...', 'sys');
+    setRunning(true);
+  } catch(e) {
+    logOutput('Send failed: ' + e.message, 'err');
+  }
 }
 
 function runCode() {
+  // Simulation mode — extracts print() statements and shows them
+  clearOutput();
+  logOutput('--- Simulation mode (no board connected) ---', 'sys');
+  logOutput('Only print() statements are shown here. Connect a board to run on hardware.', 'sys');
   const code = document.getElementById('codeEditor').value;
-  logOutput('--- Simulation ---', 'sys');
   const prints = [...code.matchAll(/print\(["'](.+?)["']\)/g)];
-  if (prints.length > 0) prints.forEach(m => logOutput(m[1]));
-  else logOutput('Code parsed. Connect a board to run on hardware.', 'sys');
+  if (prints.length > 0) {
+    setRunning(true);
+    let i = 0;
+    simInterval = setInterval(() => {
+      if (i >= prints.length) {
+        // Loop if there's a while True
+        if (code.includes('while True')) {
+          i = 0;
+        } else {
+          stopCode();
+          return;
+        }
+      }
+      logOutput(prints[i][1]);
+      i++;
+    }, 800);
+  } else {
+    logOutput('No print() statements found to simulate.', 'sys');
+    logOutput('Add print("...") calls to see output here, or connect a board.', 'sys');
+  }
+}
+
+function stopCode() {
+  if (simInterval) { clearInterval(simInterval); simInterval = null; }
+  if (state.serialPort) {
+    const writer = state.serialPort.writable.getWriter();
+    writer.write(new TextEncoder().encode('\x03')).then(() => writer.releaseLock());
+    logOutput('--- Stopped ---', 'sys');
+  } else {
+    logOutput('--- Simulation stopped ---', 'sys');
+  }
+  setRunning(false);
+}
+
+function setRunning(running) {
+  isRunning = running;
+  const runBtn  = document.getElementById('runBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  if (runBtn)  runBtn.style.display  = running ? 'none'  : 'inline-flex';
+  if (stopBtn) stopBtn.style.display = running ? 'inline-flex' : 'none';
+}
+
+function clearOutput() {
+  const out = document.getElementById('editorOutput');
+  if (out) out.innerHTML = '';
 }
 
 function logOutput(msg, type='out') {
@@ -2233,6 +2349,149 @@ while True:
     if not touched:
         pixels.fill((0, 0, 0))
         pixels.show()
+
+    time.sleep(0.01)`
+  },
+  {
+    name: 'Touch pads → NeoPixels',
+    desc: 'Each touch pad lights a different colour — combine input and output',
+    code: `# CircuitPython — Touch Pads controlling NeoPixels
+# Each of the 8 touch pads triggers a different colour on the LEDs
+# Great starting point for any touch-activated visual response
+import board
+import time
+import touchio
+import neopixel
+
+# --- Hardware setup ---
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.4, auto_write=False)
+
+touch_pins = [
+    board.GP2, board.GP3, board.GP4,  board.GP5,
+    board.GP18, board.GP19, board.GP20, board.GP21
+]
+pads = [touchio.TouchIn(pin) for pin in touch_pins]
+
+# --- Assign a colour to each pad ---
+# Modify these to suit your design — (Red, Green, Blue) 0-255
+pad_colours = [
+    (255, 0,   0  ),   # Pad 1 — Red
+    (255, 80,  0  ),   # Pad 2 — Orange
+    (200, 200, 0  ),   # Pad 3 — Yellow
+    (0,   200, 0  ),   # Pad 4 — Green
+    (0,   180, 180),   # Pad 5 — Cyan
+    (0,   0,   255),   # Pad 6 — Blue
+    (120, 0,   200),   # Pad 7 — Purple
+    (200, 0,   120),   # Pad 8 — Pink
+]
+
+print("Touch any pad to change the lights")
+
+while True:
+    any_touched = False
+
+    for i, pad in enumerate(pads):
+        if pad.value:
+            pixels.fill(pad_colours[i])
+            pixels.show()
+            print("Pad", i + 1, "—", pad_colours[i])
+            any_touched = True
+            time.sleep(0.05)   # Small debounce
+
+    if not any_touched:
+        pixels.fill((0, 0, 0))  # All off when nothing touched
+        pixels.show()
+
+    time.sleep(0.01)`
+  },
+  {
+    name: 'Servo — sweep and position',
+    desc: 'Control a servo motor angle — sweep back and forth or jump to a position',
+    code: `# CircuitPython — Servo Motor Control
+# Servo connects to GP22 (the dedicated servo pin on the board)
+# Use case: physical indicator, gate, pointer, flag, door latch
+import board
+import time
+import pwmio
+from adafruit_motor import servo
+
+# --- Hardware setup ---
+# Servo signal wire → GP22, power → 5V, ground → GND
+pwm = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
+my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
+
+# --- Helper: move to angle smoothly ---
+def move_to(target_angle, current_angle, step=2, delay=0.02):
+    if current_angle < target_angle:
+        for angle in range(current_angle, target_angle + 1, step):
+            my_servo.angle = angle
+            time.sleep(delay)
+    else:
+        for angle in range(current_angle, target_angle - 1, -step):
+            my_servo.angle = angle
+            time.sleep(delay)
+    return target_angle
+
+print("Servo ready on GP22")
+
+current = 90
+my_servo.angle = current  # Start at centre
+
+while True:
+    # Sweep from 0° to 180° and back
+    print("Moving to 0°")
+    current = move_to(0, current)
+    time.sleep(1)
+
+    print("Moving to 90°")
+    current = move_to(90, current)
+    time.sleep(1)
+
+    print("Moving to 180°")
+    current = move_to(180, current)
+    time.sleep(1)
+
+    print("Back to 90°")
+    current = move_to(90, current)
+    time.sleep(1)`
+  },
+  {
+    name: 'Touch pads → Servo positions',
+    desc: 'Touch a pad to move a servo to a set angle — physical response to touch',
+    code: `# CircuitPython — Touch Pads controlling a Servo
+# Touch pad 1-4 each move the servo to a different position
+# Use case: accessible physical indicator, pointer, valve, latch
+import board
+import time
+import touchio
+import pwmio
+from adafruit_motor import servo
+
+# --- Hardware setup ---
+pwm = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
+my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
+
+# Using pads 1-4 (GP2-GP5) for simplicity — add more as needed
+touch_pins = [board.GP2, board.GP3, board.GP4, board.GP5]
+pads = [touchio.TouchIn(pin) for pin in touch_pins]
+
+# --- Assign an angle to each pad (0–180 degrees) ---
+pad_angles = [0, 60, 120, 180]
+pad_labels = ["Closed", "Quarter", "Three-quarter", "Open"]
+
+current_angle = 90
+my_servo.angle = current_angle
+print("Ready — touch a pad to move the servo")
+
+while True:
+    for i, pad in enumerate(pads):
+        if pad.value:
+            target = pad_angles[i]
+            if target != current_angle:
+                print("Pad", i + 1, "→", pad_labels[i], "(", target, "°)")
+                my_servo.angle = target
+                current_angle = target
+            time.sleep(0.2)  # Debounce
 
     time.sleep(0.01)`
   },
