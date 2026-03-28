@@ -1887,7 +1887,11 @@ async function readSerial(port) {
 // ─── Run code ───
 // Board connected: save code.py to CIRCUITPY drive.
 //   CircuitPython detects the change and restarts automatically.
+//   Directory handle is cached after first selection — no re-picking needed.
 // No board: simulate print() output in the console.
+
+let cachedDirHandle = null;  // Remembered after first selection
+
 async function runCode() {
   const code = document.getElementById('codeEditor').value;
 
@@ -1898,17 +1902,39 @@ async function runCode() {
     }
     try {
       clearOutput();
-      logOutput('Select the CIRCUITPY drive...', 'sys');
-      const dir = await window.showDirectoryPicker({ id: 'circuitpy', mode: 'readwrite' });
-      const file = await dir.getFileHandle('code.py', { create: true });
+
+      // Try to reuse the cached handle — verify we still have permission
+      if (cachedDirHandle) {
+        try {
+          const perm = await cachedDirHandle.requestPermission({ mode: 'readwrite' });
+          if (perm !== 'granted') cachedDirHandle = null;
+        } catch(e) {
+          cachedDirHandle = null;
+        }
+      }
+
+      // Ask for the folder if we don't have a valid handle
+      if (!cachedDirHandle) {
+        logOutput('Select the CIRCUITPY drive (you only need to do this once)...', 'sys');
+        cachedDirHandle = await window.showDirectoryPicker({ id: 'circuitpy', mode: 'readwrite' });
+        logOutput('✓ CIRCUITPY drive saved — won\'t ask again this session.', 'sys');
+      }
+
+      const file = await cachedDirHandle.getFileHandle('code.py', { create: true });
       const writable = await file.createWritable();
       await writable.write(code);
       await writable.close();
-      logOutput('✓ code.py saved to ' + dir.name, 'sys');
+      logOutput('✓ code.py saved to ' + cachedDirHandle.name, 'sys');
       logOutput('Board is restarting — output will appear below.', 'sys');
     } catch(e) {
-      if (e.name !== 'AbortError') logOutput('Could not save: ' + e.message, 'err');
-      else logOutput('Cancelled.', 'sys');
+      if (e.name === 'AbortError') {
+        logOutput('Cancelled.', 'sys');
+      } else {
+        // If anything goes wrong with the cached handle, clear it so next run re-picks
+        cachedDirHandle = null;
+        logOutput('Could not save: ' + e.message, 'err');
+        logOutput('Try running again — you may need to re-select the drive.', 'sys');
+      }
     }
   } else {
     clearOutput();
@@ -2281,41 +2307,43 @@ while True:
     name: 'Touch pads — custom interface',
     desc: '8 capacitive touch pads as a custom control surface',
     code: `# CircuitPython — Touch Pads
-# 8 capacitive touch inputs — build any control surface
-# Useful for: accessible buttons, custom keyboards, interactive surfaces
+# Up to 8 capacitive touch inputs — build any control surface
+# Pads that fail to initialise are skipped rather than crashing
 import board
 import time
 import touchio
 import neopixel
 
-# Touch pad pins (base board)
 touch_pins = [
     board.GP2, board.GP3, board.GP4,  board.GP5,
     board.GP18, board.GP19, board.GP20, board.GP21
 ]
 
-pads = [touchio.TouchIn(pin) for pin in touch_pins]
+# Initialise each pad individually — skip any that fail
+pads = []
+for i, pin in enumerate(touch_pins):
+    try:
+        pads.append((i, touchio.TouchIn(pin)))
+        print("Pad", i + 1, "ready")
+    except Exception as e:
+        print("Pad", i + 1, "skipped:", e)
+
 pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
 
-# Assign a colour and action to each pad
 pad_colours = [
-    (255, 0, 0),    # Pad 1 — Red
-    (255, 80, 0),   # Pad 2 — Orange
-    (200, 200, 0),  # Pad 3 — Yellow
-    (0, 200, 0),    # Pad 4 — Green
-    (0, 180, 180),  # Pad 5 — Cyan
-    (0, 0, 255),    # Pad 6 — Blue
-    (100, 0, 200),  # Pad 7 — Purple
-    (200, 0, 200),  # Pad 8 — Pink
+    (255, 0, 0), (255, 80, 0), (200, 200, 0), (0, 200, 0),
+    (0, 180, 180), (0, 0, 255), (100, 0, 200), (200, 0, 200),
 ]
+
+print("Ready —", len(pads), "pads active")
 
 while True:
     touched = False
-    for i, pad in enumerate(pads):
+    for idx, pad in pads:
         if pad.value:
-            pixels.fill(pad_colours[i])
+            pixels.fill(pad_colours[idx])
             pixels.show()
-            print("Pad", i + 1, "touched")
+            print("Pad", idx + 1, "touched")
             touched = True
             time.sleep(0.2)
 
@@ -2329,8 +2357,8 @@ while True:
     name: 'Touch pads → NeoPixels',
     desc: 'Each touch pad lights a different colour — combine input and output',
     code: `# CircuitPython — Touch Pads controlling NeoPixels
-# Each of the 8 touch pads triggers a different colour on the LEDs
-# Great starting point for any touch-activated visual response
+# Each working touch pad triggers a different colour on the LEDs
+# Pads with hardware issues (e.g. missing resistor) are skipped safely
 import board
 import time
 import touchio
@@ -2343,9 +2371,18 @@ touch_pins = [
     board.GP2, board.GP3, board.GP4,  board.GP5,
     board.GP18, board.GP19, board.GP20, board.GP21
 ]
-pads = [touchio.TouchIn(pin) for pin in touch_pins]
 
-# --- Assign a colour to each pad ---
+# Initialise each pad individually — skip any that fail
+# (a missing resistor or hardware fault on one pin won't break the others)
+pads = []
+for i, pin in enumerate(touch_pins):
+    try:
+        pads.append((i, touchio.TouchIn(pin)))
+        print("Pad", i + 1, "ready")
+    except Exception as e:
+        print("Pad", i + 1, "skipped:", e)
+
+# --- Assign a colour to each pad position ---
 # Modify these to suit your design — (Red, Green, Blue) 0-255
 pad_colours = [
     (255, 0,   0  ),   # Pad 1 — Red
@@ -2358,21 +2395,21 @@ pad_colours = [
     (200, 0,   120),   # Pad 8 — Pink
 ]
 
-print("Touch any pad to change the lights")
+print("Ready —", len(pads), "pads active. Touch any to change the lights.")
 
 while True:
     any_touched = False
 
-    for i, pad in enumerate(pads):
+    for idx, pad in pads:
         if pad.value:
-            pixels.fill(pad_colours[i])
+            pixels.fill(pad_colours[idx])
             pixels.show()
-            print("Pad", i + 1, "—", pad_colours[i])
+            print("Pad", idx + 1, "touched")
             any_touched = True
-            time.sleep(0.05)   # Small debounce
+            time.sleep(0.05)
 
     if not any_touched:
-        pixels.fill((0, 0, 0))  # All off when nothing touched
+        pixels.fill((0, 0, 0))
         pixels.show()
 
     time.sleep(0.01)`
@@ -2432,8 +2469,8 @@ while True:
     name: 'Touch pads → Servo positions',
     desc: 'Touch a pad to move a servo to a set angle — physical response to touch',
     code: `# CircuitPython — Touch Pads controlling a Servo
-# Touch pad 1-4 each move the servo to a different position
-# Use case: accessible physical indicator, pointer, valve, latch
+# Touch pads 1-4 each move the servo to a different position
+# Pads that fail to initialise (e.g. hardware fault) are skipped safely
 import board
 import time
 import touchio
@@ -2444,27 +2481,33 @@ from adafruit_motor import servo
 pwm = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
 my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
 
-# Using pads 1-4 (GP2-GP5) for simplicity — add more as needed
+# Pads 1-4 (GP2-GP5) — each maps to a servo angle
 touch_pins = [board.GP2, board.GP3, board.GP4, board.GP5]
-pads = [touchio.TouchIn(pin) for pin in touch_pins]
-
-# --- Assign an angle to each pad (0–180 degrees) ---
 pad_angles = [0, 60, 120, 180]
 pad_labels = ["Closed", "Quarter", "Three-quarter", "Open"]
 
+# Initialise each pad individually — skip any that fail
+pads = []
+for i, pin in enumerate(touch_pins):
+    try:
+        pads.append((i, touchio.TouchIn(pin)))
+        print("Pad", i + 1, "→", pad_labels[i], "ready")
+    except Exception as e:
+        print("Pad", i + 1, "skipped:", e)
+
 current_angle = 90
 my_servo.angle = current_angle
-print("Ready — touch a pad to move the servo")
+print("Servo ready —", len(pads), "pads active")
 
 while True:
-    for i, pad in enumerate(pads):
+    for idx, pad in pads:
         if pad.value:
-            target = pad_angles[i]
+            target = pad_angles[idx]
             if target != current_angle:
-                print("Pad", i + 1, "→", pad_labels[i], "(", target, "°)")
+                print("Pad", idx + 1, "→", pad_labels[idx], "(", target, "degrees)")
                 my_servo.angle = target
                 current_angle = target
-            time.sleep(0.2)  # Debounce
+            time.sleep(0.2)
 
     time.sleep(0.01)`
   },
