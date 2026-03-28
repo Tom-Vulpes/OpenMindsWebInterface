@@ -887,6 +887,8 @@ label {
 .editor-btn-send:hover { background: #2563eb; }
 .editor-btn-send:disabled { opacity: 0.35; cursor: not-allowed; }
 .editor-btn-send:disabled:hover { background: #3b82f6; }
+.editor-btn-save      { background: #7c3aed; color: white; }
+.editor-btn-save:hover { background: #6d28d9; }
 
 .board-indicator {
   display: flex;
@@ -1584,7 +1586,8 @@ label {
           <button class="editor-btn editor-btn-template" onclick="showTemplates()">Templates</button>
           <button class="editor-btn editor-btn-run" id="runBtn" onclick="runCode()">▶ Run</button>
           <button class="editor-btn editor-btn-stop" id="stopBtn" onclick="stopCode()">■ Stop</button>
-          <button class="editor-btn editor-btn-send" id="sendBtn" onclick="sendToBoard()" disabled>↑ Send to board</button>
+          <button class="editor-btn editor-btn-save" id="saveTodriveBtn" onclick="saveToDrive()" title="Save code.py directly to the CIRCUITPY drive">💾 Save to CIRCUITPY</button>
+          <button class="editor-btn editor-btn-send" id="sendBtn" onclick="sendToBoard()" disabled title="Send via serial — stops running code first">↑ Send via serial</button>
         </div>
         <textarea class="code-editor" id="codeEditor" spellcheck="false" oninput="saveState()"># Open Minds Board — CircuitPython
 # Your hypothesis: see the sidebar →
@@ -1850,7 +1853,7 @@ async function connectBoard() {
     setBoardConnected(true);
 
     logOutput('Board connected successfully', 'sys');
-    logOutput('Use "Send to board" to upload your code', 'sys');
+    logOutput('Use "Save to CIRCUITPY" (recommended) or "Send via serial" to upload code.', 'sys');
     readSerial(port);
   } catch(e) {
     if (e.name !== 'NotFoundError') logOutput('Connection failed: ' + e.message, 'err');
@@ -1892,21 +1895,95 @@ async function readSerial(port) {
   }
 }
 
-async function sendToBoard() {
-  if (!state.serialPort) { logOutput('No board connected — click "Connect board" first', 'err'); return; }
+// ─── Save to CIRCUITPY drive ───
+// Uses File System Access API — user picks the CIRCUITPY drive,
+// we write code.py directly. No serial needed, no pin conflicts.
+async function saveToDrive() {
+  if (!('showDirectoryPicker' in window)) {
+    logOutput('File System Access API not supported in this browser.', 'err');
+    logOutput('Use Chrome or Edge, or use "Send via serial" instead.', 'sys');
+    return;
+  }
   const code = document.getElementById('codeEditor').value;
   try {
+    logOutput('Select the CIRCUITPY drive when the folder picker opens...', 'sys');
+    const dirHandle = await window.showDirectoryPicker({
+      startIn: 'desktop',
+      mode: 'readwrite',
+      id: 'circuitpy'
+    });
+    // Verify it looks like a CIRCUITPY drive
+    const dirName = dirHandle.name.toUpperCase();
+    if (!dirName.includes('CIRCUIT')) {
+      const proceed = confirm(
+        'This folder is named "' + dirHandle.name + '" — it doesn\'t look like a CIRCUITPY drive.\n\n' +
+        'Make sure you select the CIRCUITPY removable drive.\n\nContinue anyway?'
+      );
+      if (!proceed) { logOutput('Cancelled.', 'sys'); return; }
+    }
+    // Write code.py
+    const fileHandle = await dirHandle.getFileHandle('code.py', { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(code);
+    await writable.close();
+    logOutput('✓ code.py saved to ' + dirHandle.name, 'sys');
+    logOutput('The board will restart and run your code automatically.', 'sys');
+    setRunning(true);
+  } catch(e) {
+    if (e.name === 'AbortError') {
+      logOutput('Cancelled — no file saved.', 'sys');
+    } else {
+      logOutput('Save failed: ' + e.message, 'err');
+    }
+  }
+}
+
+// ─── Send via serial (with proper interrupt) ───
+// Stops running code first, waits for REPL prompt, then pastes.
+async function sendToBoard() {
+  if (!state.serialPort) {
+    logOutput('No board connected — click "Connect board" first.', 'err');
+    return;
+  }
+  const code = document.getElementById('codeEditor').value;
+  const btn = document.getElementById('sendBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+
+  try {
     const writer = state.serialPort.writable.getWriter();
-    await writer.write(new TextEncoder().encode('\x03\r\n')); // Ctrl+C stop
-    await new Promise(r => setTimeout(r, 400));
-    await writer.write(new TextEncoder().encode('\x05'));     // raw paste mode
-    await writer.write(new TextEncoder().encode(code));
-    await writer.write(new TextEncoder().encode('\x04'));     // execute
+
+    // Step 1 — interrupt any running program (Ctrl+C twice to be safe)
+    logOutput('Interrupting running code...', 'sys');
+    await writer.write(new TextEncoder().encode('\x03'));
+    await new Promise(r => setTimeout(r, 200));
+    await writer.write(new TextEncoder().encode('\x03'));
+    await new Promise(r => setTimeout(r, 500));  // Wait for REPL prompt
+
+    // Step 2 — enter raw REPL mode (Ctrl+A)
+    logOutput('Entering raw REPL...', 'sys');
+    await writer.write(new TextEncoder().encode('\x01'));
+    await new Promise(r => setTimeout(r, 200));
+
+    // Step 3 — send code in chunks (large files need chunking)
+    logOutput('Sending code...', 'sys');
+    const encoded = new TextEncoder().encode(code);
+    const CHUNK = 256;
+    for (let i = 0; i < encoded.length; i += CHUNK) {
+      await writer.write(encoded.slice(i, i + CHUNK));
+      await new Promise(r => setTimeout(r, 10));
+    }
+
+    // Step 4 — execute (Ctrl+D)
+    await writer.write(new TextEncoder().encode('\x04'));
     writer.releaseLock();
-    logOutput('Code sent to board — running...', 'sys');
+
+    logOutput('✓ Code sent — board restarting...', 'sys');
     setRunning(true);
   } catch(e) {
     logOutput('Send failed: ' + e.message, 'err');
+    logOutput('Try "Save to CIRCUITPY" instead — it avoids this issue entirely.', 'sys');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '↑ Send via serial'; }
   }
 }
 
