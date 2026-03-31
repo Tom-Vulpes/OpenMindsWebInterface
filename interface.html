@@ -2711,27 +2711,42 @@ while True:
     insight: 'Affordance: custom interfaces on any surface, accessible buttons, no screen required.',
     boardCode: `# Affordance Explorer — Touch Pads
 # Sends TOUCH_ON when pad pressed, TOUCH_OFF when released
-# Page highlights the pad and stays highlighted while held
+# Faulty pads (bad resistor, hardware issue) are caught and skipped safely
 import board, time, touchio, neopixel
 
 pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 colours = [(255,0,0),(255,80,0),(200,200,0),(0,200,0),(0,180,180),(0,0,255),(120,0,200),(200,0,120)]
 
+# Initialise each pad individually — skip any that fail
 pads = []
 for pin in [board.GP2,board.GP3,board.GP4,board.GP5,board.GP18,board.GP19,board.GP20,board.GP21]:
-    try: pads.append(touchio.TouchIn(pin))
-    except: pads.append(None)
+    try:
+        pads.append(touchio.TouchIn(pin))
+        print("Pad", len(pads), "ready")
+    except Exception as e:
+        pads.append(None)
+        print("Pad", len(pads), "skipped:", e)
 
 # Track which pads were touched last loop to detect press and release
 was_touched = [False] * len(pads)
 
-print("Ready — touch any pad")
+print("Ready —", sum(1 for p in pads if p), "pads active")
 pixels.fill((0, 0, 0))
 pixels.show()
 
 while True:
     for i, pad in enumerate(pads):
-        touched = pad and pad.value
+        if pad is None:
+            continue
+        try:
+            touched = pad.value
+        except Exception:
+            # Reading this pad caused an error — disable it for the rest of the session
+            pads[i] = None
+            was_touched[i] = False
+            print("Pad", i + 1, "disabled (hardware error)")
+            continue
+
         if touched and not was_touched[i]:
             # Pad just pressed
             r, g, b = colours[i % len(colours)]
@@ -2745,6 +2760,7 @@ while True:
             pixels.show()
             print("AFFORD:TOUCH_OFF:" + str(i))
         was_touched[i] = touched
+
     time.sleep(0.02)`
   },
   {
@@ -2834,7 +2850,12 @@ print("Touch pads to play notes")
 while True:
     playing = False
     for i, pad in enumerate(pads):
-        if pad and pad.value:
+        try:
+            touched = pad and pad.value
+        except Exception:
+            pads[pads.index(pad)] = None
+            continue
+        if touched:
             speaker.frequency = notes[i]
             speaker.duty_cycle = 32768
             print("AFFORD:TOUCH:" + str(i))
@@ -2936,7 +2957,12 @@ print("Touch pad 1=closed, 2=middle, 3=open")
 
 while True:
     for i, pad in enumerate(pads):
-        if pad and pad.value:
+        try:
+            touched = pad and pad.value
+        except Exception:
+            pads[pads.index(pad)] = None
+            continue
+        if touched:
             my_servo.angle = angles[i]
             print("AFFORD:SERVO:" + str(angles[i]))
             print("Position:", labels[i])
