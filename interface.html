@@ -1169,6 +1169,79 @@ label {
 
 #loadFileInput { display: none; }
 
+/* ─── GETTING STARTED GUIDE ─── */
+.gs-step {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.gs-step:last-of-type { border-bottom: none; margin-bottom: 0; }
+
+.gs-step-num {
+  width: 36px; height: 36px;
+  background: var(--ink);
+  color: var(--paper);
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.82rem;
+  flex-shrink: 0; margin-top: 2px;
+}
+
+.gs-step-body h3 { font-family:var(--font); font-weight:700; font-size:0.95rem; color:var(--ink); margin-bottom:8px; }
+.gs-step-body p  { font-size:0.85rem; font-weight:300; color:var(--ink); line-height:1.7; margin-bottom:12px; }
+.gs-step-body p:last-child { margin-bottom:0; }
+
+.gs-tip {
+  background: #fef3c7;
+  border-left: 3px solid var(--accent-warm);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  font-size: 0.8rem; font-weight:300; color:#78350f; line-height:1.6; margin:12px 0;
+}
+.gs-tip strong { font-weight:700; }
+
+.gs-code-block {
+  background: #1e1e2e;
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem; line-height: 1.75; overflow-x: auto;
+}
+.gs-code-line { white-space: pre; }
+.gs-hash    { color: #6c7086; }
+.gs-keyword { color: #cba6f7; font-weight:700; }
+.gs-fn      { color: #89b4fa; }
+.gs-string  { color: #a6e3a1; }
+.gs-literal { color: #fab387; }
+.gs-name    { color: #89dceb; }
+.gs-code-comment { color: #cdd6f4; }
+.gs-step-body code { font-family:'Courier New',monospace; background:var(--cream); padding:1px 5px; border-radius:3px; font-size:0.82rem; color:var(--ink); }
+
+.gs-try-block { background:var(--cream); border-radius:10px; padding:16px 18px; margin-top:14px; }
+.gs-try-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin-bottom:4px; }
+.gs-try-hint  { font-size:0.78rem; font-weight:300; color:var(--muted); line-height:1.55; margin-top:8px; font-style:italic; }
+
+.gs-load-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 16px; background:var(--ink); color:var(--paper);
+  border:none; border-radius:6px; font-family:var(--font); font-size:0.78rem; font-weight:600;
+  cursor:pointer; transition:background 0.15s; margin-top:4px;
+}
+.gs-load-btn:hover { background:#333; }
+
+.gs-sound-grid { display:flex; gap:8px; flex-wrap:wrap; }
+.gs-sound-pad {
+  width:64px; height:64px;
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all 0.1s; font-weight:700; font-size:0.7rem;
+  color:white; user-select:none; border:none; outline:none; font-family:var(--font);
+}
+.gs-sound-pad:active, .gs-sound-pad.active { transform:scale(0.92); filter:brightness(1.3); }
+
 </style>
 </head>
 <body>
@@ -1573,6 +1646,155 @@ label {
   </div>
 
   <div class="phase-body" style="padding:0; background:var(--ink);">
+
+    <!-- ─ Getting started guide ─ -->
+    <div id="gettingStarted" style="background:var(--paper); border-bottom:2px solid var(--border);">
+
+      <button onclick="toggleGettingStarted()" style="width:100%; display:flex; align-items:center; justify-content:space-between; padding:18px 28px; background:none; border:none; cursor:pointer; font-family:var(--font); text-align:left;">
+        <span style="display:flex; align-items:center; gap:12px;">
+          <span style="width:22px;height:22px;background:var(--accent-teal);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);flex-shrink:0;display:inline-block;"></span>
+          <span style="font-size:0.92rem; font-weight:700; color:var(--ink);">Getting started — never coded before? Start here</span>
+        </span>
+        <span id="gsChevron" style="font-size:0.9rem; color:var(--muted); transition:transform 0.2s;">▲</span>
+      </button>
+
+      <div id="gsContent" style="padding:0 28px 28px;">
+
+        <!-- Step 1: Connect -->
+        <div class="gs-step">
+          <div class="gs-step-num">1</div>
+          <div class="gs-step-body">
+            <h3>Connect your board</h3>
+            <p>Plug your Open Minds board into your computer with a USB cable. It should appear as a removable drive called <strong>CIRCUITPY</strong> — like a USB memory stick.</p>
+            <div class="gs-tip">
+              <strong>Not seeing CIRCUITPY?</strong> Try a different USB cable — some cables are charge-only and don't carry data. If the board shows up as a different drive name, that's fine too.
+            </div>
+            <p>Then click <strong>⬡ Connect board</strong> in the editor above. A browser pop-up will ask you to select a serial port — choose the one that appears (usually named something like "USB Serial" or "Pico").</p>
+          </div>
+        </div>
+
+        <!-- Step 2: What is code.py -->
+        <div class="gs-step">
+          <div class="gs-step-num">2</div>
+          <div class="gs-step-body">
+            <h3>How the board runs your code</h3>
+            <p>The board looks for a file called <strong>code.py</strong> on the CIRCUITPY drive and runs it automatically every time it starts up. When you click <strong>▶ Run code</strong>, your code is saved to that file and the board restarts with your new program.</p>
+            <div class="gs-tip">
+              You don't need to understand everything — just know that what you write in the editor is exactly what the board will run.
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Reading code -->
+        <div class="gs-step">
+          <div class="gs-step-num">3</div>
+          <div class="gs-step-body">
+            <h3>Reading CircuitPython code</h3>
+            <p>CircuitPython is designed to be readable. Here are the things you'll see most often:</p>
+
+            <div class="gs-code-block">
+              <div class="gs-code-line"><span class="gs-hash"># Lines starting with # are comments</span></div>
+              <div class="gs-code-line"><span class="gs-hash"># The board ignores them — they're notes for you</span></div>
+              <div class="gs-code-line">&nbsp;</div>
+              <div class="gs-code-line"><span class="gs-keyword">import</span> <span class="gs-name">time</span>  <span class="gs-hash"># Load a library (like an add-on)</span></div>
+              <div class="gs-code-line">&nbsp;</div>
+              <div class="gs-code-line"><span class="gs-keyword">while</span> <span class="gs-literal">True</span>:  <span class="gs-hash"># Do this forever</span></div>
+              <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-fn">print</span>(<span class="gs-string">"Hello!"</span>)  <span class="gs-hash"># Show a message in the output</span></div>
+              <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-name">time</span>.<span class="gs-fn">sleep</span>(<span class="gs-literal">1</span>)  <span class="gs-hash"># Wait 1 second</span></div>
+            </div>
+
+            <p style="margin-top:12px;"><strong>Indentation matters.</strong> The four spaces before <code>print</code> and <code>time.sleep</code> tell CircuitPython those lines are <em>inside</em> the while loop. If the spacing is wrong, the code won't work.</p>
+          </div>
+        </div>
+
+        <!-- Step 4: Try it now -->
+        <div class="gs-step">
+          <div class="gs-step-num">4</div>
+          <div class="gs-step-body">
+            <h3>Try changing something — right now</h3>
+            <p>Click <strong>Load this code</strong> below, then press <strong>▶ Run code</strong> to see what happens in the output panel. The board isn't needed — this runs in your browser.</p>
+
+            <div class="gs-try-block">
+              <div class="gs-try-label">Example 1 — Change the message</div>
+              <div class="gs-code-block" style="margin:10px 0;">
+                <div class="gs-code-line"><span class="gs-keyword">import</span> <span class="gs-name">time</span></div>
+                <div class="gs-code-line">&nbsp;</div>
+                <div class="gs-code-line"><span class="gs-keyword">while</span> <span class="gs-literal">True</span>:</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-fn">print</span>(<span class="gs-string">"Hello from my board!"</span>)</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-name">time</span>.<span class="gs-fn">sleep</span>(<span class="gs-literal">1</span>)</div>
+              </div>
+              <button class="gs-load-btn" onclick="loadGSCode(0)">Load this code →</button>
+              <p class="gs-try-hint">Now try changing "Hello from my board!" to your own message and run it again.</p>
+            </div>
+
+            <div class="gs-try-block">
+              <div class="gs-try-label">Example 2 — Change how fast it runs</div>
+              <div class="gs-code-block" style="margin:10px 0;">
+                <div class="gs-code-line"><span class="gs-keyword">import</span> <span class="gs-name">time</span></div>
+                <div class="gs-code-line">&nbsp;</div>
+                <div class="gs-code-line"><span class="gs-code-comment">count</span> = <span class="gs-literal">0</span></div>
+                <div class="gs-code-line">&nbsp;</div>
+                <div class="gs-code-line"><span class="gs-keyword">while</span> <span class="gs-literal">True</span>:</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-code-comment">count</span> = <span class="gs-code-comment">count</span> + <span class="gs-literal">1</span></div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-fn">print</span>(<span class="gs-string">"Count:"</span>, <span class="gs-code-comment">count</span>)</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-name">time</span>.<span class="gs-fn">sleep</span>(<span class="gs-literal">0.5</span>)</div>
+              </div>
+              <button class="gs-load-btn" onclick="loadGSCode(1)">Load this code →</button>
+              <p class="gs-try-hint">Try changing 0.5 to 0.1 to make it count faster, or 2 to make it slower.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Touch to sound demo -->
+        <div class="gs-step">
+          <div class="gs-step-num">5</div>
+          <div class="gs-step-body">
+            <h3>Touch pads making sounds — try it in your browser</h3>
+            <p>Touch the pads below to hear different tones. This is what the touch pad code does on the board — except the board would produce a physical sound through the Audio Hat rather than through your computer speakers.</p>
+
+            <div class="gs-sound-demo">
+              <div class="gs-sound-grid" id="gsSoundPads"></div>
+              <p class="gs-try-hint" style="margin-top:12px;">Each pad plays a different note. On the board, you'd use the Audio Hat to play tones through a speaker — the logic is the same.</p>
+            </div>
+
+            <div class="gs-try-block" style="margin-top:16px;">
+              <div class="gs-try-label">The code that makes this work on the board</div>
+              <div class="gs-code-block" style="margin:10px 0; font-size:0.78rem;">
+                <div class="gs-code-line"><span class="gs-keyword">import</span> <span class="gs-name">board</span>, <span class="gs-name">time</span>, <span class="gs-name">touchio</span>, <span class="gs-name">pwmio</span></div>
+                <div class="gs-code-line">&nbsp;</div>
+                <div class="gs-code-line"><span class="gs-hash"># Set up the speaker on GP16</span></div>
+                <div class="gs-code-line"><span class="gs-code-comment">speaker</span> = <span class="gs-name">pwmio</span>.<span class="gs-fn">PWMOut</span>(<span class="gs-name">board</span>.<span class="gs-name">GP16</span>, <span class="gs-code-comment">frequency</span>=<span class="gs-literal">440</span>)</div>
+                <div class="gs-code-line">&nbsp;</div>
+                <div class="gs-code-line"><span class="gs-hash"># Each pad plays a different note frequency</span></div>
+                <div class="gs-code-line"><span class="gs-code-comment">notes</span> = [<span class="gs-literal">262</span>, <span class="gs-literal">294</span>, <span class="gs-literal">330</span>, <span class="gs-literal">349</span>, <span class="gs-literal">392</span>, <span class="gs-literal">440</span>, <span class="gs-literal">494</span>, <span class="gs-literal">523</span>]</div>
+                <div class="gs-code-line"><span class="gs-code-comment">pads</span> = []</div>
+                <div class="gs-code-line"><span class="gs-keyword">for</span> <span class="gs-code-comment">pin</span> <span class="gs-keyword">in</span> [<span class="gs-name">board</span>.<span class="gs-name">GP2</span>, <span class="gs-name">board</span>.<span class="gs-name">GP3</span>, <span class="gs-name">board</span>.<span class="gs-name">GP4</span>, <span class="gs-name">board</span>.<span class="gs-name">GP5</span>,</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-name">board</span>.<span class="gs-name">GP18</span>, <span class="gs-name">board</span>.<span class="gs-name">GP19</span>, <span class="gs-name">board</span>.<span class="gs-name">GP20</span>, <span class="gs-name">board</span>.<span class="gs-name">GP21</span>]:</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-keyword">try</span>:</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-code-comment">pads</span>.<span class="gs-fn">append</span>(<span class="gs-name">touchio</span>.<span class="gs-fn">TouchIn</span>(<span class="gs-code-comment">pin</span>))</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-keyword">except</span>:</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-code-comment">pads</span>.<span class="gs-fn">append</span>(<span class="gs-literal">None</span>)</div>
+                <div class="gs-code-line">&nbsp;</div>
+                <div class="gs-code-line"><span class="gs-keyword">while</span> <span class="gs-literal">True</span>:</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-keyword">for</span> <span class="gs-code-comment">i</span>, <span class="gs-code-comment">pad</span> <span class="gs-keyword">in</span> <span class="gs-fn">enumerate</span>(<span class="gs-code-comment">pads</span>):</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-keyword">if</span> <span class="gs-code-comment">pad</span> <span class="gs-keyword">and</span> <span class="gs-code-comment">pad</span>.<span class="gs-code-comment">value</span>:</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-code-comment">speaker</span>.<span class="gs-code-comment">frequency</span> = <span class="gs-code-comment">notes</span>[<span class="gs-code-comment">i</span>]</div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-code-comment">speaker</span>.<span class="gs-code-comment">duty_cycle</span> = <span class="gs-literal">32768</span>  <span class="gs-hash"># 50% — makes sound</span></div>
+                <div class="gs-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="gs-name">time</span>.<span class="gs-fn">sleep</span>(<span class="gs-literal">0.01</span>)</div>
+              </div>
+              <button class="gs-load-btn" onclick="loadGSCode(2)">Load this code →</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center; padding-top:8px;">
+          <button onclick="toggleGettingStarted()" style="background:none; border:none; font-family:var(--font); font-size:0.8rem; color:var(--muted); cursor:pointer; text-decoration:underline;">Hide this guide</button>
+        </div>
+
+      </div>
+    </div>
+    <!-- end getting started -->
+
     <div class="proto-layout">
 
       <div class="code-editor-area">
@@ -2976,6 +3198,67 @@ function loadFromFile(event) {
   event.target.value = ''; // Reset so same file can be reloaded
 }
 
+// ═══ GETTING STARTED ═══
+const gsCodes = [
+  `import time\n\nwhile True:\n    print("Hello from my board!")\n    time.sleep(1)`,
+  `import time\n\ncount = 0\n\nwhile True:\n    count = count + 1\n    print("Count:", count)\n    time.sleep(0.5)`,
+  `import board\nimport time\nimport touchio\nimport pwmio\n\n# Set up speaker on GP16 (Audio Hat)\nspeaker = pwmio.PWMOut(board.GP16, frequency=440)\n\n# Notes: C4 D4 E4 F4 G4 A4 B4 C5\nnotes = [262, 294, 330, 349, 392, 440, 494, 523]\n\n# Set up touch pads safely\npads = []\nfor pin in [board.GP2, board.GP3, board.GP4, board.GP5,\n            board.GP18, board.GP19, board.GP20, board.GP21]:\n    try:\n        pads.append(touchio.TouchIn(pin))\n    except:\n        pads.append(None)\n\nprint("Ready — touch a pad to play a note")\n\nwhile True:\n    any_touched = False\n    for i, pad in enumerate(pads):\n        if pad and pad.value:\n            speaker.frequency = notes[i]\n            speaker.duty_cycle = 32768\n            any_touched = True\n    if not any_touched:\n        speaker.duty_cycle = 0\n    time.sleep(0.01)`
+];
+
+function loadGSCode(idx) {
+  const ed = document.getElementById('codeEditor');
+  if (!ed) return;
+  ed.value = gsCodes[idx];
+  state.code = gsCodes[idx];
+  saveState();
+  ed.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  clearOutput();
+  logOutput('Code loaded — press ▶ Run code to try it.', 'sys');
+}
+
+function toggleGettingStarted() {
+  const content = document.getElementById('gsContent');
+  const chevron = document.getElementById('gsChevron');
+  if (!content) return;
+  const isOpen = content.style.display !== 'none';
+  content.style.display = isOpen ? 'none' : 'block';
+  chevron.textContent   = isOpen ? '▼' : '▲';
+}
+
+function initSoundPads() {
+  const grid = document.getElementById('gsSoundPads');
+  if (!grid) return;
+  const notes   = [262, 294, 330, 349, 392, 440, 494, 523];
+  const labels  = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'];
+  const colours = ['#e85d26','#f0a500','#1a7a6e','#5c3d8f','#c44d6e','#2b6cb0','#0e7490','#059669'];
+  grid.innerHTML = notes.map((freq, i) => `<button class="gs-sound-pad" style="background:${colours[i]}" onmousedown="playGSNote(${freq},this)" onmouseup="stopGSNote()" onmouseleave="stopGSNote()" ontouchstart="playGSNote(${freq},this);event.preventDefault();" ontouchend="stopGSNote()">${labels[i]}</button>`).join('');
+}
+
+let gsAudioCtx = null, gsOsc = null, gsGain = null;
+
+function playGSNote(freq, el) {
+  if (!gsAudioCtx) gsAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (gsOsc) { try { gsOsc.stop(); } catch(e){} }
+  gsOsc = gsAudioCtx.createOscillator();
+  gsGain = gsAudioCtx.createGain();
+  gsOsc.connect(gsGain); gsGain.connect(gsAudioCtx.destination);
+  gsOsc.type = 'sine';
+  gsOsc.frequency.value = freq;
+  gsGain.gain.setValueAtTime(0.22, gsAudioCtx.currentTime);
+  gsOsc.start();
+  document.querySelectorAll('.gs-sound-pad').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function stopGSNote() {
+  if (gsGain && gsAudioCtx) {
+    gsGain.gain.exponentialRampToValueAtTime(0.001, gsAudioCtx.currentTime + 0.25);
+    const o = gsOsc;
+    setTimeout(() => { try { o.stop(); } catch(e){} }, 280);
+  }
+  document.querySelectorAll('.gs-sound-pad').forEach(p => p.classList.remove('active'));
+}
+
 // ═══ INIT ═══
 document.addEventListener('DOMContentLoaded', () => {
   const hasSavedSession = !!localStorage.getItem(STATE_KEY);
@@ -2983,7 +3266,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAffordances();
   renderHatChips();
   renderTemplates();
-  // Only skip splash if there is genuine saved progress
+  initSoundPads();
   if (hasSavedSession && (state.completedPhases.length > 0 || state.hypothesis || state.drawnCards?.person)) {
     startJourney();
   }
