@@ -2412,6 +2412,7 @@ async function connectBoard() {
     state.serialPort = port;
     state.boardConnected = true;
     setBoardConnected(true);
+    resetServoRepl();
     logOutput('Board connected. Press "Run code" to save and run your program.', 'sys');
     readSerial(port);
   } catch(e) {
@@ -2463,6 +2464,7 @@ async function readSerial(port) {
     logOutput('Board disconnected.', 'sys');
     state.boardConnected = false;
     setBoardConnected(false);
+    resetServoRepl();
   } finally {
     reader.releaseLock();
   }
@@ -2942,7 +2944,7 @@ while True:
     desc: 'Drive motors, control servos — make things move in the world.',
     question: 'What physical change in an environment would make a real difference for your person in your scenario?',
     needs: 'Servo (GP22)',
-    sim: `<div class="sim-label">Servo Angle</div><div class="sim-reading" id="servoReading">90°</div><input type="range" class="sim-slider" min="0" max="180" value="90" oninput="document.getElementById('servoReading').textContent=this.value+'°'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Think: latch, gate, valve, indicator arm, flag</div>`,
+    sim: `<div class="sim-label">Servo Angle</div><div class="sim-reading" id="servoReading">90°</div><input type="range" class="sim-slider" min="0" max="180" value="90" oninput="setServoAngle(this.value)"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Think: latch, gate, valve, indicator arm, flag</div>`,
     insight: 'Affordance: physical actuation — open doors, move objects, control mechanisms in direct response to sensing.',
     boardCode: `# Affordance Explorer — Servo Motor (GP22)
 # Touch pads 1-3 move servo to different positions
@@ -3149,6 +3151,68 @@ function simulateShake() {
     document.getElementById('accZ').textContent=z.toFixed(2);
   },150);
 }
+// ─── Live REPL control ───
+// Send a short command to CircuitPython's raw REPL without rebooting.
+// Ctrl+A enters raw REPL, then we send the code + Ctrl+D to execute,
+// then Ctrl+B to return to normal REPL so serial output still works.
+let servoReplReady = false;
+
+async function sendRepl(code) {
+  if (!state.serialPort || !state.serialPort.writable) return;
+  try {
+    const writer = state.serialPort.writable.getWriter();
+    const enc = new TextEncoder();
+    // Ctrl+A = raw REPL mode
+    await writer.write(enc.encode('\x01'));
+    await new Promise(r => setTimeout(r, 50));
+    // Send code + Ctrl+D to execute
+    await writer.write(enc.encode(code + '\x04'));
+    await new Promise(r => setTimeout(r, 30));
+    // Ctrl+B = back to normal REPL (keeps serial output flowing)
+    await writer.write(enc.encode('\x02'));
+    writer.releaseLock();
+  } catch(e) { /* silent */ }
+}
+
+// Debounce handle for servo slider
+let servoDebounce = null;
+let servoInitSent = false;
+
+function setServoAngle(angle) {
+  angle = parseInt(angle);
+  const el = document.getElementById('servoReading');
+  if (el) el.textContent = angle + '°';
+
+  if (!state.boardConnected || !state.serialPort) return;
+
+  // If servo hasn't been set up in the REPL yet, send the initialisation first
+  if (!servoInitSent) {
+    servoInitSent = true;
+    const initCode = [
+      'import board, pwmio',
+      'from adafruit_motor import servo as _sv',
+      '_pwm = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)',
+      '_servo = _sv.Servo(_pwm, min_pulse=500, max_pulse=2500)',
+      '_servo.angle = ' + angle
+    ].join('; ');
+    sendRepl(initCode);
+    return;
+  }
+
+  // Already initialised — just update the angle, debounced to 30ms
+  // so rapid slider drags don't flood the serial port
+  clearTimeout(servoDebounce);
+  servoDebounce = setTimeout(() => {
+    sendRepl('_servo.angle = ' + angle);
+  }, 30);
+}
+
+// Reset servo REPL state when board reconnects or page changes
+function resetServoRepl() {
+  servoInitSent = false;
+  servoReplReady = false;
+}
+
 function touchPad(i) {
   const el = document.getElementById('tp' + i);
   if (!el) return;
