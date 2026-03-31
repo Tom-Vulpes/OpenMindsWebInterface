@@ -2446,12 +2446,12 @@ async function readSerial(port) {
       const { value, done } = await reader.read();
       if (done) break;
       buf += new TextDecoder().decode(value);
-      const lines = buf.split('\n');
-      buf = lines.pop();
+      // CircuitPython uses \r\n — normalise to \n before splitting
+      const lines = buf.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      buf = lines.pop(); // keep incomplete last line in buffer
       lines.forEach(l => {
         const line = l.trim();
         if (!line) return;
-        // Structured affordance data lines: "AFFORD:key:value"
         if (line.startsWith('AFFORD:')) {
           handleAffordanceData(line.slice(7));
         } else {
@@ -2496,6 +2496,11 @@ function handleAffordanceData(line) {
     case 'ACCX': { const e=document.getElementById('accX'); if(e) e.textContent=val; break; }
     case 'ACCY': { const e=document.getElementById('accY'); if(e) e.textContent=val; break; }
     case 'ACCZ': { const e=document.getElementById('accZ'); if(e) e.textContent=val; break; }
+    case 'READY': {
+      const status = document.getElementById('touchStatus');
+      if (status) status.textContent = val + ' pads initialised — touch any pad';
+      break;
+    }
     case 'TOUCH_ON': {
       const idx = parseInt(val);
       if (!isNaN(idx)) {
@@ -2720,22 +2725,19 @@ pads = []
 for i, pin in enumerate(pins):
     try:
         pads.append(touchio.TouchIn(pin))
-        print("Pad", i + 1, "ready")
     except Exception as e:
         pads.append(None)
-        print("Pad", i + 1, "skipped:", e)
 
 was_touched = [False] * 8
 disabled    = [False] * 8
 
-print("Ready —", sum(1 for p in pads if p), "pads active")
 pixels.fill((0, 0, 0))
 pixels.show()
+print("AFFORD:READY:8")
 
 while True:
     for i in range(8):
         if disabled[i] or pads[i] is None:
-            # If this pad was previously marked as touched, send a release
             if was_touched[i]:
                 pixels[i % 12] = (0, 0, 0)
                 pixels.show()
@@ -2746,10 +2748,8 @@ while True:
         touched = False
         try:
             touched = pads[i].value
-        except Exception as e:
-            print("Pad", i + 1, "error — disabling:", e)
+        except Exception:
             disabled[i] = True
-            # Send a release if it was stuck on
             if was_touched[i]:
                 pixels[i % 12] = (0, 0, 0)
                 pixels.show()
@@ -2762,7 +2762,6 @@ while True:
             pixels[i % 12] = (r, g, b)
             pixels.show()
             print("AFFORD:TOUCH_ON:" + str(i))
-            print("AFFORD:LED:" + str(r) + "," + str(g) + "," + str(b))
 
         elif not touched and was_touched[i]:
             pixels[i % 12] = (0, 0, 0)
