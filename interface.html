@@ -1170,12 +1170,24 @@ label {
 #loadFileInput { display: none; }
 
 /* ─── LOGO ─── */
+.sidebar-logo-link {
+  display: block;
+  text-decoration: none;
+}
+
 .sidebar-logo-img {
   display: block;
   width: 100%;
   max-width: 200px;
   height: auto;
-  margin-bottom: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.splash-logo-wrap {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
 }
 
 .splash-logo-img {
@@ -1183,7 +1195,8 @@ label {
   width: 100%;
   max-width: 420px;
   height: auto;
-  margin: 0 auto 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 /* ─── HIDE GUIDE BUTTON ─── */
@@ -1412,11 +1425,15 @@ label {
 <!-- ═══ SPLASH ═══ -->
 <div class="splash" id="splash">
 <div class="splash-inner">
-  <img src="logos/Open Minds Logo White.png"
-       alt="Open Minds"
-       class="splash-logo-img"
-       onerror="this.style.display='none'; document.getElementById('splash-logo-fallback').style.display='block'">
-  <div class="splash-logo" id="splash-logo-fallback" style="display:none;">Open <span>Minds</span></div>
+  <div class="splash-logo-wrap">
+    <img src="logos/Open Minds Logo White.png"
+         alt="Open Minds"
+         class="splash-logo-img"
+         id="splashLogoImg"
+         onload="this.style.opacity='1'; document.getElementById('splash-logo-fallback').style.display='none';"
+         onerror="this.style.display='none'; document.getElementById('splash-logo-fallback').style.display='block';">
+    <div class="splash-logo" id="splash-logo-fallback">Open <span>Minds</span></div>
+  </div>
   <div class="splash-tagline">Design for Radical Inclusion</div>
 
   <div class="splash-intro">
@@ -1465,15 +1482,17 @@ label {
 <!-- ═══ SIDEBAR ═══ -->
 <nav class="sidebar" aria-label="Journey phases">
   <div class="sidebar-logo">
-    <a href="#" onclick="showSplash(); return false;" aria-label="Open Minds — return to introduction">
+    <a href="#" onclick="showSplash(); return false;" aria-label="Open Minds — return to introduction" class="sidebar-logo-link">
       <img src="logos/Open Minds Logo White.png"
            alt="Open Minds"
            class="sidebar-logo-img"
-           onerror="this.style.display='none'; document.getElementById('sidebar-logo-fallback').style.display='flex'">
+           id="sidebarLogoImg"
+           onload="this.style.opacity='1'; document.getElementById('sidebar-logo-fallback').style.display='none';"
+           onerror="this.style.display='none'; document.getElementById('sidebar-logo-fallback').style.display='flex';">
+      <div class="logo-mark" id="sidebar-logo-fallback">
+        <span class="hex-mark" aria-hidden="true"></span> Open Minds
+      </div>
     </a>
-    <div class="logo-mark" id="sidebar-logo-fallback" style="display:none;">
-      <span class="hex-mark" aria-hidden="true"></span> Open Minds
-    </div>
     <div class="logo-sub">Design for Radical Inclusion</div>
   </div>
 
@@ -3854,11 +3873,54 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHatChips();
   renderTemplates();
   initSoundPads();
+  loadLogos();
   if (hasSavedSession && (state.completedPhases.length > 0 || state.hypothesis || state.drawnCards?.person)) {
     startJourney();
   }
   goToPhase(state.currentPhase || 1);
 });
+
+function loadLogos() {
+  // Try to load each logo image. If it loads, show it and hide the fallback text.
+  // If it fails, the fallback text stays visible.
+  const logoTargets = [
+    { imgId: 'sidebarLogoImg',  fallbackId: 'sidebar-logo-fallback', fallbackDisplay: 'flex' },
+    { imgId: 'splashLogoImg',   fallbackId: 'splash-logo-fallback',  fallbackDisplay: 'block' },
+  ];
+
+  logoTargets.forEach(({ imgId, fallbackId, fallbackDisplay }) => {
+    const img = document.getElementById(imgId);
+    const fallback = document.getElementById(fallbackId);
+    if (!img || !fallback) return;
+
+    // Test if image already loaded from cache (onload may have fired before this)
+    if (img.complete && img.naturalWidth > 0) {
+      img.style.opacity = '1';
+      fallback.style.display = 'none';
+      return;
+    }
+
+    // Not loaded yet — set up handlers
+    img.onload = () => {
+      img.style.opacity = '1';
+      fallback.style.display = 'none';
+    };
+    img.onerror = () => {
+      img.style.display = 'none';
+      fallback.style.display = fallbackDisplay;
+    };
+
+    // Force a reload attempt in case src was set before handlers attached
+    if (!img.src || img.src === window.location.href) {
+      img.src = 'logos/Open Minds Logo White.png';
+    } else {
+      // Re-trigger by appending a cache-busting param only if not already loaded
+      const currentSrc = img.src;
+      img.src = '';
+      img.src = currentSrc;
+    }
+  });
+}
 </script>
 </body>
 </html>
