@@ -469,7 +469,135 @@ label {
   gap: 28px;
 }
 
-.card-piles { display: flex; flex-direction: column; gap: 14px; }
+/* ─── IMAGE CARDS ─── */
+
+/* Redesigned card game layout for large image cards */
+.card-game-area {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Three draw piles across the top */
+.card-draw-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* Drawn card display area — large, centred */
+.card-drawn-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* Single drawn card display */
+.card-drawn-slot {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-height: 120px;
+  transition: border-color 0.2s;
+}
+
+.card-drawn-slot.has-card {
+  border-color: var(--border);
+}
+
+.card-drawn-slot-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Image display */
+.card-img-wrap {
+  position: relative;
+}
+
+.card-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.card-img.loaded {
+  opacity: 1;
+}
+
+.card-img-caption {
+  padding: 10px 14px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+
+.card-img-caption-body {
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: #5a5652;
+  line-height: 1.5;
+  margin-top: 3px;
+}
+
+/* Fallback text card */
+.card-img-fallback {
+  padding: 16px;
+}
+
+/* Empty slot */
+.card-slot-empty {
+  padding: 24px 16px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
+  font-weight: 300;
+  text-align: center;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card deck draw button — styled like a face-down deck */
+.card-pile {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Stack effect — shadow cards beneath */
+.card-pile::before,
+.card-pile::after {
+  content: '';
+  position: absolute;
+  top: -4px; left: 4px; right: -4px;
+  height: 100%;
+  border-radius: var(--radius);
+  z-index: -1;
+}
+.card-pile::before { background: var(--cream); border: 1.5px solid var(--border); top: -8px; left: 8px; right: -8px; z-index: -2; opacity: 0.6; }
+.card-pile::after  { background: var(--white); border: 1.5px solid var(--border); top: -4px; left: 4px; right: -4px; z-index: -1; }
+
+.card-piles {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+
 
 .card-pile {
   background: var(--white);
@@ -1566,54 +1694,88 @@ label {
 
     <div class="card-game-area">
 
-      <div class="card-piles">
-        <div class="card-pile">
+      <!-- Draw buttons — three piles across the top -->
+      <div class="card-draw-row">
+        <div class="card-pile" style="position:relative;">
           <div class="card-pile-header">
             <span class="card-pile-label pile-person">👤 Person</span>
-            <span class="pile-count">Draw one card</span>
-          </div>
-          <div class="drawn-card">
-            <div class="drawn-card-content" id="drawnPerson">
-              <div class="card-title" id="personTitle"></div>
-              <div class="card-body" id="personBody"></div>
-            </div>
-            <div class="card-empty" id="personEmpty">No card drawn yet</div>
+            <span class="pile-count" id="personCount">25 cards</span>
           </div>
           <button class="draw-btn" onclick="drawCard('person')" aria-label="Draw a new person card">Draw Person Card ↻</button>
         </div>
 
-        <div class="card-pile">
+        <div class="card-pile" style="position:relative;">
           <div class="card-pile-header">
             <span class="card-pile-label pile-condition">⚡ Condition</span>
-            <span class="pile-count">Draw one card</span>
-          </div>
-          <div class="drawn-card">
-            <div class="drawn-card-content" id="drawnCondition">
-              <div class="card-title" id="conditionTitle"></div>
-              <div class="card-body" id="conditionBody"></div>
-            </div>
-            <div class="card-empty" id="conditionEmpty">No card drawn yet</div>
+            <span class="pile-count" id="conditionCount">25 cards</span>
           </div>
           <button class="draw-btn" onclick="drawCard('condition')" aria-label="Draw a new condition card">Draw Condition Card ↻</button>
         </div>
 
-        <div class="card-pile">
+        <div class="card-pile" style="position:relative;">
           <div class="card-pile-header">
             <span class="card-pile-label pile-environment">🏢 Environment</span>
-            <span class="pile-count">Draw one card</span>
-          </div>
-          <div class="drawn-card">
-            <div class="drawn-card-content" id="drawnEnvironment">
-              <div class="card-title" id="environmentTitle"></div>
-              <div class="card-body" id="environmentBody"></div>
-            </div>
-            <div class="card-empty" id="environmentEmpty">No card drawn yet</div>
+            <span class="pile-count" id="environmentCount">25 cards</span>
           </div>
           <button class="draw-btn" onclick="drawCard('environment')" aria-label="Draw a new environment card">Draw Environment Card ↻</button>
         </div>
       </div>
 
-      <div class="scenario-panel">
+      <!-- Drawn cards — large display -->
+      <div class="card-drawn-area">
+
+        <div class="card-drawn-slot" id="personSlot">
+          <div class="card-drawn-slot-header">
+            <span class="card-pile-label pile-person" style="font-size:0.72rem;">👤 Person</span>
+          </div>
+          <div id="drawnPerson" style="display:none;">
+            <div class="card-img-fallback">
+              <div class="card-title" id="personTitle"></div>
+              <div class="card-body" id="personBody"></div>
+            </div>
+          </div>
+          <div class="card-slot-empty" id="personEmpty">No card drawn yet</div>
+        </div>
+
+        <div class="card-drawn-slot" id="conditionSlot">
+          <div class="card-drawn-slot-header">
+            <span class="card-pile-label pile-condition" style="font-size:0.72rem;">⚡ Condition</span>
+          </div>
+          <div id="drawnCondition" style="display:none;">
+            <div class="card-img-wrap">
+              <img id="conditionImg" src="" alt="" class="card-img"
+                   onerror="this.style.display='none'; document.getElementById('conditionImgFallback').style.display='block';">
+            </div>
+            <div class="card-img-caption">
+              <div id="conditionTitle"></div>
+              <div class="card-img-caption-body" id="conditionBody"></div>
+            </div>
+            <div class="card-img-fallback" id="conditionImgFallback" style="display:none;">
+              <div class="card-title" id="conditionTitleFallback"></div>
+              <div class="card-body" id="conditionBodyFallback"></div>
+            </div>
+          </div>
+          <div class="card-slot-empty" id="conditionEmpty">No card drawn yet</div>
+        </div>
+
+        <div class="card-drawn-slot" id="environmentSlot">
+          <div class="card-drawn-slot-header">
+            <span class="card-pile-label pile-environment" style="font-size:0.72rem;">🏢 Environment</span>
+          </div>
+          <div id="drawnEnvironment" style="display:none;">
+            <div class="card-img-fallback">
+              <div class="card-title" id="environmentTitle"></div>
+              <div class="card-body" id="environmentBody"></div>
+            </div>
+          </div>
+          <div class="card-slot-empty" id="environmentEmpty">No card drawn yet</div>
+        </div>
+
+      </div>
+
+      <!-- Scenario + discussion -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
         <div class="scenario-display" id="scenarioDisplay">
           <p class="scenario-prompt">Draw all three cards to see your scenario here.</p>
         </div>
@@ -1629,10 +1791,11 @@ label {
           </ol>
         </div>
 
-        <div class="panel" style="background:var(--cream); border-color:var(--border);">
-          <p style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:7px;">The key principle</p>
-          <p style="font-size:0.82rem; font-weight:300; color:var(--ink); line-height:1.65;">You cannot change the person. You cannot change the condition. But you can design the environment differently.</p>
-        </div>
+      </div>
+
+      <div class="panel" style="background:var(--cream); border-color:var(--border);">
+        <p style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:7px;">The key principle</p>
+        <p style="font-size:0.82rem; font-weight:300; color:var(--ink); line-height:1.65;">You cannot change the person. You cannot change the condition. But you can design the environment differently.</p>
       </div>
 
       <div class="hypothesis-section">
@@ -2892,17 +3055,33 @@ const cardData = {
     { title:'Anna', body:'Anna is a 73-year-old former librarian who has lived in the same neighbourhood for most of her adult life. She is intellectually active and engaged with her community.' },
     { title:'Kofi', body:'Kofi is a 33-year-old architect working for a firm in the city centre. He commutes by bicycle and is passionate about urban design and sustainable cities.' },
   ],
+
   condition: [
-    { title:'Uses a wheelchair', body:'Uses a manual wheelchair for mobility. Independent and active, but the design of physical environments frequently creates barriers to full participation.' },
-    { title:'Is blind', body:'Has no functional vision. Navigates using a combination of a white cane, screen readers and spatial memory. Most digital and physical environments assume sighted users.' },
-    { title:'Is Deaf', body:'Has been Deaf since birth and communicates primarily in sign language. Oral communication, telephone systems and audio-only environments create significant barriers.' },
-    { title:'Has depression', body:'Experiences persistent low mood, fatigue and difficulty concentrating. Symptoms fluctuate and are often invisible to others. Some days are significantly harder than others.' },
-    { title:'Has anxiety', body:'Experiences intense anxiety in certain situations, particularly crowded or unpredictable environments. This can make everyday activities feel difficult or overwhelming.' },
-    { title:'Has a broken arm', body:'Has recently broken their dominant arm and is wearing a cast. This is a temporary condition, but many everyday tools and environments suddenly require two functioning hands.' },
-    { title:'Is pregnant', body:'Is in the later stages of pregnancy. Mobility is reduced and fatigue is significant. Some environments and systems were not designed with pregnant people in mind.' },
-    { title:'Has dyslexia', body:'Has dyslexia, which affects the processing of written text. Highly capable in many areas, but text-heavy systems, forms and written instructions can create barriers.' },
-    { title:'Has ADHD', body:'Has attention deficit hyperactivity disorder. Is creative, energetic and highly capable, but environments requiring sustained concentration or rigid procedures can be challenging.' },
-    { title:'Does not speak the local language', body:'Has recently moved to a new country and does not yet speak the local language fluently. Systems that rely entirely on written or spoken local language create barriers.' },
+    { title:'Condition 1', body:'', img:'conditions/Condition_Page 1_condition.png' },
+    { title:'Condition 2', body:'', img:'conditions/Condition_Page 2_condition.png' },
+    { title:'Condition 3', body:'', img:'conditions/Condition_Page 3_condition.png' },
+    { title:'Condition 4', body:'', img:'conditions/Condition_Page 4_condition.png' },
+    { title:'Condition 5', body:'', img:'conditions/Condition_Page 5_condition.png' },
+    { title:'Condition 6', body:'', img:'conditions/Condition_Page 6_condition.png' },
+    { title:'Condition 7', body:'', img:'conditions/Condition_Page 7_condition.png' },
+    { title:'Condition 8', body:'', img:'conditions/Condition_Page 8_condition.png' },
+    { title:'Condition 9', body:'', img:'conditions/Condition_Page 9_condition.png' },
+    { title:'Condition 10', body:'', img:'conditions/Condition_Page 10_condition.png' },
+    { title:'Condition 11', body:'', img:'conditions/Condition_Page 11_condition.png' },
+    { title:'Condition 12', body:'', img:'conditions/Condition_Page 12_condition.png' },
+    { title:'Condition 13', body:'', img:'conditions/Condition_Page 13_condition.png' },
+    { title:'Condition 14', body:'', img:'conditions/Condition_Page 14_condition.png' },
+    { title:'Condition 15', body:'', img:'conditions/Condition_Page 15_condition.png' },
+    { title:'Condition 16', body:'', img:'conditions/Condition_Page 16_condition.png' },
+    { title:'Condition 17', body:'', img:'conditions/Condition_Page 17_condition.png' },
+    { title:'Condition 18', body:'', img:'conditions/Condition_Page 18_condition.png' },
+    { title:'Condition 19', body:'', img:'conditions/Condition_Page 19_condition.png' },
+    { title:'Condition 20', body:'', img:'conditions/Condition_Page 20_condition.png' },
+    { title:'Condition 21', body:'', img:'conditions/Condition_Page 21_condition.png' },
+    { title:'Condition 22', body:'', img:'conditions/Condition_Page 22_condition.png' },
+    { title:'Condition 23', body:'', img:'conditions/Condition_Page 23_condition.png' },
+    { title:'Condition 24', body:'', img:'conditions/Condition_Page 24_condition.png' },
+    { title:'Condition 25', body:'', img:'conditions/Condition_Page 25_condition.png' },
   ],
   environment: [
     { title:'A hospital', body:'A large general hospital. Busy, complex and often stressful. Navigation relies on signs, announcements and verbal communication. Fast-paced with many simultaneous demands on staff.' },
@@ -2928,12 +3107,56 @@ function drawCard(type) {
 }
 
 function renderCard(type, card) {
-  const cap = type.charAt(0).toUpperCase()+type.slice(1);
-  const content = document.getElementById('drawn'+cap);
-  const empty   = document.getElementById(type+'Empty');
-  document.getElementById(type+'Title').textContent = card.title;
-  document.getElementById(type+'Body').textContent  = card.body;
-  content.classList.add('visible');
+  const empty   = document.getElementById(type + 'Empty');
+  const content = document.getElementById('drawn' + type.charAt(0).toUpperCase() + type.slice(1));
+
+  if (type === 'condition' && card.img) {
+    // Image + caption layout
+    const img          = document.getElementById('conditionImg');
+    const titleEl      = document.getElementById('conditionTitle');
+    const bodyEl       = document.getElementById('conditionBody');
+    const fallback     = document.getElementById('conditionImgFallback');
+    const fallbackTitle = document.getElementById('conditionTitleFallback');
+    const fallbackBody  = document.getElementById('conditionBodyFallback');
+
+    // Populate caption and fallback
+    if (titleEl)       titleEl.textContent       = card.title;
+    if (bodyEl)        bodyEl.textContent         = card.body;
+    if (fallbackTitle) fallbackTitle.textContent  = card.title;
+    if (fallbackBody)  fallbackBody.textContent   = card.body;
+
+    // Load image
+    if (img) {
+      img.classList.remove('loaded');
+      img.alt = card.title;
+      img.style.display = 'block';
+      if (fallback) fallback.style.display = 'none';
+      img.onload  = () => img.classList.add('loaded');
+      img.onerror = () => {
+        img.style.display = 'none';
+        if (fallback) {
+          fallback.style.display = 'block';
+          // Make sure fallback text is populated
+          if (fallbackTitle) fallbackTitle.textContent = card.title;
+          if (fallbackBody)  fallbackBody.textContent  = card.body;
+        }
+      };
+      img.src = card.img;
+    }
+
+  } else {
+    // Text layout (person, environment, or condition without image)
+    const titleEl = document.getElementById(type + 'Title');
+    const bodyEl  = document.getElementById(type + 'Body');
+    if (titleEl) titleEl.textContent = card.title;
+    if (bodyEl)  bodyEl.textContent  = card.body;
+  }
+
+  // Show content, hide empty state
+  if (content) {
+    content.style.display  = 'block';
+    content.style.animation = 'cardReveal 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+  }
   if (empty) empty.style.display = 'none';
 }
 
