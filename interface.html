@@ -81,31 +81,31 @@ body {
 .splash-logo span { color: var(--accent); }
 
 .splash-tagline {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 300;
   color: rgba(245,243,238,0.5);
-  margin-bottom: 52px;
+  margin-bottom: 24px;
   letter-spacing: 0.03em;
 }
 
 .splash-intro {
   max-width: 560px;
-  margin: 0 auto 48px;
+  margin: 0 auto 24px;
 }
 
 .splash-intro p {
-  font-size: 1.05rem;
+  font-size: 0.92rem;
   font-weight: 300;
   color: rgba(245,243,238,0.75);
-  line-height: 1.75;
-  margin-bottom: 20px;
+  line-height: 1.65;
+  margin-bottom: 12px;
 }
 
 .splash-principles {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 48px;
+  gap: 10px;
+  margin-bottom: 28px;
   max-width: 680px;
 }
 
@@ -113,13 +113,13 @@ body {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
-  padding: 18px 16px;
+  padding: 12px 14px;
   text-align: left;
 }
 
 .splash-principle-icon {
-  font-size: 1.4rem;
-  margin-bottom: 10px;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
   display: block;
 }
 
@@ -138,13 +138,13 @@ body {
 }
 
 .splash-start-btn {
-  padding: 16px 48px;
+  padding: 14px 48px;
   background: var(--accent);
   color: white;
   border: none;
   border-radius: 100px;
   font-family: var(--font);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -784,8 +784,9 @@ label {
 .investigation-sidebar { display: flex; flex-direction: column; gap: 14px; }
 
 .sidebar-hint {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-left: 4px solid var(--phase-2);
   border-radius: var(--radius);
   padding: 18px;
 }
@@ -795,13 +796,13 @@ label {
   font-weight: 700;
   font-size: 0.8rem;
   margin-bottom: 8px;
-  color: var(--paper);
+  color: var(--ink);
 }
 
 .sidebar-hint p {
   font-size: 0.77rem;
   font-weight: 300;
-  color: rgba(245,243,238,0.55);
+  color: #5a5652;
   line-height: 1.6;
 }
 
@@ -1550,7 +1551,7 @@ label {
 
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
-<!-- ═══ SPLASH ═══ -->
+<!--  SPLASH  -->
 <div class="splash" id="splash">
 <div class="splash-inner">
   <div class="splash-logo-wrap">
@@ -1571,32 +1572,32 @@ label {
 
   <div class="splash-principles">
     <div class="splash-principle">
-      <span class="splash-principle-icon">🧩</span>
+      <span class="splash-principle-icon"></span>
       <div class="splash-principle-title">Purpose before skill</div>
       <div class="splash-principle-body">Start with a real challenge. Technical skills are learned because the design needs them — not the other way around.</div>
     </div>
     <div class="splash-principle">
-      <span class="splash-principle-icon">👥</span>
+      <span class="splash-principle-icon"></span>
       <div class="splash-principle-title">Multiple perspectives</div>
       <div class="splash-principle-body">You cannot change the person. You cannot change the condition. But you can redesign the environment.</div>
     </div>
     <div class="splash-principle">
-      <span class="splash-principle-icon">🔬</span>
+      <span class="splash-principle-icon"></span>
       <div class="splash-principle-title">Hypothesis first</div>
       <div class="splash-principle-body">No jumping from scenario to solution. Investigate whether your theory about the challenge is actually true.</div>
     </div>
     <div class="splash-principle">
-      <span class="splash-principle-icon">🛠️</span>
+      <span class="splash-principle-icon"></span>
       <div class="splash-principle-title">Prototype to learn</div>
       <div class="splash-principle-body">A prototype is not a finished product. It's a way to find out what works — with real people, in a real context.</div>
     </div>
     <div class="splash-principle">
-      <span class="splash-principle-icon">🔄</span>
+      <span class="splash-principle-icon"></span>
       <div class="splash-principle-title">Iterate and reflect</div>
       <div class="splash-principle-body">The process is the learning. Document the dead ends as well as the breakthroughs — both matter.</div>
     </div>
     <div class="splash-principle">
-      <span class="splash-principle-icon">📢</span>
+      <span class="splash-principle-icon"></span>
       <div class="splash-principle-title">Share the journey</div>
       <div class="splash-principle-body">Present not just what you built but how and why — the scenario, the investigation, the decisions, the surprises.</div>
     </div>
@@ -1607,7 +1608,7 @@ label {
 </div>
 </div>
 
-<!-- ═══ SIDEBAR ═══ -->
+<!--  SIDEBAR  -->
 <nav class="sidebar" aria-label="Journey phases">
   <div class="sidebar-logo">
     <a href="#" onclick="showSplash(); return false;" aria-label="Open Minds — return to introduction" class="sidebar-logo-link">
@@ -1659,17 +1660,17 @@ label {
   </div>
 </nav>
 
-<!-- ═══ MAIN ═══ -->
+<!--  MAIN  -->
 <main class="main" id="main-content">
 
 <div class="session-bar">
   <span id="sessionStatus">Session saved locally</span>
-  <button class="session-btn save" onclick="saveToFile()">⬇ Save progress</button>
-  <button class="session-btn" onclick="document.getElementById('loadFileInput').click()">⬆ Load progress</button>
+  <button class="session-btn save" onclick="saveToFile()"> Save progress</button>
+  <button class="session-btn" onclick="document.getElementById('loadFileInput').click()"> Load progress</button>
   <input type="file" id="loadFileInput" accept=".json" onchange="loadFromFile(event)">
 </div>
 
-<!-- ─── PHASE 1: IDEATION ─── -->
+<!--  PHASE 1: IDEATION  -->
 <section class="phase-view active" id="phase-1">
   <div class="phase-header" data-phase-num="1" style="--phase-color: var(--phase-1)">
     <div class="phase-eyebrow">Phase 1</div>
@@ -1680,7 +1681,7 @@ label {
   <div class="phase-body">
 
     <div style="background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:13px 17px; margin-bottom:22px; display:flex; align-items:flex-start; gap:12px;">
-      <span style="font-size:1rem; flex-shrink:0; margin-top:1px;">🃏</span>
+      <span style="font-size:1rem; flex-shrink:0; margin-top:1px;"></span>
       <div>
         <span style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);">Card set</span>
         <p style="font-size:0.8rem; color:var(--ink); font-weight:300; line-height:1.5; margin-top:2px;">
@@ -1698,7 +1699,7 @@ label {
       <div class="card-draw-row">
         <div class="card-pile" style="position:relative;">
           <div class="card-pile-header">
-            <span class="card-pile-label pile-person">👤 Person</span>
+            <span class="card-pile-label pile-person">Person</span>
             <span class="pile-count" id="personCount">25 cards</span>
           </div>
           <button class="draw-btn" onclick="drawCard('person')" aria-label="Draw a new person card">Draw Person Card ↻</button>
@@ -1706,7 +1707,7 @@ label {
 
         <div class="card-pile" style="position:relative;">
           <div class="card-pile-header">
-            <span class="card-pile-label pile-condition">⚡ Condition</span>
+            <span class="card-pile-label pile-condition">Condition</span>
             <span class="pile-count" id="conditionCount">25 cards</span>
           </div>
           <button class="draw-btn" onclick="drawCard('condition')" aria-label="Draw a new condition card">Draw Condition Card ↻</button>
@@ -1714,7 +1715,7 @@ label {
 
         <div class="card-pile" style="position:relative;">
           <div class="card-pile-header">
-            <span class="card-pile-label pile-environment">🏢 Environment</span>
+            <span class="card-pile-label pile-environment">Environment</span>
             <span class="pile-count" id="environmentCount">25 cards</span>
           </div>
           <button class="draw-btn" onclick="drawCard('environment')" aria-label="Draw a new environment card">Draw Environment Card ↻</button>
@@ -1726,7 +1727,7 @@ label {
 
         <div class="card-drawn-slot" id="personSlot">
           <div class="card-drawn-slot-header">
-            <span class="card-pile-label pile-person" style="font-size:0.72rem;">👤 Person</span>
+            <span class="card-pile-label pile-person" style="font-size:0.72rem;">Person</span>
           </div>
           <div id="drawnPerson" style="display:none;">
             <div class="card-img-wrap">
@@ -1747,7 +1748,7 @@ label {
 
         <div class="card-drawn-slot" id="conditionSlot">
           <div class="card-drawn-slot-header">
-            <span class="card-pile-label pile-condition" style="font-size:0.72rem;">⚡ Condition</span>
+            <span class="card-pile-label pile-condition" style="font-size:0.72rem;">Condition</span>
           </div>
           <div id="drawnCondition" style="display:none;">
             <div class="card-img-wrap">
@@ -1768,7 +1769,7 @@ label {
 
         <div class="card-drawn-slot" id="environmentSlot">
           <div class="card-drawn-slot-header">
-            <span class="card-pile-label pile-environment" style="font-size:0.72rem;">🏢 Environment</span>
+            <span class="card-pile-label pile-environment" style="font-size:0.72rem;">Environment</span>
           </div>
           <div id="drawnEnvironment" style="display:none;">
             <div class="card-img-wrap">
@@ -1832,7 +1833,7 @@ label {
   </div>
 </section>
 
-<!-- ─── PHASE 2: INVESTIGATION ─── -->
+<!--  PHASE 2: INVESTIGATION  -->
 <section class="phase-view" id="phase-2">
   <div class="phase-header" data-phase-num="2" style="--phase-color: var(--phase-2)">
     <div class="phase-eyebrow">Phase 2</div>
@@ -1871,9 +1872,9 @@ label {
           <h3>Does your hypothesis hold up?</h3>
           <p>After investigating, what's your verdict?</p>
           <div class="verdict-options">
-            <button class="verdict-btn" id="verdict-holds"   onclick="setVerdict('holds')">✓ Holds up</button>
+            <button class="verdict-btn" id="verdict-holds"   onclick="setVerdict('holds')"> Holds up</button>
             <button class="verdict-btn" id="verdict-revised" onclick="setVerdict('revised')">~ Needs revising</button>
-            <button class="verdict-btn" id="verdict-wrong"   onclick="setVerdict('wrong')">✗ Wrong track</button>
+            <button class="verdict-btn" id="verdict-wrong"   onclick="setVerdict('wrong')"> Wrong track</button>
           </div>
           <div style="height:12px;"></div>
           <label>Confirmed or revised hypothesis — carry this into prototyping</label>
@@ -1914,7 +1915,7 @@ label {
   </div>
 </section>
 
-<!-- ─── PHASE 3: AFFORDANCE DISCOVERY ─── -->
+<!--  PHASE 3: AFFORDANCE DISCOVERY  -->
 <section class="phase-view" id="phase-3">
   <div class="phase-header" data-phase-num="3" style="--phase-color: var(--phase-3)">
     <div class="phase-eyebrow">Phase 3</div>
@@ -1926,7 +1927,7 @@ label {
 
     <!-- No-tech reminder -->
     <div style="background:var(--ink); border-radius:var(--radius); padding:22px 26px; margin-bottom:28px; display:flex; align-items:flex-start; gap:18px;">
-      <span style="font-size:1.6rem; flex-shrink:0;">💡</span>
+      <span style="font-size:1.6rem; flex-shrink:0;"></span>
       <div>
         <div style="font-family:var(--font); font-weight:700; font-size:0.95rem; color:var(--paper); margin-bottom:7px;">Technology is a tool, not the answer</div>
         <p style="font-size:0.82rem; font-weight:300; color:rgba(245,243,238,0.6); line-height:1.65; max-width:620px;">The best response to a challenge might be a policy change, a piece of signage, a different layout, a trained person, or a simple mechanical solution. A working prototype built with the Open Minds board is a fast, responsive way to test whether a technology-based approach adds real value — not a commitment to tech for its own sake.</p>
@@ -1939,22 +1940,6 @@ label {
         <h3 style="font-family:var(--font); font-weight:700; font-size:1rem; margin-bottom:6px;">What could a response look like?</h3>
         <p style="font-size:0.82rem; color:var(--muted); font-weight:300; margin-bottom:14px;">Think about your confirmed hypothesis. What kind of response would actually help? Sketch the idea before choosing any tools.</p>
         <textarea id="responseSketch" rows="5" placeholder="Describe the response idea. What does it do? Who uses it? How does it change the environment? Does it need technology at all — or would a simpler approach work better?" oninput="saveState()"></textarea>
-      </div>
-
-      <div style="background:var(--ink); border-radius:var(--radius); padding:20px;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-          <span style="font-size:1.3rem;">⬡</span>
-          <div>
-            <div style="font-family:var(--font); font-weight:700; font-size:0.85rem; color:var(--paper);">Board Configurator</div>
-            <div style="font-size:0.68rem; color:rgba(245,243,238,0.35);">Separate tool</div>
-          </div>
-        </div>
-        <p style="font-size:0.77rem; color:rgba(245,243,238,0.5); font-weight:300; line-height:1.6; margin-bottom:14px;">If you're using the Open Minds board, use the Board Configurator to plan which hats to stack, check for pin conflicts, and generate starter code.</p>
-        <button onclick="alert('Open openminds-board-config.html in a separate tab alongside this prototype.')"
-          style="width:100%; padding:9px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:rgba(245,243,238,0.65); font-family:var(--font); font-size:0.78rem; font-weight:600; cursor:pointer;"
-          onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">
-          Open Board Configurator ↗
-        </button>
       </div>
 
     </div>
@@ -2010,7 +1995,7 @@ label {
   </div>
 </section>
 
-<!-- ─── PHASE 4: PROTOTYPING ─── -->
+<!--  PHASE 4: PROTOTYPING  -->
 <section class="phase-view" id="phase-4">
   <div class="phase-header" data-phase-num="4" style="--phase-color: var(--phase-4)">
     <div class="phase-eyebrow">Phase 4</div>
@@ -2020,7 +2005,7 @@ label {
 
   <div class="phase-body" style="padding:0; background:var(--ink);">
 
-    <!-- ─ Getting started guide ─ -->
+    <!--  Getting started guide  -->
     <div id="gettingStarted" style="background:var(--paper); border-bottom:2px solid var(--border);">
 
       <button onclick="toggleGettingStarted()"
@@ -2031,7 +2016,7 @@ label {
           <span style="width:22px;height:22px;background:var(--accent-teal);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);flex-shrink:0;display:inline-block;"></span>
           <span style="font-size:0.92rem; font-weight:700; color:var(--ink);">Getting started — never coded before? Start here</span>
         </span>
-        <span id="gsChevron" style="font-size:0.9rem; color:var(--muted); transition:transform 0.2s;">▲</span>
+        <span id="gsChevron" style="font-size:0.9rem; color:var(--muted); transition:transform 0.2s;"></span>
       </button>
 
       <div id="gsContent" style="padding:0 28px 28px;">
@@ -2045,7 +2030,7 @@ label {
             <div class="gs-tip">
               <strong>Not seeing CIRCUITPY?</strong> Try a different USB cable — some cables are charge-only and don't carry data. If the board shows up as a different drive name, that's fine too.
             </div>
-            <p>Then click <strong>⬡ Connect board</strong> in the editor above. A browser pop-up will ask you to select a serial port — choose the one that appears (usually named something like "USB Serial" or "Pico").</p>
+            <p>Then click <strong> Connect board</strong> in the editor above. A browser pop-up will ask you to select a serial port — choose the one that appears (usually named something like "USB Serial" or "Pico").</p>
           </div>
         </div>
 
@@ -2054,7 +2039,7 @@ label {
           <div class="gs-step-num">2</div>
           <div class="gs-step-body">
             <h3>How the board runs your code</h3>
-            <p>The board looks for a file called <strong>code.py</strong> on the CIRCUITPY drive and runs it automatically every time it starts up. When you click <strong>▶ Run code</strong>, your code is saved to that file and the board restarts with your new program.</p>
+            <p>The board looks for a file called <strong>code.py</strong> on the CIRCUITPY drive and runs it automatically every time it starts up. When you click <strong> Run code</strong>, your code is saved to that file and the board restarts with your new program.</p>
             <div class="gs-tip">
               You don't need to understand everything — just know that what you write in the editor is exactly what the board will run.
             </div>
@@ -2088,7 +2073,7 @@ label {
           <div class="gs-step-num">4</div>
           <div class="gs-step-body">
             <h3>Try changing something — right now</h3>
-            <p>Click <strong>Load this code</strong> below, then press <strong>▶ Run code</strong> to see what happens in the output panel. The board isn't needed — this runs in your browser.</p>
+            <p>Click <strong>Load this code</strong> below, then press <strong> Run code</strong> to see what happens in the output panel. The board isn't needed — this runs in your browser.</p>
 
             <div class="gs-try-block">
               <div class="gs-try-label">Example 1 — Change the message</div>
@@ -2185,9 +2170,9 @@ label {
             <div class="board-indicator-dot" id="boardIndicatorDot"></div>
             <span id="boardIndicatorLabel">No board</span>
           </div>
-          <button class="editor-btn editor-btn-connect" id="connectBoardBtn2" onclick="connectBoard()">⬡ Connect board</button>
+          <button class="editor-btn editor-btn-connect" id="connectBoardBtn2" onclick="connectBoard()"> Connect board</button>
           <button class="editor-btn editor-btn-template" onclick="showTemplates()">Templates</button>
-          <button class="editor-btn editor-btn-run" id="runBtn" onclick="runCode()">▶ Run code</button>
+          <button class="editor-btn editor-btn-run" id="runBtn" onclick="runCode()"> Run code</button>
         </div>
         <textarea class="code-editor" id="codeEditor" spellcheck="false" oninput="saveState()"># Open Minds Board — CircuitPython
 # Your hypothesis: see the sidebar →
@@ -2238,7 +2223,7 @@ while True:
   </div>
 </section>
 
-<!-- ─── PHASE 5: REFLECTION ─── -->
+<!--  PHASE 5: REFLECTION  -->
 <section class="phase-view" id="phase-5">
   <div class="phase-header" data-phase-num="5" style="--phase-color: var(--phase-5)">
     <div class="phase-eyebrow">Phase 5</div>
@@ -2288,7 +2273,7 @@ while True:
   </div>
 </section>
 
-<!-- ─── PHASE 6: SHARING ─── -->
+<!--  PHASE 6: SHARING  -->
 <section class="phase-view" id="phase-6">
   <div class="phase-header" data-phase-num="6" style="--phase-color: var(--phase-6)">
     <div class="phase-eyebrow">Phase 6</div>
@@ -2302,12 +2287,12 @@ while True:
       <div class="share-hero-title" id="shareTitle">Your Open Minds Project</div>
       <div class="share-hero-sub" id="shareSubtitle">Complete journey</div>
       <div class="share-formats">
-        <span class="format-chip">📊 Presentation</span>
-        <span class="format-chip">📹 Video</span>
-        <span class="format-chip">📝 Written case study</span>
-        <span class="format-chip">🎙️ Podcast</span>
-        <span class="format-chip">📌 Poster</span>
-        <span class="format-chip">💻 Live demo</span>
+        <span class="format-chip"> Presentation</span>
+        <span class="format-chip"> Video</span>
+        <span class="format-chip"> Written case study</span>
+        <span class="format-chip"> Podcast</span>
+        <span class="format-chip"> Poster</span>
+        <span class="format-chip"> Live demo</span>
       </div>
     </div>
 
@@ -2316,7 +2301,7 @@ while True:
     <div class="divider"></div>
 
     <div style="text-align:center; padding: 16px 0;">
-      <button class="btn btn-primary" onclick="printJourney()">🖨 Print / Export PDF</button>
+      <button class="btn btn-primary" onclick="printJourney()"> Print / Export PDF</button>
       <span style="margin:0 12px; color:var(--muted);">·</span>
       <button class="btn btn-secondary" onclick="resetJourney()">Start a new journey</button>
     </div>
@@ -2325,7 +2310,7 @@ while True:
 
   <div class="phase-nav">
     <button class="btn btn-secondary" onclick="goToPhase(5)">← Back to Reflection</button>
-    <span class="badge badge-success">Journey complete ✓</span>
+    <span class="badge badge-success">Journey complete </span>
   </div>
 </section>
 
@@ -3983,7 +3968,7 @@ function printJourney() {
 </div>
 
 <div class="footer">
-  <img src="logos/Open Minds Logo Black.png"
+  <img src="logos/Open Minds Logo  Black.png"
        alt="Open Minds"
        style="height:22px; width:auto; display:inline-block; vertical-align:middle; margin-right:10px;"
        onerror="this.style.display='none'">
@@ -4141,44 +4126,25 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadLogos() {
-  // Try to load each logo image. If it loads, show it and hide the fallback text.
-  // If it fails, the fallback text stays visible.
-  const logoTargets = [
-    { imgId: 'sidebarLogoImg',  fallbackId: 'sidebar-logo-fallback', fallbackDisplay: 'flex' },
-    { imgId: 'splashLogoImg',   fallbackId: 'splash-logo-fallback',  fallbackDisplay: 'block' },
+  const targets = [
+    { imgId: 'sidebarLogoImg', fallbackId: 'sidebar-logo-fallback', fallbackDisplay: 'flex',  src: 'logos/Open Minds Logo White.png' },
+    { imgId: 'splashLogoImg',  fallbackId: 'splash-logo-fallback',  fallbackDisplay: 'block', src: 'logos/Open Minds Logo White.png' },
   ];
-
-  logoTargets.forEach(({ imgId, fallbackId, fallbackDisplay }) => {
+  targets.forEach(({ imgId, fallbackId, fallbackDisplay, src }) => {
     const img = document.getElementById(imgId);
     const fallback = document.getElementById(fallbackId);
     if (!img || !fallback) return;
-
-    // Test if image already loaded from cache (onload may have fired before this)
-    if (img.complete && img.naturalWidth > 0) {
-      img.style.opacity = '1';
-      fallback.style.display = 'none';
-      return;
-    }
-
-    // Not loaded yet — set up handlers
-    img.onload = () => {
+    const probe = new Image();
+    probe.onload = () => {
+      img.src = src;
       img.style.opacity = '1';
       fallback.style.display = 'none';
     };
-    img.onerror = () => {
+    probe.onerror = () => {
       img.style.display = 'none';
       fallback.style.display = fallbackDisplay;
     };
-
-    // Force a reload attempt in case src was set before handlers attached
-    if (!img.src || img.src === window.location.href) {
-      img.src = 'logos/Open Minds Logo White.png';
-    } else {
-      // Re-trigger by appending a cache-busting param only if not already loaded
-      const currentSrc = img.src;
-      img.src = '';
-      img.src = currentSrc;
-    }
+    probe.src = src;
   });
 }
 </script>
