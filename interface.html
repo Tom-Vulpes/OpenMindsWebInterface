@@ -1169,7 +1169,168 @@ label {
 
 #loadFileInput { display: none; }
 
-/* ─── GETTING STARTED GUIDE ─── */
+/* ─── LOGO ─── */
+.sidebar-logo-img {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 4px;
+}
+
+.splash-logo-img {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  margin: 0 auto 8px;
+}
+
+/* ─── HIDE GUIDE BUTTON ─── */
+.gs-hide-bar {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+}
+
+.gs-hide-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 48px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 100px;
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
+  min-width: 280px;
+}
+
+.gs-hide-btn:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.gs-hide-btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  background: #333;
+}
+
+/* ─── ACCESSIBILITY ─── */
+
+/* Focus styles — visible on all interactive elements */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Ensure phase nav buttons have sufficient contrast and size */
+.phase-item {
+  min-height: 52px;
+}
+
+/* Affordance cards — keyboard accessible */
+.affordance-card:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Draw card buttons — minimum touch target 44×44px */
+.draw-btn {
+  min-height: 44px;
+}
+
+.btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.editor-btn {
+  min-height: 36px;
+}
+
+/* Hat chips — keyboard accessible */
+.hat-chip {
+  min-height: 36px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hat-chip:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Skip to main content link — screen reader / keyboard users */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 9999;
+  padding: 12px 20px;
+  background: var(--accent);
+  color: white;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: top 0.1s;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* Improve muted text contrast — push towards AA */
+/* var(--muted) #8a8580 on white fails AA — use #767170 instead for body text */
+.phase-description,
+.affordance-desc,
+.card-body,
+.gs-step-body p,
+.gs-try-hint,
+.gs-tip,
+.splash-principle-body,
+.sidebar-hint p,
+.investigation-sidebar .panel p,
+.form-group p,
+.reflection-card p {
+  color: #5a5652; /* AA compliant on white: 7.2:1 */
+}
+
+/* Dark backgrounds — use near-white not low-opacity white */
+.splash-intro p,
+.splash-tagline {
+  color: rgba(245,243,238,0.82); /* sufficient on #1a1a1a */
+}
+
+.splash-principle-body {
+  color: rgba(245,243,238,0.72);
+}
+
+/* Phase description on white header */
+.phase-description { color: #5a5652; }
+
+/* Section headers — sufficient contrast */
+.phase-label { color: rgba(245,243,238,0.7); }
+.phase-item:hover .phase-label,
+.phase-item.active .phase-label { color: var(--paper); }
+
+/* Ensure interactive divs have role and tabindex — added via JS */
+
+/* ─── GETTING STARTED GUIDE (existing + accessibility) ─── */
 .gs-step {
   display: grid;
   grid-template-columns: 36px 1fr;
@@ -1246,10 +1407,16 @@ label {
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
 <!-- ═══ SPLASH ═══ -->
 <div class="splash" id="splash">
 <div class="splash-inner">
-  <div class="splash-logo">Open <span>Minds</span></div>
+  <img src="logos/Open Minds Logo White.png"
+       alt="Open Minds"
+       class="splash-logo-img"
+       onerror="this.style.display='none'; document.getElementById('splash-logo-fallback').style.display='block'">
+  <div class="splash-logo" id="splash-logo-fallback" style="display:none;">Open <span>Minds</span></div>
   <div class="splash-tagline">Design for Radical Inclusion</div>
 
   <div class="splash-intro">
@@ -1296,9 +1463,17 @@ label {
 </div>
 
 <!-- ═══ SIDEBAR ═══ -->
-<nav class="sidebar">
+<nav class="sidebar" aria-label="Journey phases">
   <div class="sidebar-logo">
-    <div class="logo-mark"><span class="hex-mark"></span> Open Minds</div>
+    <a href="#" onclick="showSplash(); return false;" aria-label="Open Minds — return to introduction">
+      <img src="logos/Open Minds Logo White.png"
+           alt="Open Minds"
+           class="sidebar-logo-img"
+           onerror="this.style.display='none'; document.getElementById('sidebar-logo-fallback').style.display='flex'">
+    </a>
+    <div class="logo-mark" id="sidebar-logo-fallback" style="display:none;">
+      <span class="hex-mark" aria-hidden="true"></span> Open Minds
+    </div>
     <div class="logo-sub">Design for Radical Inclusion</div>
   </div>
 
@@ -1338,7 +1513,7 @@ label {
 </nav>
 
 <!-- ═══ MAIN ═══ -->
-<main class="main">
+<main class="main" id="main-content">
 
 <div class="session-bar">
   <span id="sessionStatus">Session saved locally</span>
@@ -1385,7 +1560,7 @@ label {
             </div>
             <div class="card-empty" id="personEmpty">No card drawn yet</div>
           </div>
-          <button class="draw-btn" onclick="drawCard('person')">Draw Person Card ↻</button>
+          <button class="draw-btn" onclick="drawCard('person')" aria-label="Draw a new person card">Draw Person Card ↻</button>
         </div>
 
         <div class="card-pile">
@@ -1400,7 +1575,7 @@ label {
             </div>
             <div class="card-empty" id="conditionEmpty">No card drawn yet</div>
           </div>
-          <button class="draw-btn" onclick="drawCard('condition')">Draw Condition Card ↻</button>
+          <button class="draw-btn" onclick="drawCard('condition')" aria-label="Draw a new condition card">Draw Condition Card ↻</button>
         </div>
 
         <div class="card-pile">
@@ -1415,7 +1590,7 @@ label {
             </div>
             <div class="card-empty" id="environmentEmpty">No card drawn yet</div>
           </div>
-          <button class="draw-btn" onclick="drawCard('environment')">Draw Environment Card ↻</button>
+          <button class="draw-btn" onclick="drawCard('environment')" aria-label="Draw a new environment card">Draw Environment Card ↻</button>
         </div>
       </div>
 
@@ -1650,7 +1825,10 @@ label {
     <!-- ─ Getting started guide ─ -->
     <div id="gettingStarted" style="background:var(--paper); border-bottom:2px solid var(--border);">
 
-      <button onclick="toggleGettingStarted()" style="width:100%; display:flex; align-items:center; justify-content:space-between; padding:18px 28px; background:none; border:none; cursor:pointer; font-family:var(--font); text-align:left;">
+      <button onclick="toggleGettingStarted()"
+              aria-expanded="true"
+              aria-controls="gsContent"
+              style="width:100%; display:flex; align-items:center; justify-content:space-between; padding:18px 28px; background:none; border:none; cursor:pointer; font-family:var(--font); text-align:left; min-height:60px;">
         <span style="display:flex; align-items:center; gap:12px;">
           <span style="width:22px;height:22px;background:var(--accent-teal);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);flex-shrink:0;display:inline-block;"></span>
           <span style="font-size:0.92rem; font-weight:700; color:var(--ink);">Getting started — never coded before? Start here</span>
@@ -1787,8 +1965,13 @@ label {
           </div>
         </div>
 
-        <div style="text-align:center; padding-top:8px;">
-          <button onclick="toggleGettingStarted()" style="background:none; border:none; font-family:var(--font); font-size:0.8rem; color:var(--muted); cursor:pointer; text-decoration:underline;">Hide this guide</button>
+        <div class="gs-hide-bar">
+          <button onclick="toggleGettingStarted()"
+                  class="gs-hide-btn"
+                  aria-expanded="true"
+                  aria-controls="gsContent">
+            Hide the getting started guide
+          </button>
         </div>
 
       </div>
@@ -2095,7 +2278,16 @@ async function readSerial(port) {
       buf += new TextDecoder().decode(value);
       const lines = buf.split('\n');
       buf = lines.pop();
-      lines.forEach(l => { if (l.trim()) logOutput(l.trim()); });
+      lines.forEach(l => {
+        const line = l.trim();
+        if (!line) return;
+        // Structured affordance data lines: "AFFORD:key:value"
+        if (line.startsWith('AFFORD:')) {
+          handleAffordanceData(line.slice(7));
+        } else {
+          logOutput(line);
+        }
+      });
     }
   } catch(e) {
     logOutput('Board disconnected.', 'sys');
@@ -2103,6 +2295,66 @@ async function readSerial(port) {
     setBoardConnected(false);
   } finally {
     reader.releaseLock();
+  }
+}
+
+// Parse "key:value" lines from board affordance code and update the GUI
+function handleAffordanceData(line) {
+  const colon = line.indexOf(':');
+  if (colon === -1) return;
+  const key = line.slice(0, colon).trim();
+  const val = line.slice(colon + 1).trim();
+
+  switch(key) {
+    case 'LIGHT': {
+      const el = document.getElementById('lightReading');
+      if (el) el.textContent = val + ' lux';
+      const sl = document.querySelector('.afford-live-slider[data-key="LIGHT"]');
+      if (sl) sl.value = Math.min(1000, parseInt(val) || 0);
+      break;
+    }
+    case 'SOUND': {
+      const el = document.getElementById('soundReading');
+      if (el) el.textContent = val + ' dB';
+      break;
+    }
+    case 'DIST': {
+      const el = document.getElementById('distReading');
+      if (el) el.textContent = val + ' cm';
+      break;
+    }
+    case 'ACCX': { const e=document.getElementById('accX'); if(e) e.textContent=val; break; }
+    case 'ACCY': { const e=document.getElementById('accY'); if(e) e.textContent=val; break; }
+    case 'ACCZ': { const e=document.getElementById('accZ'); if(e) e.textContent=val; break; }
+    case 'TOUCH': {
+      const idx = parseInt(val);
+      if (!isNaN(idx)) {
+        const el = document.getElementById('tp' + idx);
+        if (el) {
+          el.style.background = 'rgba(232,93,38,0.6)';
+          el.style.color = 'white';
+          setTimeout(() => {
+            el.style.background = 'rgba(255,255,255,0.08)';
+            el.style.color = 'rgba(255,255,255,0.35)';
+          }, 200);
+        }
+      }
+      break;
+    }
+    case 'LED': {
+      // "r,g,b" — set all sim LEDs to this colour
+      const [r,g,b] = val.split(',').map(Number);
+      const hex = '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+      setLedColor(hex);
+      break;
+    }
+    case 'SERVO': {
+      const el = document.getElementById('servoReading');
+      if (el) el.textContent = val + '°';
+      const sl = document.querySelector('.afford-live-slider[data-key="SERVO"]');
+      if (sl) sl.value = val;
+      break;
+    }
   }
 }
 
@@ -2196,24 +2448,299 @@ function logOutput(msg, type='out') {
 
 // ═══ AFFORDANCES ═══
 const affordances = [
-  { id:'light-sense', icon:'☀️', name:'Sensing Light', desc:'Detect how bright or dark an environment is.', question:'Cover the sensor — what should happen in the design response when the space goes dark?', sim:`<div class="sim-label">Light Level</div><div class="sim-reading" id="lightReading">750 lux</div><input type="range" class="sim-slider" min="0" max="1000" value="750" oninput="document.getElementById('lightReading').textContent=this.value+' lux'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Drag to simulate day/dark/covered sensor</div>`, insight:'Affordance: detect occupancy, daylight changes, lights left on — without any manual interaction.' },
-  { id:'light-output', icon:'💡', name:'Controlling Light', desc:'Produce any colour of light — fade, flash, animate.', question:'What could you communicate with light that words cannot — especially for someone who cannot rely on sound?', sim:`<div class="sim-label">LED Colour</div><div class="sim-led" id="ledRow">${Array.from({length:8},(_,i)=>`<div class="sim-led-dot" id="led${i}" style="--led-color:#ff4444" onclick="toggleLed(${i})"></div>`).join('')}</div><div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;">${[['#ff4444','Red'],['#44ff44','Green'],['#4488ff','Blue'],['#ffaa00','Amber'],['#ffffff','White']].map(([c,n])=>`<button onclick="setLedColor('${c}')" style="padding:3px 9px;border-radius:4px;background:${c};border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:${c==='#ffffff'?'#000':'white'}">${n}</button>`).join('')}</div>`, insight:'Affordance: visual alerts, status indicators, ambient signals that do not rely on sound or reading.' },
-  { id:'sound-input', icon:'🎙️', name:'Hearing Sound', desc:'Detect sound levels — claps, voices, ambient noise.', question:'What kinds of sounds would it be useful for an environment to notice automatically?', sim:`<div class="sim-label">Sound Level</div><div class="sim-reading" id="soundReading">42 dB</div><input type="range" class="sim-slider" min="20" max="100" value="42" oninput="document.getElementById('soundReading').textContent=this.value+' dB'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Simulate clapping, speaking, ambient noise levels</div>`, insight:'Affordance: detect when a space is too loud, trigger responses, enable clap or sound activation.' },
-  { id:'sound-output', icon:'🔊', name:'Making Sound', desc:'Produce tones, melodies, spoken alerts.', question:'What information could you communicate through sound to someone who cannot see a screen?', sim:`<div class="sim-label">Tone Frequency</div><div class="sim-reading" id="toneReading">440 Hz</div><input type="range" class="sim-slider" min="100" max="2000" value="440" oninput="playSimTone(this.value)"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Drag to change pitch — audio plays in browser</div>`, insight:'Affordance: audio alerts, navigation cues, accessible notifications for those who cannot see a screen.' },
-  { id:'distance', icon:'📏', name:'Sensing Distance', desc:'Measure how far away something is — centimetres to metres.', question:'What becomes possible when a space knows how close you are — without you having to do anything?', sim:`<div class="sim-label">Distance</div><div class="sim-reading" id="distReading">85 cm</div><input type="range" class="sim-slider" min="2" max="200" value="85" oninput="document.getElementById('distReading').textContent=this.value+' cm'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Imagine approaching a door, a counter, a machine</div>`, insight:'Affordance: proximity alerts, contactless triggers, obstacle detection, automatic responses on approach.' },
-  { id:'motion', icon:'🏃', name:'Sensing Motion', desc:'Detect acceleration, orientation, gestures — is the board moving?', question:'If this board were attached to a wheelchair, a walking frame, or someone\'s body — what could it understand?', sim:`<div class="sim-label">Acceleration (g)</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:5px;"><div><div class="sim-label">X</div><div class="sim-reading" id="accX" style="font-size:1.1rem">0.02</div></div><div><div class="sim-label">Y</div><div class="sim-reading" id="accY" style="font-size:1.1rem">0.98</div></div><div><div class="sim-label">Z</div><div class="sim-reading" id="accZ" style="font-size:1.1rem">0.05</div></div></div><button onclick="simulateShake()" style="margin-top:10px;padding:5px 14px;background:var(--accent);border:none;border-radius:6px;color:white;cursor:pointer;font-size:0.72rem;font-family:var(--font);">Simulate shake</button>`, insight:'Affordance: fall detection, posture, gesture control, orientation-aware interfaces, activity monitoring.' },
-  { id:'touch', icon:'👆', name:'Touch Input', desc:'Eight capacitive pads — sense contact on any conductive surface.', question:'What if a custom control panel could be made from any material — without a screen?', sim:`<div class="sim-label">Touch Pads</div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:5px;">${Array.from({length:8},(_,i)=>`<div id="tp${i}" onclick="touchPad(${i})" style="width:40px;height:40px;border-radius:7px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.72rem;color:rgba(255,255,255,0.35);transition:all 0.15s;font-family:var(--font);">${i+1}</div>`).join('')}</div>`, insight:'Affordance: custom interfaces on any surface, accessible buttons, no screen required.' },
-  { id:'motor', icon:'⚙️', name:'Physical Motion', desc:'Drive motors, control servos — make things move in the world.', question:'What physical change in an environment would make a real difference for your person in your scenario?', sim:`<div class="sim-label">Servo Angle</div><div class="sim-reading" id="servoReading">90°</div><input type="range" class="sim-slider" min="0" max="180" value="90" oninput="document.getElementById('servoReading').textContent=this.value+'°'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Think: latch, gate, valve, indicator arm, flag</div>`, insight:'Affordance: physical actuation — open doors, move objects, control mechanisms in direct response to sensing.' },
+  {
+    id: 'light-output', icon: '💡', name: 'Controlling Light',
+    desc: 'Produce any colour of light — fade, flash, animate.',
+    question: 'What could you communicate with light that words cannot — especially for someone who cannot rely on sound?',
+    needs: 'base',
+    sim: `<div class="sim-label">LED Colour</div><div class="sim-led" id="ledRow">${Array.from({length:8},(_,i)=>`<div class="sim-led-dot" id="led${i}" style="--led-color:#ff4444" onclick="toggleLed(${i})"></div>`).join('')}</div><div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;">${[['#ff4444','Red'],['#44ff44','Green'],['#4488ff','Blue'],['#ffaa00','Amber'],['#ffffff','White']].map(([c,n])=>`<button onclick="setLedColor('${c}')" style="padding:3px 9px;border-radius:4px;background:${c};border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:${c==='#ffffff'?'#000':'white'}">${n}</button>`).join('')}</div>`,
+    insight: 'Affordance: visual alerts, status indicators, ambient signals that do not rely on sound or reading.',
+    boardCode: `# Affordance Explorer — NeoPixel Light Control
+# Touch pads 1-3 cycle through colours. Touch pad 4 turns off.
+import board, time, neopixel, touchio
+
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.4, auto_write=False)
+colours = [(255,0,0),(0,200,0),(0,80,255),(255,120,0),(180,0,180),(0,200,180),(255,255,0),(255,255,255)]
+colour_names = ["Red","Green","Blue","Orange","Purple","Cyan","Yellow","White"]
+current = 0
+
+pads = []
+for pin in [board.GP2,board.GP3,board.GP4,board.GP5]:
+    try: pads.append(touchio.TouchIn(pin))
+    except: pads.append(None)
+
+def show_colour(idx):
+    pixels.fill(colours[idx])
+    pixels.show()
+    r,g,b = colours[idx]
+    print("AFFORD:LED:" + str(r) + "," + str(g) + "," + str(b))
+    print("Colour:", colour_names[idx])
+
+show_colour(current)
+print("Touch pad 1/2 to cycle colours, pad 3 to turn off")
+
+while True:
+    if pads[0] and pads[0].value:
+        current = (current + 1) % len(colours)
+        show_colour(current)
+        time.sleep(0.3)
+    if pads[1] and pads[1].value:
+        current = (current - 1) % len(colours)
+        show_colour(current)
+        time.sleep(0.3)
+    if pads[2] and pads[2].value:
+        pixels.fill((0,0,0)); pixels.show()
+        print("AFFORD:LED:0,0,0")
+        print("Lights off")
+        time.sleep(0.3)
+    time.sleep(0.02)`
+  },
+  {
+    id: 'touch', icon: '👆', name: 'Touch Input',
+    desc: 'Eight capacitive pads — sense contact on any conductive surface.',
+    question: 'What if a custom control panel could be made from any material — without a screen?',
+    needs: 'base',
+    sim: `<div class="sim-label">Touch Pads</div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:5px;">${Array.from({length:8},(_,i)=>`<div id="tp${i}" onclick="touchPad(${i})" style="width:40px;height:40px;border-radius:7px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.72rem;color:rgba(255,255,255,0.35);transition:all 0.15s;font-family:var(--font);">${i+1}</div>`).join('')}</div>`,
+    insight: 'Affordance: custom interfaces on any surface, accessible buttons, no screen required.',
+    boardCode: `# Affordance Explorer — Touch Pads
+# Touch any pad to see it light up on the page and change the LEDs
+import board, time, touchio, neopixel
+
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.4, auto_write=False)
+colours = [(255,0,0),(255,80,0),(200,200,0),(0,200,0),(0,180,180),(0,0,255),(120,0,200),(200,0,120)]
+
+pads = []
+for pin in [board.GP2,board.GP3,board.GP4,board.GP5,board.GP18,board.GP19,board.GP20,board.GP21]:
+    try: pads.append(touchio.TouchIn(pin))
+    except: pads.append(None)
+
+print("Ready — touch any pad")
+
+while True:
+    for i, pad in enumerate(pads):
+        if pad and pad.value:
+            pixels.fill(colours[i])
+            pixels.show()
+            r,g,b = colours[i]
+            print("AFFORD:TOUCH:" + str(i))
+            print("AFFORD:LED:" + str(r) + "," + str(g) + "," + str(b))
+            print("Pad", i+1, "touched")
+            time.sleep(0.15)
+    time.sleep(0.01)`
+  },
+  {
+    id: 'light-sense', icon: '☀️', name: 'Sensing Light',
+    desc: 'Detect how bright or dark an environment is.',
+    question: 'Cover the sensor — what should happen in the design response when the space goes dark?',
+    needs: 'Light Hat',
+    sim: `<div class="sim-label">Light Level</div><div class="sim-reading" id="lightReading">750 lux</div><input type="range" class="sim-slider" min="0" max="1000" value="750" oninput="document.getElementById('lightReading').textContent=this.value+' lux'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Drag to simulate day/dark/covered sensor</div>`,
+    insight: 'Affordance: detect occupancy, daylight changes, lights left on — without any manual interaction.',
+    boardCode: `# Affordance Explorer — Light Sensor (Light Hat)
+# Reads LDR on GP28, shows value on page, changes LEDs by brightness
+import board, time, analogio, neopixel
+
+ldr = analogio.AnalogIn(board.GP28)
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+
+print("Light sensor running — cover the sensor to see it respond")
+
+while True:
+    raw = ldr.value
+    lux = int(raw / 65535 * 1000)
+    print("AFFORD:LIGHT:" + str(lux))
+    if lux < 200:
+        pixels.fill((255, 60, 0)); pixels.show()
+        print("Dark!")
+    elif lux < 500:
+        pixels.fill((255, 200, 0)); pixels.show()
+        print("Dim")
+    else:
+        pixels.fill((0, 200, 80)); pixels.show()
+        print("Bright")
+    time.sleep(0.3)`
+  },
+  {
+    id: 'sound-input', icon: '🎙️', name: 'Hearing Sound',
+    desc: 'Detect sound levels — claps, voices, ambient noise.',
+    question: 'What kinds of sounds would it be useful for an environment to notice automatically?',
+    needs: 'Audio Hat',
+    sim: `<div class="sim-label">Sound Level</div><div class="sim-reading" id="soundReading">42 dB</div><input type="range" class="sim-slider" min="20" max="100" value="42" oninput="document.getElementById('soundReading').textContent=this.value+' dB'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Simulate clapping, speaking, ambient noise levels</div>`,
+    insight: 'Affordance: detect when a space is too loud, trigger responses, enable clap or sound activation.',
+    boardCode: `# Affordance Explorer — Microphone (Audio Hat)
+# Reads mic on GP26, detects loud sounds, flashes LEDs
+import board, time, analogio, neopixel
+
+mic = analogio.AnalogIn(board.GP26)
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+THRESHOLD = 2000
+
+def sound_level():
+    return max(abs(mic.value - 32768) for _ in range(20))
+
+print("Listening — clap or speak loudly")
+
+while True:
+    level = sound_level()
+    db = int(20 + (level / 32768) * 80)
+    print("AFFORD:SOUND:" + str(db))
+    if level > THRESHOLD:
+        pixels.fill((255, 0, 0)); pixels.show()
+        print("Loud sound detected!")
+        time.sleep(0.1)
+    else:
+        pixels.fill((0, 0, 0)); pixels.show()
+    time.sleep(0.05)`
+  },
+  {
+    id: 'sound-output', icon: '🔊', name: 'Making Sound',
+    desc: 'Produce tones, melodies, spoken alerts.',
+    question: 'What information could you communicate through sound to someone who cannot see a screen?',
+    needs: 'Audio Hat',
+    sim: `<div class="sim-label">Tone Frequency</div><div class="sim-reading" id="toneReading">440 Hz</div><input type="range" class="sim-slider" min="100" max="2000" value="440" oninput="playSimTone(this.value)"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Drag to change pitch — audio plays in browser</div>`,
+    insight: 'Affordance: audio alerts, navigation cues, accessible notifications for those who cannot see a screen.',
+    boardCode: `# Affordance Explorer — Speaker (Audio Hat)
+# Touch pads play different notes through the speaker
+import board, time, touchio, pwmio
+
+speaker = pwmio.PWMOut(board.GP16, frequency=440, duty_cycle=0)
+notes = [262, 294, 330, 349, 392, 440, 494, 523]
+
+pads = []
+for pin in [board.GP2,board.GP3,board.GP4,board.GP5,board.GP18,board.GP19,board.GP20,board.GP21]:
+    try: pads.append(touchio.TouchIn(pin))
+    except: pads.append(None)
+
+print("Touch pads to play notes")
+
+while True:
+    playing = False
+    for i, pad in enumerate(pads):
+        if pad and pad.value:
+            speaker.frequency = notes[i]
+            speaker.duty_cycle = 32768
+            print("AFFORD:TOUCH:" + str(i))
+            playing = True
+    if not playing:
+        speaker.duty_cycle = 0
+    time.sleep(0.01)`
+  },
+  {
+    id: 'distance', icon: '📏', name: 'Sensing Distance',
+    desc: 'Measure how far away something is — centimetres to metres.',
+    question: 'What becomes possible when a space knows how close you are — without you having to do anything?',
+    needs: 'Movement Hat',
+    sim: `<div class="sim-label">Distance</div><div class="sim-reading" id="distReading">85 cm</div><input type="range" class="sim-slider" min="2" max="200" value="85" oninput="document.getElementById('distReading').textContent=this.value+' cm'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Imagine approaching a door, a counter, a machine</div>`,
+    insight: 'Affordance: proximity alerts, contactless triggers, obstacle detection, automatic responses on approach.',
+    boardCode: `# Affordance Explorer — Distance Sensor (Movement Hat)
+# Reads HC-SR04, shows distance on page, LEDs change by proximity
+import board, time, neopixel
+from hcsr04 import HCSR04
+
+sonar = HCSR04(trigger_pin=board.GP6, echo_pin=board.GP7)
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+
+print("Distance sensor running — move your hand toward it")
+
+while True:
+    try:
+        dist = sonar.dist_cm()
+        if dist is not None:
+            print("AFFORD:DIST:" + str(int(dist)))
+            if dist < 15:
+                pixels.fill((255, 0, 0)); pixels.show(); print("Very close!")
+            elif dist < 40:
+                pixels.fill((255, 120, 0)); pixels.show(); print("Close")
+            else:
+                pixels.fill((0, 0, 60)); pixels.show()
+    except: pass
+    time.sleep(0.1)`
+  },
+  {
+    id: 'motion', icon: '🏃', name: 'Sensing Motion',
+    desc: 'Detect acceleration, orientation, gestures — is the board moving?',
+    question: "If this board were attached to a wheelchair, a walking frame, or someone's body — what could it understand?",
+    needs: 'Gesture Hat',
+    sim: `<div class="sim-label">Acceleration (g)</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:5px;"><div><div class="sim-label">X</div><div class="sim-reading" id="accX" style="font-size:1.1rem">0.02</div></div><div><div class="sim-label">Y</div><div class="sim-reading" id="accY" style="font-size:1.1rem">0.98</div></div><div><div class="sim-label">Z</div><div class="sim-reading" id="accZ" style="font-size:1.1rem">0.05</div></div></div><button onclick="simulateShake()" style="margin-top:10px;padding:5px 14px;background:var(--accent);border:none;border-radius:6px;color:white;cursor:pointer;font-size:0.72rem;font-family:var(--font);">Simulate shake</button>`,
+    insight: 'Affordance: fall detection, posture, gesture control, orientation-aware interfaces, activity monitoring.',
+    boardCode: `# Affordance Explorer — Accelerometer (Gesture Hat)
+# Reads MPU6050, detects shake, flashes LEDs
+import board, time, busio, neopixel, adafruit_mpu6050
+
+i2c = busio.I2C(board.GP15, board.GP14)
+mpu = adafruit_mpu6050.MPU6050(i2c)
+pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+
+def mag(x,y,z): return (x**2+y**2+z**2)**0.5
+
+print("Move or shake the board")
+
+while True:
+    ax,ay,az = mpu.acceleration
+    m = mag(ax,ay,az)
+    print("AFFORD:ACCX:{:.2f}".format(ax))
+    print("AFFORD:ACCY:{:.2f}".format(ay))
+    print("AFFORD:ACCZ:{:.2f}".format(az))
+    if m > 15:
+        pixels.fill((255,255,0)); pixels.show(); print("Shake!")
+    elif abs(ax) > 5:
+        pixels.fill((0,180,255)); pixels.show(); print("Tilted")
+    else:
+        pixels.fill((0,50,0)); pixels.show()
+    time.sleep(0.1)`
+  },
+  {
+    id: 'motor', icon: '⚙️', name: 'Physical Motion',
+    desc: 'Drive motors, control servos — make things move in the world.',
+    question: 'What physical change in an environment would make a real difference for your person in your scenario?',
+    needs: 'Servo (GP22)',
+    sim: `<div class="sim-label">Servo Angle</div><div class="sim-reading" id="servoReading">90°</div><input type="range" class="sim-slider" min="0" max="180" value="90" oninput="document.getElementById('servoReading').textContent=this.value+'°'"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Think: latch, gate, valve, indicator arm, flag</div>`,
+    insight: 'Affordance: physical actuation — open doors, move objects, control mechanisms in direct response to sensing.',
+    boardCode: `# Affordance Explorer — Servo Motor (GP22)
+# Touch pads 1-3 move servo to different positions
+import board, time, touchio, pwmio
+from adafruit_motor import servo
+
+pwm = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
+my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
+
+pads = []
+for pin in [board.GP2,board.GP3,board.GP4]:
+    try: pads.append(touchio.TouchIn(pin))
+    except: pads.append(None)
+
+angles = [0, 90, 180]
+labels = ["0 — closed", "90 — middle", "180 — open"]
+current = 90
+my_servo.angle = current
+print("AFFORD:SERVO:90")
+print("Touch pad 1=closed, 2=middle, 3=open")
+
+while True:
+    for i, pad in enumerate(pads):
+        if pad and pad.value:
+            my_servo.angle = angles[i]
+            print("AFFORD:SERVO:" + str(angles[i]))
+            print("Position:", labels[i])
+            time.sleep(0.3)
+    time.sleep(0.01)`
+  },
 ];
 
 function renderAffordances() {
   const grid = document.getElementById('affordanceGrid'); if (!grid) return;
   grid.innerHTML = affordances.map(a => `
     <div class="affordance-card ${state.exploredAffordances.includes(a.id)?'explored':''}"
-         id="acard-${a.id}" onclick="exploreAffordance('${a.id}')">
+         id="acard-${a.id}"
+         role="button"
+         tabindex="0"
+         aria-pressed="${state.exploredAffordances.includes(a.id)}"
+         aria-label="${a.name} — ${a.desc}"
+         onclick="exploreAffordance('${a.id}')"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();exploreAffordance('${a.id}')}">
       <span class="affordance-icon">${a.icon}</span>
       <div class="affordance-name">${a.name}</div>
       <div class="affordance-desc">${a.desc}</div>
+      <div style="margin-top:8px;"><span style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${a.needs==='base'?'var(--accent-teal)':'var(--muted)'};background:${a.needs==='base'?'rgba(26,122,110,0.1)':'var(--cream)'};padding:2px 7px;border-radius:100px;">${a.needs==='base'?'✓ Base board':'Needs: '+a.needs}</span></div>
     </div>`).join('');
 }
 
@@ -2221,12 +2748,56 @@ function exploreAffordance(id) {
   if (!state.exploredAffordances.includes(id)) { state.exploredAffordances.push(id); saveState(); }
   document.getElementById('acard-'+id).classList.add('explored');
   const a = affordances.find(x => x.id === id);
+  const boardBtn = state.boardConnected && a.boardCode
+    ? `<button onclick="tryAffordanceOnBoard('${id}')" style="margin-top:12px;padding:7px 16px;background:#10b981;border:none;border-radius:6px;color:white;font-family:var(--font);font-size:0.78rem;font-weight:700;cursor:pointer;">▶ Try this on the board</button>`
+    : a.boardCode
+      ? `<div style="margin-top:12px;font-size:0.75rem;color:rgba(255,255,255,0.35);font-style:italic;">Connect a board to try this live</div>`
+      : '';
   const demo = document.getElementById('affordanceDemo');
-  demo.innerHTML = `<div class="demo-title">${a.icon} ${a.name}</div><div class="demo-question">${a.question}</div><div class="demo-sim">${a.sim}</div><div class="demo-insight">${a.insight}</div>`;
+  demo.innerHTML = `
+    <div class="demo-title">${a.icon} ${a.name}</div>
+    <div class="demo-question">${a.question}</div>
+    <div class="demo-sim">${a.sim}</div>
+    ${boardBtn}
+    <div class="demo-insight">${a.insight}</div>`;
   demo.classList.add('active');
   const count = state.exploredAffordances.length;
   document.getElementById('exploredCount').textContent = count + ' / 8';
   document.getElementById('exploredFill').style.width = (count/8*100)+'%';
+}
+
+async function tryAffordanceOnBoard(id) {
+  const a = affordances.find(x => x.id === id);
+  if (!a || !a.boardCode) return;
+  if (!cachedDirHandle) {
+    if (!('showDirectoryPicker' in window)) {
+      alert('File System Access not supported — use Chrome or Edge.');
+      return;
+    }
+    try {
+      cachedDirHandle = await window.showDirectoryPicker({ id: 'circuitpy', mode: 'readwrite' });
+    } catch(e) { return; }
+  }
+  try {
+    const perm = await cachedDirHandle.requestPermission({ mode: 'readwrite' });
+    if (perm !== 'granted') { cachedDirHandle = null; return; }
+    const file = await cachedDirHandle.getFileHandle('code.py', { create: true });
+    const writable = await file.createWritable();
+    await writable.write(a.boardCode);
+    await writable.close();
+    // Show feedback in the demo panel
+    const fb = document.createElement('div');
+    fb.style.cssText = 'margin-top:10px;font-size:0.78rem;color:#6ee7b7;font-weight:700;';
+    fb.textContent = '✓ Code saved — board is restarting. Sensor values will update above.';
+    const demo = document.getElementById('affordanceDemo');
+    const existing = demo.querySelector('.afford-feedback');
+    if (existing) existing.remove();
+    fb.className = 'afford-feedback';
+    demo.appendChild(fb);
+  } catch(e) {
+    cachedDirHandle = null;
+    alert('Could not save: ' + e.message);
+  }
 }
 
 // Sim helpers
@@ -2269,7 +2840,7 @@ const hats = [
 
 function renderHatChips() {
   const c = document.getElementById('hatChips'); if (!c) return;
-  c.innerHTML = hats.map(h => `<div class="hat-chip ${state.selectedHats.includes(h.id)?'selected':''}" style="color:${h.color};background:${state.selectedHats.includes(h.id)?h.color+'22':'transparent'}" onclick="toggleHat('${h.id}')">${h.name}</div>`).join('');
+  c.innerHTML = hats.map(h => `<div class="hat-chip ${state.selectedHats.includes(h.id)?'selected':''}" style="color:${h.color};background:${state.selectedHats.includes(h.id)?h.color+'22':'transparent'}" onclick="toggleHat('${h.id}')" role="checkbox" aria-checked="${state.selectedHats.includes(h.id)}" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHat('${h.id}')}">${h.name}</div>`).join('');
   const n = state.selectedHats.length;
   document.getElementById('hatCountBadge').textContent = n===0 ? 'None selected' : n+' hat'+(n!==1?'s':'')+' selected';
 }
@@ -2822,7 +3393,7 @@ while True:
 
 function renderTemplates() {
   const list = document.getElementById('templateList'); if (!list) return;
-  list.innerHTML = templates.map((t,i) => `<div class="template-item" onclick="loadTemplate(${i})"><div class="template-name">${t.name}</div><div class="template-desc">${t.desc}</div></div>`).join('');
+  list.innerHTML = templates.map((t,i) => `<div class="template-item" onclick="loadTemplate(${i})" role="button" tabindex="0" aria-label="Load template: ${t.name}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();loadTemplate(${i})}"><div class="template-name">${t.name}</div><div class="template-desc">${t.desc}</div></div>`).join('');
 }
 
 function loadTemplate(i) {
@@ -3116,7 +3687,13 @@ function printJourney() {
 <body>
 
 <div class="cover">
-  <div class="cover-brand"><span class="cover-hex"></span>Open Minds — Design for Radical Inclusion</div>
+  <div class="cover-brand">
+    <img src="logos/Open Minds Logo White.png"
+         alt="Open Minds"
+         style="height:36px; width:auto; display:block; margin-bottom:10px;"
+         onerror="this.style.display='none'">
+    <span class="cover-hex"></span>Open Minds — Design for Radical Inclusion
+  </div>
   <div class="cover-title">${projectTitle}</div>
   <div class="cover-subtitle">${cardSummary || 'Student journey'}</div>
   <div class="cover-meta">Printed ${dateStr} &nbsp;·&nbsp; openminds.education</div>
@@ -3126,7 +3703,13 @@ function printJourney() {
   ${body || '<p style="color:#8a8580;font-style:italic;">No journey content to display yet — complete the phases and return here to print.</p>'}
 </div>
 
-<div class="footer">Open Minds · Design for Radical Inclusion · openminds.education</div>
+<div class="footer">
+  <img src="logos/Open Minds Logo Black.png"
+       alt="Open Minds"
+       style="height:22px; width:auto; display:inline-block; vertical-align:middle; margin-right:10px;"
+       onerror="this.style.display='none'">
+  Design for Radical Inclusion · openminds.education
+</div>
 
 <script>
   // Auto-print once fonts have loaded
@@ -3219,10 +3802,14 @@ function loadGSCode(idx) {
 function toggleGettingStarted() {
   const content = document.getElementById('gsContent');
   const chevron = document.getElementById('gsChevron');
+  const hideBtn = document.querySelector('.gs-hide-btn');
+  const toggleBtn = document.querySelector('button[aria-controls="gsContent"]');
   if (!content) return;
   const isOpen = content.style.display !== 'none';
   content.style.display = isOpen ? 'none' : 'block';
   chevron.textContent   = isOpen ? '▼' : '▲';
+  if (hideBtn) hideBtn.setAttribute('aria-expanded', String(!isOpen));
+  if (toggleBtn) toggleBtn.setAttribute('aria-expanded', String(!isOpen));
 }
 
 function initSoundPads() {
