@@ -2710,55 +2710,65 @@ while True:
     sim: `<div class="sim-label" style="margin-bottom:10px;">Touch Pads — tap to simulate, board updates live</div><div style="display:flex;gap:8px;flex-wrap:wrap;"><div id="tp0" onclick="touchPad(0)" role="button" tabindex="0" aria-label="Touch pad 1" onkeydown="if(event.key==='Enter'||event.key===' '){touchPad(0)}" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);transition:all 0.12s;font-family:var(--font);user-select:none;">1</div><div id="tp1" onclick="touchPad(1)" role="button" tabindex="0" aria-label="Touch pad 2" onkeydown="if(event.key==='Enter'||event.key===' '){touchPad(1)}" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);transition:all 0.12s;font-family:var(--font);user-select:none;">2</div><div id="tp2" onclick="touchPad(2)" role="button" tabindex="0" aria-label="Touch pad 3" onkeydown="if(event.key==='Enter'||event.key===' '){touchPad(2)}" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);transition:all 0.12s;font-family:var(--font);user-select:none;">3</div><div id="tp3" onclick="touchPad(3)" role="button" tabindex="0" aria-label="Touch pad 4" onkeydown="if(event.key==='Enter'||event.key===' '){touchPad(3)}" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);transition:all 0.12s;font-family:var(--font);user-select:none;">4</div><div id="tp4" onclick="touchPad(4)" role="button" tabindex="0" aria-label="Touch pad 5" onkeydown="if(event.key==='Enter'||event.key===' '){touchPad(4)}" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);transition:all 0.12s;font-family:var(--font);user-select:none;">5</div><div id="tp5" onclick="touchPad(5)" role="button" tabindex="0" aria-label="Touch pad 6" onkeydown="if(event.key==='Enter'||event.key===' '){touchPad(5)}" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);transition:all 0.12s;font-family:var(--font);user-select:none;">6</div><div id="tp6" onclick="touchPad(6)" role="button" tabindex="0" aria-label="Touch pad 7" onkeydown="if(event.key==='Enter'||event.key===' '){touchPad(6)}" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);transition:all 0.12s;font-family:var(--font);user-select:none;">7</div><div id="tp7" onclick="touchPad(7)" role="button" tabindex="0" aria-label="Touch pad 8" onkeydown="if(event.key==='Enter'||event.key===' '){touchPad(7)}" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);transition:all 0.12s;font-family:var(--font);user-select:none;">8</div></div><div id="touchStatus" style="margin-top:10px;font-size:0.75rem;color:rgba(255,255,255,0.4);min-height:18px;"></div>`,
     insight: 'Affordance: custom interfaces on any surface, accessible buttons, no screen required.',
     boardCode: `# Affordance Explorer — Touch Pads
-# Sends TOUCH_ON when pad pressed, TOUCH_OFF when released
-# Faulty pads (bad resistor, hardware issue) are caught and skipped safely
 import board, time, touchio, neopixel
 
 pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 colours = [(255,0,0),(255,80,0),(200,200,0),(0,200,0),(0,180,180),(0,0,255),(120,0,200),(200,0,120)]
 
-# Initialise each pad individually — skip any that fail
+pins = [board.GP2,board.GP3,board.GP4,board.GP5,board.GP18,board.GP19,board.GP20,board.GP21]
 pads = []
-for pin in [board.GP2,board.GP3,board.GP4,board.GP5,board.GP18,board.GP19,board.GP20,board.GP21]:
+for i, pin in enumerate(pins):
     try:
         pads.append(touchio.TouchIn(pin))
-        print("Pad", len(pads), "ready")
+        print("Pad", i + 1, "ready")
     except Exception as e:
         pads.append(None)
-        print("Pad", len(pads), "skipped:", e)
+        print("Pad", i + 1, "skipped:", e)
 
-# Track which pads were touched last loop to detect press and release
-was_touched = [False] * len(pads)
+was_touched = [False] * 8
+disabled    = [False] * 8
 
 print("Ready —", sum(1 for p in pads if p), "pads active")
 pixels.fill((0, 0, 0))
 pixels.show()
 
 while True:
-    for i, pad in enumerate(pads):
-        if pad is None:
+    for i in range(8):
+        if disabled[i] or pads[i] is None:
+            # If this pad was previously marked as touched, send a release
+            if was_touched[i]:
+                pixels[i % 12] = (0, 0, 0)
+                pixels.show()
+                print("AFFORD:TOUCH_OFF:" + str(i))
+                was_touched[i] = False
             continue
+
+        touched = False
         try:
-            touched = pad.value
-        except Exception:
-            # Reading this pad caused an error — disable it for the rest of the session
-            pads[i] = None
-            was_touched[i] = False
-            print("Pad", i + 1, "disabled (hardware error)")
+            touched = pads[i].value
+        except Exception as e:
+            print("Pad", i + 1, "error — disabling:", e)
+            disabled[i] = True
+            # Send a release if it was stuck on
+            if was_touched[i]:
+                pixels[i % 12] = (0, 0, 0)
+                pixels.show()
+                print("AFFORD:TOUCH_OFF:" + str(i))
+                was_touched[i] = False
             continue
 
         if touched and not was_touched[i]:
-            # Pad just pressed
             r, g, b = colours[i % len(colours)]
             pixels[i % 12] = (r, g, b)
             pixels.show()
             print("AFFORD:TOUCH_ON:" + str(i))
             print("AFFORD:LED:" + str(r) + "," + str(g) + "," + str(b))
+
         elif not touched and was_touched[i]:
-            # Pad just released
             pixels[i % 12] = (0, 0, 0)
             pixels.show()
             print("AFFORD:TOUCH_OFF:" + str(i))
+
         was_touched[i] = touched
 
     time.sleep(0.02)`
