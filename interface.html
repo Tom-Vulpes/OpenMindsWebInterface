@@ -2623,13 +2623,13 @@ const affordances = [
     desc: 'Produce any colour of light — fade, flash, animate.',
     question: 'What could you communicate with light that words cannot — especially for someone who cannot rely on sound?',
     needs: 'base',
-    sim: `<div class="sim-label">LED Colour</div><div class="sim-led" id="ledRow">${Array.from({length:8},(_,i)=>`<div class="sim-led-dot" id="led${i}" style="--led-color:#ff4444" onclick="toggleLed(${i})"></div>`).join('')}</div><div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;">${[['#ff4444','Red'],['#44ff44','Green'],['#4488ff','Blue'],['#ffaa00','Amber'],['#ffffff','White']].map(([c,n])=>`<button onclick="setLedColor('${c}')" style="padding:3px 9px;border-radius:4px;background:${c};border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:${c==='#ffffff'?'#000':'white'}">${n}</button>`).join('')}</div>`,
+    sim: `<div class="sim-label" style="margin-bottom:10px;">12 NeoPixels — circle configuration</div><div style="position:relative;width:126px;height:126px;margin:0 auto 14px;"><div class="sim-led-dot on" id="led0" style="--led-color:#ff0000; position:absolute; top:-11px; left:41px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(0)" title="LED 1"></div><div class="sim-led-dot on" id="led1" style="--led-color:#ff6600; position:absolute; top:-4px; left:67px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(1)" title="LED 2"></div><div class="sim-led-dot on" id="led2" style="--led-color:#ff9900; position:absolute; top:15px; left:86px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(2)" title="LED 3"></div><div class="sim-led-dot on" id="led3" style="--led-color:#ffcc00; position:absolute; top:41px; left:93px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(3)" title="LED 4"></div><div class="sim-led-dot on" id="led4" style="--led-color:#ffff00; position:absolute; top:67px; left:86px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(4)" title="LED 5"></div><div class="sim-led-dot on" id="led5" style="--led-color:#99ff00; position:absolute; top:86px; left:67px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(5)" title="LED 6"></div><div class="sim-led-dot on" id="led6" style="--led-color:#00ff00; position:absolute; top:93px; left:41px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(6)" title="LED 7"></div><div class="sim-led-dot on" id="led7" style="--led-color:#00ffaa; position:absolute; top:86px; left:15px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(7)" title="LED 8"></div><div class="sim-led-dot on" id="led8" style="--led-color:#00ccff; position:absolute; top:67px; left:-4px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(8)" title="LED 9"></div><div class="sim-led-dot on" id="led9" style="--led-color:#0066ff; position:absolute; top:41px; left:-11px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(9)" title="LED 10"></div><div class="sim-led-dot on" id="led10" style="--led-color:#6600ff; position:absolute; top:15px; left:-4px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(10)" title="LED 11"></div><div class="sim-led-dot on" id="led11" style="--led-color:#cc00ff; position:absolute; top:-4px; left:15px; width:22px; height:22px; cursor:pointer;" onclick="toggleLed(11)" title="LED 12"></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><button onclick="setLedColor('#ff0000')" style="padding:4px 10px;border-radius:4px;background:#ff0000;border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:white;font-weight:600;">Red</button><button onclick="setLedColor('#ff6600')" style="padding:4px 10px;border-radius:4px;background:#ff6600;border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:white;font-weight:600;">Orange</button><button onclick="setLedColor('#00ff00')" style="padding:4px 10px;border-radius:4px;background:#00ff00;border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:white;font-weight:600;">Green</button><button onclick="setLedColor('#00ccff')" style="padding:4px 10px;border-radius:4px;background:#00ccff;border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:white;font-weight:600;">Cyan</button><button onclick="setLedColor('#0066ff')" style="padding:4px 10px;border-radius:4px;background:#0066ff;border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:white;font-weight:600;">Blue</button><button onclick="setLedColor('#cc00ff')" style="padding:4px 10px;border-radius:4px;background:#cc00ff;border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:white;font-weight:600;">Purple</button><button onclick="setLedColor('#ffffff')" style="padding:4px 10px;border-radius:4px;background:#ffffff;border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:#000;font-weight:600;">White</button><button onclick="setLedColor('#000000')" style="padding:4px 10px;border-radius:4px;background:#000000;border:none;cursor:pointer;font-size:0.68rem;font-family:var(--font);color:white;font-weight:600;">Off</button></div>`,
     insight: 'Affordance: visual alerts, status indicators, ambient signals that do not rely on sound or reading.',
     boardCode: `# Affordance Explorer — NeoPixel Light Control
 # Touch pads 1-3 cycle through colours. Touch pad 4 turns off.
 import board, time, neopixel, touchio
 
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.4, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 colours = [(255,0,0),(0,200,0),(0,80,255),(255,120,0),(180,0,180),(0,200,180),(255,255,0),(255,255,255)]
 colour_names = ["Red","Green","Blue","Orange","Purple","Cyan","Yellow","White"]
 current = 0
@@ -2676,7 +2676,7 @@ while True:
 # Touch any pad to see it light up on the page and change the LEDs
 import board, time, touchio, neopixel
 
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.4, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 colours = [(255,0,0),(255,80,0),(200,200,0),(0,200,0),(0,180,180),(0,0,255),(120,0,200),(200,0,120)]
 
 pads = []
@@ -2710,7 +2710,7 @@ while True:
 import board, time, analogio, neopixel
 
 ldr = analogio.AnalogIn(board.GP28)
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 
 print("Light sensor running — cover the sensor to see it respond")
 
@@ -2741,7 +2741,7 @@ while True:
 import board, time, analogio, neopixel
 
 mic = analogio.AnalogIn(board.GP26)
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 THRESHOLD = 2000
 
 def sound_level():
@@ -2807,7 +2807,7 @@ import board, time, neopixel
 from hcsr04 import HCSR04
 
 sonar = HCSR04(trigger_pin=board.GP6, echo_pin=board.GP7)
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 
 print("Distance sensor running — move your hand toward it")
 
@@ -2838,7 +2838,7 @@ import board, time, busio, neopixel, adafruit_mpu6050
 
 i2c = busio.I2C(board.GP15, board.GP14)
 mpu = adafruit_mpu6050.MPU6050(i2c)
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 
 def mag(x,y,z): return (x**2+y**2+z**2)**0.5
 
@@ -2971,7 +2971,17 @@ async function tryAffordanceOnBoard(id) {
 }
 
 // Sim helpers
-function toggleLed(i) { document.getElementById('led'+i).classList.toggle('on'); }
+function toggleLed(i) {
+  const el = document.getElementById('led'+i);
+  if (!el) return;
+  if (el.classList.contains('dimmed')) {
+    el.classList.remove('dimmed');
+    el.style.opacity = '1';
+  } else {
+    el.classList.add('dimmed');
+    el.style.opacity = '0.15';
+  }
+}
 function setLedColor(c) {
   document.querySelectorAll('.sim-led-dot').forEach(d => {
     d.style.setProperty('--led-color', c);
@@ -2985,7 +2995,7 @@ function setLedColor(c) {
     const code = [
       '# NeoPixel colour from affordance page',
       'import board, neopixel',
-      'pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.4, auto_write=False)',
+      'pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)',
       'pixels.fill((' + r + ', ' + g + ', ' + b + '))',
       'pixels.show()',
       'print("LED colour: RGB(' + r + ', ' + g + ', ' + b + ')")'
@@ -3236,7 +3246,7 @@ import neopixel
 
 # Light Hat connections
 ldr = analogio.AnalogIn(board.GP28)       # Light sensor
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 
 DARK_THRESHOLD = 20000  # 0-65535, lower = darker
 
@@ -3272,7 +3282,7 @@ from hcsr04 import HCSR04   # Include hcsr04.py in your lib folder
 
 # Movement Hat connections
 sonar = HCSR04(trigger_pin=board.GP6, echo_pin=board.GP7)
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 
 TRIGGER_DISTANCE = 40  # cm — adjust for your context
 
@@ -3347,7 +3357,7 @@ import neopixel
 
 # Audio Hat connections
 mic = analogio.AnalogIn(board.GP26)
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 
 NOISE_THRESHOLD = 35000  # 0-65535, adjust for environment
 SAMPLE_COUNT = 20
@@ -3402,7 +3412,7 @@ for i, pin in enumerate(touch_pins):
     except Exception as e:
         print("Pad", i + 1, "skipped:", e)
 
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.3, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 
 pad_colours = [
     (255, 0, 0), (255, 80, 0), (200, 200, 0), (0, 200, 0),
@@ -3439,7 +3449,7 @@ import touchio
 import neopixel
 
 # --- Hardware setup ---
-pixels = neopixel.NeoPixel(board.GP0, 16, brightness=0.4, auto_write=False)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
 
 touch_pins = [
     board.GP2, board.GP3, board.GP4,  board.GP5,
@@ -3596,7 +3606,7 @@ import time
 import neopixel
 
 # --- Settings ---
-NUM_PIXELS = 16       # Number of LEDs on your hat
+NUM_PIXELS = 12       # Number of LEDs on your hat
 BRIGHTNESS = 0.3      # 0.0 (off) to 1.0 (full — gets hot, use sparingly)
 SPEED = 0.01          # Seconds between steps — smaller = faster
 
