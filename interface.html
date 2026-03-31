@@ -1729,9 +1729,17 @@ label {
             <span class="card-pile-label pile-person" style="font-size:0.72rem;">👤 Person</span>
           </div>
           <div id="drawnPerson" style="display:none;">
-            <div class="card-img-fallback">
-              <div class="card-title" id="personTitle"></div>
-              <div class="card-body" id="personBody"></div>
+            <div class="card-img-wrap">
+              <img id="personImg" src="" alt="" class="card-img"
+                   onerror="this.style.display='none'; document.getElementById('personImgFallback').style.display='block';">
+            </div>
+            <div class="card-img-caption">
+              <div id="personTitle"></div>
+              <div class="card-img-caption-body" id="personBody"></div>
+            </div>
+            <div class="card-img-fallback" id="personImgFallback" style="display:none;">
+              <div class="card-title" id="personTitleFallback"></div>
+              <div class="card-body" id="personBodyFallback"></div>
             </div>
           </div>
           <div class="card-slot-empty" id="personEmpty">No card drawn yet</div>
@@ -1763,9 +1771,17 @@ label {
             <span class="card-pile-label pile-environment" style="font-size:0.72rem;">🏢 Environment</span>
           </div>
           <div id="drawnEnvironment" style="display:none;">
-            <div class="card-img-fallback">
-              <div class="card-title" id="environmentTitle"></div>
-              <div class="card-body" id="environmentBody"></div>
+            <div class="card-img-wrap">
+              <img id="environmentImg" src="" alt="" class="card-img"
+                   onerror="this.style.display='none'; document.getElementById('environmentImgFallback').style.display='block';">
+            </div>
+            <div class="card-img-caption">
+              <div id="environmentTitle"></div>
+              <div class="card-img-caption-body" id="environmentBody"></div>
+            </div>
+            <div class="card-img-fallback" id="environmentImgFallback" style="display:none;">
+              <div class="card-title" id="environmentTitleFallback"></div>
+              <div class="card-body" id="environmentBodyFallback"></div>
             </div>
           </div>
           <div class="card-slot-empty" id="environmentEmpty">No card drawn yet</div>
@@ -3044,56 +3060,85 @@ function toggleHat(id) {
 // ─────────────────────────────────────────────────────────────────
 const cardData = {
   person: [
-    { title:'Maria', body:'Maria is a 24-year-old graphic design student in her final year at university. She is creative, sociable and hardworking, and is looking forward to starting her career.' },
-    { title:'Johan', body:'Johan is a 67-year-old retired engineer who lives with his wife in the house they have shared for 35 years. He enjoys gardening, cooking and spending time with his grandchildren.' },
-    { title:'Aiko', body:'Aiko is a 38-year-old software developer and mother of two young children. She works full-time and is passionate about open-source technology and community organising.' },
-    { title:'Samuel', body:'Samuel is a 16-year-old secondary school student who loves football, music production and spending time with friends. He is ambitious and wants to study medicine.' },
-    { title:'Fatima', body:'Fatima is a 52-year-old nurse who has worked in the same hospital for twenty years. She is respected by colleagues and patients alike and is training the next generation of staff.' },
-    { title:'Erik', body:'Erik is a 29-year-old freelance photographer who travels frequently for work. He is independent and resourceful, and has built a career doing what he loves.' },
-    { title:'Priya', body:'Priya is a 45-year-old secondary school teacher of mathematics. She is dedicated to her students and has been recognised for her innovative teaching methods.' },
-    { title:'Leon', body:'Leon is a 19-year-old who has recently moved away from home for the first time to study at a further education college in a different city.' },
-    { title:'Anna', body:'Anna is a 73-year-old former librarian who has lived in the same neighbourhood for most of her adult life. She is intellectually active and engaged with her community.' },
-    { title:'Kofi', body:'Kofi is a 33-year-old architect working for a firm in the city centre. He commutes by bicycle and is passionate about urban design and sustainable cities.' },
+    { title:'Fatima', body:'Fatima is a 38 year-old architect and construction engineer. She is kind, business-like and private.', img:'' },
+    { title:'Isaiah', body:'Isaiah is a 29 year-old activist who enjoys jigsaw puzzles and cookery. He is amiable, competitive and anxious.', img:'' },
+    { title:'Omar', body:'Omar is a 20 year-old Pakistani Christian bank teller from a large family. He is friendly, self-reliant, and tidy.', img:'' },
+    { title:'Willard', body:'Willard is a 41 year-old technician who enjoys working on cars. He is organised, private and easily discouraged.', img:'' },
+    { title:'Thomas', body:'Thomas is a 26 year-old lab assistant who enjoys football. He is healthy, irreverent and unambitious.', img:'' },
+    { title:'Salia', body:'Salia is a 48 year-old plumber with two teenage daughters. She is clever, romantic and aloof.', img:'' },
+    { title:'Georgina', body:'Georgina is an 18 year-old non-binary volunteer worker. They are fair-minded, spontaneous and a bit naive.', img:'' },
+    { title:'Orla', body:'Orla is 63. She trained as a nurse but no longer works. She is forgetful, enthusiastic and can often be irritable.', img:'' },
+    { title:'Rosa', body:'Rosa is 34 and works as a legal aid. She is empathetic, determined and assertive.', img:'' },
+    { title:'Jerry', body:'Jerry is a 60 year-old chef and restaurateur. He is adventurous, freewheeling and compulsive.', img:'' },
+    { title:'Martha', body:'Martha is a 37 year-old data journalist. She is considerate, ambitious and creative.', img:'' },
+    { title:'Hashim', body:'Hashim is a 32 year-old gallery-commissioned artist. They are creative, competitive and often unreliable.', img:'' },
+    { title:'Fergus', body:'Fergus is a 13 year-old student who likes maths and science. He is rational, conservative and very trusting.', img:'' },
+    { title:'Ellis', body:'Ellis is a 48 year-old local conservative politician. He is well-dressed, intolerant and quite paternalistic.', img:'' },
+    { title:'Bailey', body:'Bailey is an 18 year-old student who enjoys meditation. They are private, unaggressive, but often critical.', img:'' },
+    { title:'Anton', body:'Anton is a 34 year-old car mechanic. He is outgoing and confident but can be very jealous.', img:'' },
+    { title:'Lukas', body:'Lukas is an 84 year-old former school teacher. He is frugal and anti-social but never complains.', img:'' },
+    { title:'Damien', body:'Damien is a single 55 year-old TV camera operator. He is tolerant, proud and very resourceful.', img:'' },
+    { title:'Ella', body:'Ella is a 29 year-old health centre receptionist from Nigeria. She is gentle, optimistic and likes to be efficient.', img:'' },
+    { title:'Camille', body:'Camille is a 35 year-old language teacher. She is determined, impulsive and fun-loving.', img:'' },
+    { title:'Loke', body:'Loke is a 62 year-old warehouse manager. He is patient and fair but can be sarcastic.', img:'' },
+    { title:'Brett', body:'Brett is 22 years old and currently unemployed. He is dependable and polite but can become very anxious.', img:'' },
+    { title:'Pia', body:'Pia is 15, very tall, loves reading and is good at science. She is honourable, sporty and intelligent.', img:'' },
+    { title:'Peter', body:'Peter is a 47 year-old music producer who lives with two dogs. He is loyal, independent and skeptical.', img:'' },
+    { title:'Kyle', body:'Kyle is a 30 year-old graphic designer and app developer. He is active, ambitious and playful.', img:'' },
   ],
-
   condition: [
-    { title:'Condition 1', body:'', img:'conditions/Condition_Page 1_condition.png' },
-    { title:'Condition 2', body:'', img:'conditions/Condition_Page 2_condition.png' },
-    { title:'Condition 3', body:'', img:'conditions/Condition_Page 3_condition.png' },
-    { title:'Condition 4', body:'', img:'conditions/Condition_Page 4_condition.png' },
-    { title:'Condition 5', body:'', img:'conditions/Condition_Page 5_condition.png' },
-    { title:'Condition 6', body:'', img:'conditions/Condition_Page 6_condition.png' },
-    { title:'Condition 7', body:'', img:'conditions/Condition_Page 7_condition.png' },
-    { title:'Condition 8', body:'', img:'conditions/Condition_Page 8_condition.png' },
-    { title:'Condition 9', body:'', img:'conditions/Condition_Page 9_condition.png' },
-    { title:'Condition 10', body:'', img:'conditions/Condition_Page 10_condition.png' },
-    { title:'Condition 11', body:'', img:'conditions/Condition_Page 11_condition.png' },
-    { title:'Condition 12', body:'', img:'conditions/Condition_Page 12_condition.png' },
-    { title:'Condition 13', body:'', img:'conditions/Condition_Page 13_condition.png' },
-    { title:'Condition 14', body:'', img:'conditions/Condition_Page 14_condition.png' },
-    { title:'Condition 15', body:'', img:'conditions/Condition_Page 15_condition.png' },
-    { title:'Condition 16', body:'', img:'conditions/Condition_Page 16_condition.png' },
-    { title:'Condition 17', body:'', img:'conditions/Condition_Page 17_condition.png' },
-    { title:'Condition 18', body:'', img:'conditions/Condition_Page 18_condition.png' },
-    { title:'Condition 19', body:'', img:'conditions/Condition_Page 19_condition.png' },
-    { title:'Condition 20', body:'', img:'conditions/Condition_Page 20_condition.png' },
-    { title:'Condition 21', body:'', img:'conditions/Condition_Page 21_condition.png' },
-    { title:'Condition 22', body:'', img:'conditions/Condition_Page 22_condition.png' },
-    { title:'Condition 23', body:'', img:'conditions/Condition_Page 23_condition.png' },
-    { title:'Condition 24', body:'', img:'conditions/Condition_Page 24_condition.png' },
-    { title:'Condition 25', body:'', img:'conditions/Condition_Page 25_condition.png' },
+    { title:'Has Aspergers Syndrome',               body:'Aspergers Syndrome is a form of autism. People with Aspergers may find social interaction and communication challenging, and may have intense focus on specific interests.',                           img:'conditions/Condition_Page 1_condition.png'  },
+    { title:'Has a prosthetic leg',                 body:'A prosthetic leg replaces a limb lost through injury or medical necessity. Depending on the prosthetic and environment, some surfaces, steps and distances can create barriers.',                       img:'conditions/Condition_Page 2_condition.png'  },
+    { title:'Uses a wheelchair',                    body:'A wheelchair user may be unable to use steps, narrow doorways, or spaces without adequate turning room. Environments designed without wheelchair access create significant barriers.',                    img:'conditions/Condition_Page 3_condition.png'  },
+    { title:'Has a hearing aid',                    body:'A hearing aid amplifies sound but does not restore normal hearing. Background noise, poor acoustics, and audio-only information systems can still create barriers.',                                       img:'conditions/Condition_Page 4_condition.png'  },
+    { title:'Has a sprained ankle',                 body:'A sprained ankle is a temporary but painful condition affecting mobility. Stairs, uneven surfaces and long distances become difficult. The condition will heal, but barriers remain in the meantime.',    img:'conditions/Condition_Page 5_condition.png'  },
+    { title:'Recently had a family member pass away', body:'Grief affects concentration, energy and emotional resilience. Everyday tasks can feel overwhelming. Environments that assume high capacity or do not allow for flexibility can compound difficulty.',   img:'conditions/Condition_Page 6_condition.png'  },
+    { title:'Is blind',                             body:'A blind person navigates using non-visual cues: sound, touch, spatial memory and assistive technology. Environments designed only for sighted users — signs, layouts, screens — create significant barriers.', img:'conditions/Condition_Page 7_condition.png'  },
+    { title:'Has osteoarthritis',                   body:'Osteoarthritis causes joint pain and stiffness, particularly in hands, knees and hips. Fine motor tasks, prolonged standing, stairs and heavy doors can all create barriers.',                          img:'conditions/Condition_Page 8_condition.png'  },
+    { title:'Has multiple sclerosis',               body:'MS is a condition affecting the nervous system, causing fatigue, mobility difficulties and unpredictable symptoms. What is manageable one day may not be possible the next.',                              img:'conditions/Condition_Page 9_condition.png'  },
+    { title:'Has motor neurone disease',            body:'MND progressively affects the ability to move, speak, swallow and breathe. Environments and systems that cannot adapt to changing physical capability create compounding barriers.',                        img:'conditions/Condition_Page 10_condition.png' },
+    { title:'Has cerebral palsy',                   body:'Cerebral palsy affects movement and coordination. The degree of impact varies widely between individuals. Environments assuming standard mobility or fine motor control can exclude people with CP.',       img:'conditions/Condition_Page 11_condition.png' },
+    { title:'Has low vision',                       body:'Low vision is not full blindness — shapes and light may be visible but detail is not. Standard print sizes, low-contrast displays and poor lighting all create barriers.',                                 img:'conditions/Condition_Page 12_condition.png' },
+    { title:'Has had a stroke',                     body:'A stroke can affect movement, speech, memory and cognition. Recovery varies significantly. Environments requiring quick response, complex navigation or clear speech can create barriers.',               img:'conditions/Condition_Page 13_condition.png' },
+    { title:'Is deaf',                              body:'A deaf person relies on visual information, signing or text rather than spoken or audio communication. Environments built around verbal announcements, alarms or phone calls create systematic exclusion.',  img:'conditions/Condition_Page 14_condition.png' },
+    { title:'Has had a brain injury',               body:'Acquired brain injury can affect memory, concentration, processing speed and emotional regulation. Environments requiring sustained focus or complex navigation can be particularly difficult.',             img:'conditions/Condition_Page 15_condition.png' },
+    { title:'Has ADHD',                             body:'Attention Deficit Hyperactivity Disorder affects concentration, impulse control and organisation. Environments with high distraction, rigid procedures or long waits can create barriers.',                  img:'conditions/Condition_Page 16_condition.png' },
+    { title:'Has carpal tunnel syndrome',           body:'Carpal tunnel syndrome causes pain, numbness and weakness in the hands and wrists. Tasks requiring gripping, typing or fine motor control can become painful or impossible.',                               img:'conditions/Condition_Page 17_condition.png' },
+    { title:'Has a speech impairment',              body:'A speech impairment affects the ability to communicate verbally. Systems relying entirely on spoken interaction — phone calls, verbal check-ins, voice-activated technology — create barriers.',            img:'conditions/Condition_Page 18_condition.png' },
+    { title:'Has chronic back pain',                body:'Chronic back pain is persistent and often invisible. Prolonged sitting or standing, carrying loads, and environments without seating or rest options can all create significant barriers.',                  img:'conditions/Condition_Page 19_condition.png' },
+    { title:'Has chronic fatigue',                  body:'Chronic fatigue syndrome causes severe, persistent exhaustion not relieved by rest. Environments requiring sustained energy, long travel or extended activity can exclude people with CFS.',                 img:'conditions/Condition_Page 20_condition.png' },
+    { title:'Has epilepsy',                         body:'Epilepsy causes recurring seizures. Triggers can include flashing lights, stress and disrupted routines. Environments that are unpredictable or lack quiet, safe spaces can create barriers.',               img:'conditions/Condition_Page 21_condition.png' },
+    { title:'Has multiple chemical sensitivities',  body:'MCS causes adverse reactions to everyday chemicals — cleaning products, perfumes, materials. Many built environments are inaccessible to people with MCS due to the chemicals routinely used in them.',    img:'conditions/Condition_Page 22_condition.png' },
+    { title:'Has asthma',                           body:'Asthma affects breathing, triggered by air quality, allergens or exertion. Poor ventilation, dusty environments, and physically demanding access routes can all create barriers.',                         img:'conditions/Condition_Page 23_condition.png' },
+    { title:'Has multiple food allergies',          body:'Severe food allergies require constant vigilance about ingredients. Environments where food is unlabelled, shared or handled carelessly create genuine risk, not just inconvenience.',                      img:'conditions/Condition_Page 24_condition.png' },
+    { title:'Has bipolar disorder',                 body:'Bipolar disorder involves periods of very high and very low mood. Environments requiring consistent performance regardless of mental state, or lacking flexibility, can create significant barriers.',       img:'conditions/Condition_Page 25_condition.png' },
   ],
   environment: [
-    { title:'A hospital', body:'A large general hospital. Busy, complex and often stressful. Navigation relies on signs, announcements and verbal communication. Fast-paced with many simultaneous demands on staff.' },
-    { title:'A public library', body:'A municipal library in a mid-sized town. Valued community resource with a reduced budget. Some areas are accessible; others less so. Mix of old and new technology.' },
-    { title:'A university campus', body:'A university with buildings from different eras. Some modern accessible buildings; some older ones with steps, narrow doorways and lifts frequently out of service.' },
-    { title:'A supermarket', body:'A large supermarket. Self-checkout is the default. Products are frequently moved. Some aisles are narrow. Lighting is bright and noise levels are high at busy times.' },
-    { title:'A workplace', body:'An open-plan office. Hot-desking is standard. Many impromptu meetings and conversations. Communication is a mix of in-person, video calls and messaging.' },
-    { title:'A public park', body:'A municipal park used by a wide range of people. Paths, open grass areas, a café and a play area. Well-used but maintenance funding is limited.' },
-    { title:'A train station', body:'A busy urban station. Trains are announced verbally and on digital boards. Steps between platforms. Lifts are available but occasionally out of service.' },
-    { title:'A school', body:'A secondary school with multiple buildings on a split-level site. Built over several decades. Some areas have been renovated; others have not. 900 students, 80 staff.' },
-    { title:'A sports centre', body:'A community leisure centre with a swimming pool, gym and sports hall. Changing facilities are standard design. Booking is done online or by telephone.' },
-    { title:'A government website', body:'An official website used to access public services and complete forms. Designed for the average user; not always tested with diverse users in mind.' },
+    { title:'Forest',           body:'A forest or woodland environment. Uneven terrain, no mobile signal, limited accessibility infrastructure. Natural but potentially isolating.',                                                   img:'environments/1_Page 1_environment.png'  },
+    { title:'Office',           body:'A typical open-plan office. Shared desks, constant noise, visual and verbal communication assumed. Designed for standard working hours and full physical and cognitive capacity.',               img:'environments/1_Page 2_environment.png'  },
+    { title:'Phone',            body:'A telephone call or phone-based system. Relies entirely on voice. No visual cues, no text, no signing. Automated systems add complexity. Assumes hearing and clear speech.',                    img:'environments/1_Page 3_environment.png'  },
+    { title:'School',           body:'A secondary school. Multiple buildings, fast-moving timetables, peer-heavy social environment. Designed primarily for physically and neurotypically average students.',                         img:'environments/1_Page 4_environment.png'  },
+    { title:'Bathroom',         body:'A domestic or public bathroom. Layout, fixture heights and accessibility vary enormously. Many are designed for standard body shapes and abilities.',                                           img:'environments/1_Page 5_environment.png'  },
+    { title:'Home',             body:'A domestic home. Comfort and familiarity vary. May have stairs, narrow corridors, or fixed layouts. Social expectations and isolation can both be factors.',                                    img:'environments/1_Page 6_environment.png'  },
+    { title:'Hospital',         body:'A large general hospital. Fast-paced, complex, often stressful. Information delivered verbally and visually. Wayfinding is challenging. Designed for efficiency, not always for inclusion.',    img:'environments/1_Page 7_environment.png'  },
+    { title:'Store',            body:'A retail store. Busy, visually complex, aisles of varying width. Self-service increasingly common. Products frequently moved. Designed for average customers moving at average pace.',          img:'environments/1_Page 8_environment.png'  },
+    { title:'Train',            body:'A train journey and station. Steps, gaps, narrow aisles, verbal and visual announcements. Time pressure. Designed for able-bodied passengers travelling independently.',                       img:'environments/1_Page 9_environment.png'  },
+    { title:'VR',               body:'A virtual reality environment. Requires headset, controllers and physical movement. Assumes standard vision, hearing, balance and motor control. Emerging — accessibility standards still developing.', img:'environments/1_Page 10_environment.png' },
+    { title:'City Centre',      body:'A busy urban city centre. Uneven pavements, crowds, traffic noise. Fast-paced. Wayfinding relies heavily on sight and reading. Services distributed across large distances.',                  img:'environments/1_Page 11_environment.png' },
+    { title:'Farm',             body:'An agricultural farm. Outdoor, physically demanding, often remote. Machinery, terrain and weather all create barriers. Limited digital infrastructure.',                                        img:'environments/1_Page 12_environment.png' },
+    { title:'Restaurant',       body:'A restaurant. Noisy, often dimly lit, tables close together. Menus may not be accessible. Social pressure and time expectations built into the format.',                                       img:'environments/1_Page 13_environment.png' },
+    { title:'Bar',              body:'A bar or pub. Loud music, crowds, standing expected. Cash and verbal ordering common. Social norms around drinking and interaction can exclude some people.',                                   img:'environments/1_Page 14_environment.png' },
+    { title:'Concert',          body:'A live music concert. Loud, crowded, standing for long periods, strobing lights possible. Designed for an average able-bodied audience.',                                                      img:'environments/1_Page 15_environment.png' },
+    { title:'Museum',           body:'A museum or gallery. Often multiple floors, long walking distances, heavy doors. Audio guides assume hearing. Text assumes literacy and adequate vision.',                                      img:'environments/1_Page 16_environment.png' },
+    { title:'Theatre',          body:'A theatre or performance venue. Fixed seating, narrow rows, performances often audio-centric. Some provide captioning or audio description — many do not.',                                    img:'environments/1_Page 17_environment.png' },
+    { title:'Web',              body:'A website or digital service. Should be universally accessible by design — but most are not. Screen reader compatibility, contrast, keyboard navigation and plain language all frequently fail.', img:'environments/1_Page 18_environment.png' },
+    { title:'Sport facility',   body:'A sports centre or gym. Equipment assumes standard body size and mobility. Changing facilities often inaccessible. Booking systems digital-only. Culture can be intimidating.',                 img:'environments/1_Page 19_environment.png' },
+    { title:'Beach',            body:'A beach environment. Soft sand, uneven surfaces, wind, sun. No infrastructure in many cases. Designed by nature with no accessibility consideration — but managed spaces vary widely.',        img:'environments/1_Page 20_environment.png' },
+    { title:'Graveyard',        body:'A graveyard or place of mourning. Uneven ground, outdoor, often quiet and isolated. Emotional significance adds to any physical barriers. Rarely designed for accessibility.',                 img:'environments/1_Page 21_environment.png' },
+    { title:'Place of worship', body:'A church, mosque, temple or other religious space. May have steps, specific dress requirements, or cultural expectations. Inclusivity varies considerably.',                                   img:'environments/1_Page 22_environment.png' },
+    { title:'Bus',              body:'A bus journey. Steps on older buses, moving vehicle, verbal and visual announcements. Relies on confidence navigating public transport systems under time pressure.',                           img:'environments/1_Page 23_environment.png' },
+    { title:'Nightclub',        body:'A nightclub. Loud music, flashing lights, crowds, alcohol-centric social norms. Almost entirely inaccessible by design for many people with sensory, mobility or anxiety-related conditions.', img:'environments/1_Page 24_environment.png' },
+    { title:'Gym',              body:'A gym or fitness facility. Equipment assumes standard strength and mobility. Culture can be intimidating. Often digital-only booking. Changing facilities may lack accessible options.',        img:'environments/1_Page 25_environment.png' },
   ]
 };
 
@@ -3110,52 +3155,44 @@ function renderCard(type, card) {
   const empty   = document.getElementById(type + 'Empty');
   const content = document.getElementById('drawn' + type.charAt(0).toUpperCase() + type.slice(1));
 
-  if (type === 'condition' && card.img) {
-    // Image + caption layout
-    const img          = document.getElementById('conditionImg');
-    const titleEl      = document.getElementById('conditionTitle');
-    const bodyEl       = document.getElementById('conditionBody');
-    const fallback     = document.getElementById('conditionImgFallback');
-    const fallbackTitle = document.getElementById('conditionTitleFallback');
-    const fallbackBody  = document.getElementById('conditionBodyFallback');
+  const imgEl       = document.getElementById(type + 'Img');
+  const titleEl     = document.getElementById(type + 'Title');
+  const bodyEl      = document.getElementById(type + 'Body');
+  const fallbackEl  = document.getElementById(type + 'ImgFallback');
+  const fbTitleEl   = document.getElementById(type + 'TitleFallback');
+  const fbBodyEl    = document.getElementById(type + 'BodyFallback');
 
-    // Populate caption and fallback
-    if (titleEl)       titleEl.textContent       = card.title;
-    if (bodyEl)        bodyEl.textContent         = card.body;
-    if (fallbackTitle) fallbackTitle.textContent  = card.title;
-    if (fallbackBody)  fallbackBody.textContent   = card.body;
+  // Populate caption text (shown below image, or in fallback if image fails)
+  if (titleEl)   titleEl.textContent   = card.title;
+  if (bodyEl)    bodyEl.textContent    = card.body;
+  if (fbTitleEl) fbTitleEl.textContent = card.title;
+  if (fbBodyEl)  fbBodyEl.textContent  = card.body;
 
-    // Load image
-    if (img) {
-      img.classList.remove('loaded');
-      img.alt = card.title;
-      img.style.display = 'block';
-      if (fallback) fallback.style.display = 'none';
-      img.onload  = () => img.classList.add('loaded');
-      img.onerror = () => {
-        img.style.display = 'none';
-        if (fallback) {
-          fallback.style.display = 'block';
-          // Make sure fallback text is populated
-          if (fallbackTitle) fallbackTitle.textContent = card.title;
-          if (fallbackBody)  fallbackBody.textContent  = card.body;
-        }
-      };
-      img.src = card.img;
-    }
+  if (imgEl && card.img) {
+    // Reset state
+    imgEl.classList.remove('loaded');
+    imgEl.style.display = 'block';
+    if (fallbackEl) fallbackEl.style.display = 'none';
 
-  } else {
-    // Text layout (person, environment, or condition without image)
-    const titleEl = document.getElementById(type + 'Title');
-    const bodyEl  = document.getElementById(type + 'Body');
-    if (titleEl) titleEl.textContent = card.title;
-    if (bodyEl)  bodyEl.textContent  = card.body;
+    imgEl.alt = card.title;
+    imgEl.onload  = () => imgEl.classList.add('loaded');
+    imgEl.onerror = () => {
+      imgEl.style.display = 'none';
+      if (fallbackEl) fallbackEl.style.display = 'block';
+    };
+    imgEl.src = card.img;
+  } else if (imgEl) {
+    // No image path — hide img, show fallback
+    imgEl.style.display = 'none';
+    if (fallbackEl) fallbackEl.style.display = 'block';
   }
 
-  // Show content, hide empty state
+  // Show content, hide empty state — animate in
   if (content) {
-    content.style.display  = 'block';
+    content.style.animation = 'none';
+    content.offsetHeight; // reflow to restart animation
     content.style.animation = 'cardReveal 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+    content.style.display = 'block';
   }
   if (empty) empty.style.display = 'none';
 }
