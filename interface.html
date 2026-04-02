@@ -18,12 +18,13 @@
   --muted: #8a8580;
   --border: #d4cfc6;
   --white: #ffffff;
-  --phase-1: #e85d26;
-  --phase-2: #f0a500;
-  --phase-3: #1a7a6e;
+  --phase-1: #1a7a6e;
+  --phase-2: #e85d26;
+  --phase-3: #f0a500;
   --phase-4: #5c3d8f;
   --phase-5: #c44d6e;
-  --phase-6: #2b6cb0;
+  --phase-6: #d97706;
+  --phase-7: #2b6cb0;
   --sidebar-w: 268px;
   --radius: 12px;
   --font: 'Comfortaa', sans-serif;
@@ -1628,27 +1629,31 @@ label {
   <div class="sidebar-phases">
     <button class="phase-item active" data-phase="1" style="--phase-accent: var(--phase-1)" onclick="goToPhase(1)">
       <div class="hex-phase-num">1</div>
-      <div class="phase-label"><strong>Ideation</strong>Cards, scenario, hypothesis</div>
+      <div class="phase-label"><strong>Explore the Toolkit</strong>What can this do?</div>
     </button>
     <button class="phase-item" data-phase="2" style="--phase-accent: var(--phase-2)" onclick="goToPhase(2)">
       <div class="hex-phase-num">2</div>
-      <div class="phase-label"><strong>Investigation</strong>Test your hypothesis</div>
+      <div class="phase-label"><strong>Ideation</strong>Scenario, perspectives, hypothesis</div>
     </button>
     <button class="phase-item" data-phase="3" style="--phase-accent: var(--phase-3)" onclick="goToPhase(3)">
       <div class="hex-phase-num">3</div>
-      <div class="phase-label"><strong>Affordances</strong>What tools make possible</div>
+      <div class="phase-label"><strong>Investigation</strong>Is this a real challenge?</div>
     </button>
     <button class="phase-item" data-phase="4" style="--phase-accent: var(--phase-4)" onclick="goToPhase(4)">
       <div class="hex-phase-num">4</div>
-      <div class="phase-label"><strong>Prototyping</strong>Build &amp; respond</div>
+      <div class="phase-label"><strong>Design Proposal</strong>What are we building and why?</div>
     </button>
     <button class="phase-item" data-phase="5" style="--phase-accent: var(--phase-5)" onclick="goToPhase(5)">
       <div class="hex-phase-num">5</div>
-      <div class="phase-label"><strong>Reflection</strong>What did we learn?</div>
+      <div class="phase-label"><strong>Prototyping</strong>Build in service of the proposal</div>
     </button>
     <button class="phase-item" data-phase="6" style="--phase-accent: var(--phase-6)" onclick="goToPhase(6)">
       <div class="hex-phase-num">6</div>
-      <div class="phase-label"><strong>Sharing</strong>Present your journey</div>
+      <div class="phase-label"><strong>Evaluation &amp; Iteration</strong>Test, improve, loop back</div>
+    </button>
+    <button class="phase-item" data-phase="7" style="--phase-accent: var(--phase-7)" onclick="goToPhase(7)">
+      <div class="hex-phase-num">7</div>
+      <div class="phase-label"><strong>Sharing</strong>Present the journey</div>
     </button>
   </div>
 
@@ -1674,8 +1679,87 @@ label {
 <section class="phase-view active" id="phase-1">
   <div class="phase-header" data-phase-num="1" style="--phase-color: var(--phase-1)">
     <div class="phase-eyebrow">Phase 1</div>
+    <h1 class="phase-title">Explore the Toolkit</h1>
+    <p class="phase-description">Before you think about problems, find out what this technology makes possible. Explore the board, try the sensors, play with the outputs. Students who understand what the toolkit affords can imagine a much wider range of possibilities when they come to design.</p>
+  </div>
+
+  <div class="phase-body">
+
+    <!-- No-tech reminder -->
+    <div style="background:var(--ink); border-radius:var(--radius); padding:22px 26px; margin-bottom:28px; display:flex; align-items:flex-start; gap:18px;">
+      <span style="font-size:1.6rem; flex-shrink:0;"></span>
+      <div>
+        <div style="font-family:var(--font); font-weight:700; font-size:0.95rem; color:var(--paper); margin-bottom:7px;">Technology is a tool, not the answer</div>
+        <p style="font-size:0.82rem; font-weight:300; color:rgba(245,243,238,0.6); line-height:1.65; max-width:620px;">The best response to a challenge might be a policy change, a piece of signage, a different layout, a trained person, or a simple mechanical solution. A working prototype built with the Open Minds board is a fast, responsive way to test whether a technology-based approach adds real value — not a commitment to tech for its own sake.</p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 300px; gap:24px; margin-bottom:28px;">
+
+      <div>
+        <h3 style="font-family:var(--font); font-weight:700; font-size:1rem; margin-bottom:6px;">What could a response look like?</h3>
+        <p style="font-size:0.82rem; color:var(--muted); font-weight:300; margin-bottom:14px;">Think about your confirmed hypothesis. What kind of response would actually help? Sketch the idea before choosing any tools.</p>
+        <textarea id="responseSketch" rows="5" placeholder="Describe the response idea. What does it do? Who uses it? How does it change the environment? Does it need technology at all — or would a simpler approach work better?" oninput="saveState()"></textarea>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="margin-bottom:16px;">
+      <h3 style="font-family:var(--font); font-weight:700; font-size:1rem; margin-bottom:4px;">If you're using the board — explore what it can do</h3>
+      <p style="font-size:0.82rem; color:var(--muted); font-weight:300;">Click each affordance to see what's possible. Which of these could be relevant to your design response?</p>
+    </div>
+
+    <div class="board-connect-banner">
+      <div class="board-connect-info">
+        <div class="board-status-dot" id="boardStatusDot"></div>
+        <div class="board-status-text">
+          <strong id="boardStatusTitle">No board connected</strong>
+          <span id="boardStatusSub">Explore simulated affordances below, or connect a board to try the real thing</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="connectBoardBtn" onclick="connectBoard()">Connect Board</button>
+    </div>
+
+    <div class="affordance-grid" id="affordanceGrid"></div>
+
+    <div class="affordance-demo" id="affordanceDemo"></div>
+
+    <div style="display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; margin-top:20px;">
+      <div style="flex:1; min-width:260px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <p style="font-size:0.82rem; font-weight:700; color:var(--ink);">Which hats do you have?</p>
+          <span class="badge badge-info" id="hatCountBadge">None selected</span>
+        </div>
+        <p style="font-size:0.78rem; color:var(--muted); font-weight:300; margin-bottom:12px;">Select what's available to your group — this carries through to the prototyping phase.</p>
+        <div class="hat-chips" id="hatChips"></div>
+      </div>
+    </div>
+
+    <div class="completeness-meter">
+      <div class="completeness-label">
+        <span>Affordances explored</span>
+        <span id="exploredCount">0 / 8</span>
+      </div>
+      <div class="completeness-track">
+        <div class="completeness-fill" id="exploredFill" style="width:0%"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="phase-nav">
+    <button class="btn btn-secondary" onclick="goToPhase(2)">Continue to Ideation →</button>
+    <button class="btn btn-primary" onclick="goToPhase(4)">Continue to Prototyping →</button>
+  </div>
+</section>
+
+<section class="phase-view" id="phase-2">
+  <div class="phase-header" data-phase-num="2" style="--phase-color: var(--phase-2)">
+    <div class="phase-eyebrow">Phase 2</div>
     <h1 class="phase-title">Ideation</h1>
-    <p class="phase-description">Draw three cards — a Person, a Condition, a Disabling Environment. Together they create a scenario. Don't jump to solutions. Form a hypothesis: a theory about what is true in this situation and why the environment is creating difficulty.</p>
+    <p class="phase-description">Draw three cards — a Person, a Condition, a Disabling Environment. Together they create a scenario. Your task is to form a hypothesis: a theory about what is true in this situation and why the environment is creating difficulty.</p>
   </div>
 
   <div class="phase-body">
@@ -1816,14 +1900,13 @@ label {
 
   <div class="phase-nav">
     <button class="btn btn-secondary" onclick="showSplash()">← Back to intro</button>
-    <button class="btn btn-primary" onclick="goToPhase(2)">Continue to Investigation →</button>
+    <button class="btn btn-primary" onclick="goToPhase(3)">Continue to Investigation →</button>
   </div>
 </section>
 
-<!--  PHASE 2: INVESTIGATION  -->
-<section class="phase-view" id="phase-2">
-  <div class="phase-header" data-phase-num="2" style="--phase-color: var(--phase-2)">
-    <div class="phase-eyebrow">Phase 2</div>
+<section class="phase-view" id="phase-3">
+  <div class="phase-header" data-phase-num="3" style="--phase-color: var(--phase-3)">
+    <div class="phase-eyebrow">Phase 3</div>
     <h1 class="phase-title">Investigation</h1>
     <p class="phase-description">Before you design anything, test your hypothesis against reality. Is this challenge real? Who experiences it? What has already been tried? Intellectual honesty lives here.</p>
   </div>
@@ -1834,7 +1917,7 @@ label {
       <div class="investigation-form">
 
         <div class="hypothesis-echo" id="hypothesisEcho">
-          Your hypothesis will appear here once you've written it in Phase 1.
+          Your hypothesis will appear here once you've written it in Phase 2.
         </div>
 
         <div class="form-group">
@@ -1897,97 +1980,74 @@ label {
   </div>
 
   <div class="phase-nav">
-    <button class="btn btn-secondary" onclick="goToPhase(1)">← Back</button>
+    <button class="btn btn-secondary" onclick="goToPhase(4)">Continue to Design Proposal →</button>
     <button class="btn btn-primary" onclick="goToPhase(3)">Continue to Affordances →</button>
   </div>
 </section>
 
-<!--  PHASE 3: AFFORDANCE DISCOVERY  -->
-<section class="phase-view" id="phase-3">
-  <div class="phase-header" data-phase-num="3" style="--phase-color: var(--phase-3)">
-    <div class="phase-eyebrow">Phase 3</div>
-    <h1 class="phase-title">What tools make possible</h1>
-    <p class="phase-description">Now that you understand the challenge, think about what a response could look like. Technology is one option — sometimes the right prototype has no technology at all. If you do use tech, explore what it actually makes possible before you commit to a direction.</p>
+<section class="phase-view" id="phase-4">
+  <div class="phase-header" data-phase-num="4" style="--phase-color: var(--phase-4)">
+    <div class="phase-eyebrow">Phase 4</div>
+    <h1 class="phase-title">Design Proposal</h1>
+    <p class="phase-description">Before building anything, agree on what you are building, why, and what success looks like. Setting evaluation criteria now — not after the fact — is what separates serious design from guesswork.</p>
   </div>
 
   <div class="phase-body">
 
-    <!-- No-tech reminder -->
-    <div style="background:var(--ink); border-radius:var(--radius); padding:22px 26px; margin-bottom:28px; display:flex; align-items:flex-start; gap:18px;">
-      <span style="font-size:1.6rem; flex-shrink:0;"></span>
-      <div>
-        <div style="font-family:var(--font); font-weight:700; font-size:0.95rem; color:var(--paper); margin-bottom:7px;">Technology is a tool, not the answer</div>
-        <p style="font-size:0.82rem; font-weight:300; color:rgba(245,243,238,0.6); line-height:1.65; max-width:620px;">The best response to a challenge might be a policy change, a piece of signage, a different layout, a trained person, or a simple mechanical solution. A working prototype built with the Open Minds board is a fast, responsive way to test whether a technology-based approach adds real value — not a commitment to tech for its own sake.</p>
-      </div>
+    <div class="hypothesis-echo" id="proposalHypothesisEcho" style="border-left-color:var(--phase-4);">
+      Your confirmed hypothesis from Investigation will appear here.
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 300px; gap:24px; margin-bottom:28px;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
 
-      <div>
-        <h3 style="font-family:var(--font); font-weight:700; font-size:1rem; margin-bottom:6px;">What could a response look like?</h3>
-        <p style="font-size:0.82rem; color:var(--muted); font-weight:300; margin-bottom:14px;">Think about your confirmed hypothesis. What kind of response would actually help? Sketch the idea before choosing any tools.</p>
-        <textarea id="responseSketch" rows="5" placeholder="Describe the response idea. What does it do? Who uses it? How does it change the environment? Does it need technology at all — or would a simpler approach work better?" oninput="saveState()"></textarea>
+      <div class="form-group">
+        <h3>What are we building?</h3>
+        <p>Describe the design response clearly enough that someone else could build it. What does it do? Who uses it? How does it work?</p>
+        <textarea id="proposal1" rows="5" placeholder="A clear description of the proposed prototype — what it does and how it responds to the challenge." oninput="saveState()"></textarea>
+      </div>
+
+      <div class="form-group">
+        <h3>Why this response?</h3>
+        <p>Why is this the right approach? What alternatives did you consider and why did you choose this direction?</p>
+        <textarea id="proposal2" rows="5" placeholder="Your design rationale. Why this approach over others? What does it address that existing solutions don't?" oninput="saveState()"></textarea>
       </div>
 
     </div>
 
-    <div class="divider"></div>
-
-    <div style="margin-bottom:16px;">
-      <h3 style="font-family:var(--font); font-weight:700; font-size:1rem; margin-bottom:4px;">If you're using the board — explore what it can do</h3>
-      <p style="font-size:0.82rem; color:var(--muted); font-weight:300;">Click each affordance to see what's possible. Which of these could be relevant to your design response?</p>
+    <div class="form-group" style="border-left: 4px solid var(--phase-4);">
+      <h3>What does success look like?</h3>
+      <p>Write your evaluation criteria now — before you build. What would the prototype need to do for you to consider it successful? Be specific. Vague criteria produce vague feedback.</p>
+      <div style="background:var(--cream); border-radius:8px; padding:14px 16px; margin-bottom:14px; font-size:0.82rem; color:var(--ink); font-weight:300; line-height:1.65;">
+        Good criteria are <strong>observable</strong> ("a user can complete the task without assistance"), not just <strong>desirable</strong> ("it should be easy to use"). Write criteria you could actually test with a real person.
+      </div>
+      <textarea id="proposal3" rows="5" placeholder="e.g. A Deaf visitor to the hospital can find the ward they need without requiring verbal interaction with staff. The system works without requiring the user to carry or wear anything." oninput="saveState()"></textarea>
     </div>
 
-    <div class="board-connect-banner">
-      <div class="board-connect-info">
-        <div class="board-status-dot" id="boardStatusDot"></div>
-        <div class="board-status-text">
-          <strong id="boardStatusTitle">No board connected</strong>
-          <span id="boardStatusSub">Explore simulated affordances below, or connect a board to try the real thing</span>
-        </div>
-      </div>
-      <button class="btn btn-primary" id="connectBoardBtn" onclick="connectBoard()">Connect Board</button>
+    <div class="form-group">
+      <h3>Who will you test with?</h3>
+      <p>Identify specific people or groups you will gather feedback from. Not "users in general" — real people with the relevant lived experience.</p>
+      <textarea id="proposal4" rows="3" placeholder="Who will test your prototype? How will you reach them? What will you ask them?" oninput="saveState()"></textarea>
     </div>
 
-    <div class="affordance-grid" id="affordanceGrid"></div>
-
-    <div class="affordance-demo" id="affordanceDemo"></div>
-
-    <div style="display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; margin-top:20px;">
-      <div style="flex:1; min-width:260px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-          <p style="font-size:0.82rem; font-weight:700; color:var(--ink);">Which hats do you have?</p>
-          <span class="badge badge-info" id="hatCountBadge">None selected</span>
-        </div>
-        <p style="font-size:0.78rem; color:var(--muted); font-weight:300; margin-bottom:12px;">Select what's available to your group — this carries through to the prototyping phase.</p>
-        <div class="hat-chips" id="hatChips"></div>
-      </div>
-    </div>
-
-    <div class="completeness-meter">
-      <div class="completeness-label">
-        <span>Affordances explored</span>
-        <span id="exploredCount">0 / 8</span>
-      </div>
-      <div class="completeness-track">
-        <div class="completeness-fill" id="exploredFill" style="width:0%"></div>
-      </div>
+    <div class="form-group">
+      <h3>What are the constraints?</h3>
+      <p>Time, materials, skills, access. What are the real limits of this prototype? What is it not trying to solve?</p>
+      <textarea id="proposal5" rows="3" placeholder="Scope, limitations, what's out of scope for this prototype..." oninput="saveState()"></textarea>
     </div>
 
   </div>
 
   <div class="phase-nav">
-    <button class="btn btn-secondary" onclick="goToPhase(2)">← Back</button>
-    <button class="btn btn-primary" onclick="goToPhase(4)">Continue to Prototyping →</button>
+    <button class="btn btn-secondary" onclick="goToPhase(3)">← Back</button>
+    <button class="btn btn-primary" onclick="goToPhase(5)">Continue to Prototyping →</button>
   </div>
 </section>
 
-<!--  PHASE 4: PROTOTYPING  -->
-<section class="phase-view" id="phase-4">
-  <div class="phase-header" data-phase-num="4" style="--phase-color: var(--phase-4)">
-    <div class="phase-eyebrow">Phase 4</div>
+<section class="phase-view" id="phase-5">
+  <div class="phase-header" data-phase-num="5" style="--phase-color: var(--phase-5)">
+    <div class="phase-eyebrow">Phase 5</div>
     <h1 class="phase-title">Design &amp; Prototyping</h1>
-    <p class="phase-description">Build a working prototype of your response — something you can put in someone's hands. The goal isn't a finished product. It's something responsive enough to test with real people and learn from.</p>
+    <p class="phase-description">Build in service of your proposal. Your hypothesis, investigation, and success criteria are your brief. Keep referring back to them. The code serves the challenge.</p>
   </div>
 
   <div class="phase-body" style="padding:0; background:var(--ink);">
@@ -2186,7 +2246,7 @@ while True:
           <h4>Your Challenge</h4>
           <div class="challenge-reminder">
             <h5>Hypothesis</h5>
-            <p id="protoHypothesis">Complete Phase 1 and 2 to see your hypothesis here.</p>
+            <p id="protoHypothesis">Complete Phases 2–4 to see your hypothesis and success criteria here.</p>
           </div>
         </div>
 
@@ -2205,67 +2265,109 @@ while True:
   </div>
 
   <div class="phase-nav" style="background:var(--ink); border-top:1px solid rgba(255,255,255,0.05);">
-    <button class="btn" style="background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.55);" onclick="goToPhase(3)">← Back</button>
+    <button class="btn" style="background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.55);" onclick="goToPhase(6)">Continue to Evaluation →</button>
     <button class="btn" style="background:var(--accent); color:white;" onclick="goToPhase(5)">Continue to Reflection →</button>
   </div>
 </section>
 
-<!--  PHASE 5: REFLECTION  -->
-<section class="phase-view" id="phase-5">
-  <div class="phase-header" data-phase-num="5" style="--phase-color: var(--phase-5)">
-    <div class="phase-eyebrow">Phase 5</div>
-    <h1 class="phase-title">Reflection</h1>
-    <p class="phase-description">The prototype isn't the end. What did you learn? What worked? What didn't? Did testing with real people change your understanding of the challenge? Documenting the journey is part of the learning.</p>
-  </div>
-
-  <div class="phase-body">
-    <div class="reflection-grid">
-
-      <div class="reflection-card">
-        <h3>What did you build?</h3>
-        <p>Describe your prototype. What does it do, and why did you make the choices you made?</p>
-        <textarea id="ref1" rows="4" placeholder="What does your prototype do? What was the core design decision?" oninput="saveState()"></textarea>
-      </div>
-
-      <div class="reflection-card">
-        <h3>What happened when you tested it?</h3>
-        <p>Did you put it in front of real people? What did you observe or hear?</p>
-        <textarea id="ref2" rows="4" placeholder="Testing observations, user feedback, surprises..." oninput="saveState()"></textarea>
-      </div>
-
-      <div class="reflection-card">
-        <h3>What didn't work?</h3>
-        <p>Where did you get stuck? What did you try that failed? What would you do differently?</p>
-        <textarea id="ref3" rows="4" placeholder="Failures, dead ends, things you'd change next time..." oninput="saveState()"></textarea>
-      </div>
-
-      <div class="reflection-card">
-        <h3>What did you learn about the challenge?</h3>
-        <p>Not the technology — the actual human challenge. Did your understanding shift?</p>
-        <textarea id="ref4" rows="4" placeholder="New understanding of the problem, the people affected, the environment..." oninput="saveState()"></textarea>
-      </div>
-
-      <div class="reflection-card full-width">
-        <h3>What would you do next?</h3>
-        <p>Another week, more resources, a real partner organisation. What's the next step?</p>
-        <textarea id="ref5" rows="3" placeholder="Next iterations, people to involve, questions still to answer..." oninput="saveState()"></textarea>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="phase-nav">
-    <button class="btn btn-secondary" onclick="goToPhase(4)">← Back</button>
-    <button class="btn btn-primary" onclick="buildShareView(); goToPhase(6)">See your journey →</button>
-  </div>
-</section>
-
-<!--  PHASE 6: SHARING  -->
 <section class="phase-view" id="phase-6">
   <div class="phase-header" data-phase-num="6" style="--phase-color: var(--phase-6)">
     <div class="phase-eyebrow">Phase 6</div>
+    <h1 class="phase-title">Evaluation &amp; Iteration</h1>
+    <p class="phase-description">Evaluation is a skill, not a formality. Testing your prototype against the criteria you set — with real people — tells you what to improve. Then you improve it. This phase loops back to prototyping until the evidence says you're done.</p>
+  </div>
+
+  <div class="phase-body">
+
+    <div class="hypothesis-echo" id="evalCriteriaEcho" style="border-left-color:var(--phase-6);">
+      Your success criteria from the Design Proposal will appear here.
+    </div>
+
+    <div class="hex-divider"><span class="hex-divider-icon"></span>Round 1 — First test<span class="hex-divider-icon"></span></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+
+      <div class="form-group">
+        <h3>What did you test?</h3>
+        <p>Describe the test. Who was involved? What did you ask them to do?</p>
+        <textarea id="eval1a" rows="4" placeholder="Who tested it, what the scenario was, what you observed..." oninput="saveState()"></textarea>
+      </div>
+
+      <div class="form-group">
+        <h3>What did your criteria tell you?</h3>
+        <p>Go through each success criterion. Did the prototype meet it? Partially? Not at all? Use evidence — what you observed, not what you hoped.</p>
+        <textarea id="eval1b" rows="4" placeholder="Criterion by criterion: met / partially met / not met — with evidence from the test." oninput="saveState()"></textarea>
+      </div>
+
+    </div>
+
+    <div class="form-group" style="margin-bottom:20px;">
+      <h3>What will you change and why?</h3>
+      <p>Based on the evidence, what specifically will you improve in the next iteration? Changes without evidence are guesses. Changes with evidence are design decisions.</p>
+      <textarea id="eval1c" rows="4" placeholder="Specific changes to make, in priority order, with the evidence that justifies each one." oninput="saveState()"></textarea>
+    </div>
+
+    <div style="background:var(--ink); border-radius:var(--radius); padding:18px 22px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+      <div>
+        <div style="font-family:var(--font); font-weight:700; font-size:0.92rem; color:var(--paper); margin-bottom:4px;">Ready to iterate?</div>
+        <p style="font-size:0.8rem; font-weight:300; color:rgba(245,243,238,0.6);">Go back to Prototyping, make your changes, then return here for the next round of testing.</p>
+      </div>
+      <button class="btn" style="background:var(--accent);color:white;flex-shrink:0;" onclick="goToPhase(5)">← Back to Prototyping</button>
+    </div>
+
+    <div class="hex-divider"><span class="hex-divider-icon"></span>Round 2 — After iteration<span class="hex-divider-icon"></span></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+
+      <div class="form-group">
+        <h3>What changed?</h3>
+        <p>What did you actually change in the prototype, and how does it address the feedback from Round 1?</p>
+        <textarea id="eval2a" rows="4" placeholder="What you changed and the reasoning behind each change." oninput="saveState()"></textarea>
+      </div>
+
+      <div class="form-group">
+        <h3>Second test — what did you find?</h3>
+        <p>Test again. Did the changes make a difference? Check against your criteria again.</p>
+        <textarea id="eval2b" rows="4" placeholder="Results of the second test against the same criteria." oninput="saveState()"></textarea>
+      </div>
+
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+
+      <div class="form-group">
+        <h3>What have you learned about the challenge?</h3>
+        <p>Not the technology — the actual human challenge. Did your understanding deepen or shift through testing with real people?</p>
+        <textarea id="eval3a" rows="4" placeholder="How your understanding of the problem changed through the evaluation process." oninput="saveState()"></textarea>
+      </div>
+
+      <div class="form-group">
+        <h3>What would the next iteration address?</h3>
+        <p>If you had more time, what would the next version focus on? What evidence points to this?</p>
+        <textarea id="eval3b" rows="4" placeholder="Future directions, with the evidence that justifies prioritising them." oninput="saveState()"></textarea>
+      </div>
+
+    </div>
+
+    <div class="form-group" style="border-left:4px solid var(--phase-6);">
+      <h3>How good is good enough?</h3>
+      <p>Evaluation requires a judgment, not just measurement. Given your criteria and the evidence, how well does this prototype address the original challenge? What would it take to be genuinely useful to real people in this situation?</p>
+      <textarea id="eval4" rows="4" placeholder="Your honest assessment of how well the prototype addresses the challenge — and what a truly good solution would require." oninput="saveState()"></textarea>
+    </div>
+
+  </div>
+
+  <div class="phase-nav">
+    <button class="btn btn-secondary" onclick="goToPhase(5)">← Back to Prototyping</button>
+    <button class="btn btn-primary" onclick="buildShareView(); goToPhase(7)">See your journey →</button>
+  </div>
+</section>
+
+<section class="phase-view" id="phase-7">
+  <div class="phase-header" data-phase-num="7" style="--phase-color: var(--phase-7)">
+    <div class="phase-eyebrow">Phase 7</div>
     <h1 class="phase-title">Sharing</h1>
-    <p class="phase-description">Here is your complete journey — the scenario, the hypothesis, the investigation, the prototype, the reflection. Present not just what you built, but how and why you got there.</p>
+    <p class="phase-description">Present not just what you built, but how and why you got there — the scenario, the investigation, the criteria you set, what the testing told you, and what you would do next.</p>
   </div>
 
   <div class="phase-body">
@@ -2296,10 +2398,12 @@ while True:
   </div>
 
   <div class="phase-nav">
-    <button class="btn btn-secondary" onclick="goToPhase(5)">← Back to Reflection</button>
+    <button class="btn btn-secondary" onclick="buildShareView(); goToPhase(7)">See your journey →</button>
     <span class="badge badge-success">Journey complete </span>
   </div>
 </section>
+
+
 
 </main>
 
@@ -2318,7 +2422,11 @@ let state = {
   hypothesis: '',
   inv1: '', inv2: '', inv3: '', inv4: '',
   verdict: null,
+  proposal1: '', proposal2: '', proposal3: '', proposal4: '', proposal5: '',
   responseSketch: '',
+  eval1a: '', eval1b: '', eval1c: '',
+  eval2a: '', eval2b: '',
+  eval3a: '', eval3b: '', eval4: '',
   code: `# Open Minds Board — CircuitPython
 # Your hypothesis: see the sidebar →
 #
@@ -2333,10 +2441,10 @@ while True:
     print("Board running...")
     time.sleep(1)`,
   designLog: '',
-  ref1: '', ref2: '', ref3: '', ref4: '', ref5: '',
+
 };
 
-const FIELDS = ['hypothesis','inv1','inv2','inv3','inv4','responseSketch','designLog','ref1','ref2','ref3','ref4','ref5'];
+const FIELDS = ['hypothesis','inv1','inv2','inv3','inv4','proposal1','proposal2','proposal3','proposal4','proposal5','responseSketch','designLog','eval1a','eval1b','eval1c','eval2a','eval2b','eval3a','eval3b','eval4'];
 
 function saveState() {
   FIELDS.forEach(f => { const el = document.getElementById(f); if (el) state[f] = el.value; });
@@ -2393,7 +2501,7 @@ function goToPhase(n) {
 
   document.getElementById('phase-'+n).classList.add('active');
   document.querySelector(`.phase-item[data-phase="${n}"]`).classList.add('active');
-  document.getElementById('progressBar').style.width = ((n-1)/5*100)+'%';
+  document.getElementById('progressBar').style.width = ((n-1)/6*100)+'%';
   window.scrollTo(0,0);
   updateHypothesisEchoes();
 }
@@ -2947,38 +3055,52 @@ while True:
     sim: `<div class="sim-label">Servo Angle</div><div class="sim-reading" id="servoReading">90°</div><input type="range" class="sim-slider" min="0" max="180" value="90" oninput="setServoAngle(this.value)"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:6px;">Think: latch, gate, valve, indicator arm, flag</div>`,
     insight: 'Affordance: physical actuation — open doors, move objects, control mechanisms in direct response to sensing.',
     boardCode: `# Affordance Explorer — Servo Motor (GP22)
-# Touch pads 1-3 move servo to different positions
+# Slider on the page controls target_angle live via REPL
+# Touch any pad to snap the servo to the current slider angle
 import board, time, touchio, pwmio
 from adafruit_motor import servo
 
 pwm = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
 my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
 
-pads = []
-for pin in [board.GP2,board.GP3,board.GP4]:
-    try: pads.append(touchio.TouchIn(pin))
-    except: pads.append(None)
+# target_angle is updated live from the page slider via REPL
+# Change this value from the browser without restarting the program
+target_angle = 90
 
-angles = [0, 90, 180]
-labels = ["0 — closed", "90 — middle", "180 — open"]
-current = 90
-my_servo.angle = current
-print("AFFORD:SERVO:90")
-print("Touch pad 1=closed, 2=middle, 3=open")
+pads = []
+for pin in [board.GP2, board.GP3, board.GP4, board.GP5]:
+    try:
+        pads.append(touchio.TouchIn(pin))
+    except Exception:
+        pads.append(None)
+
+was_touched = [False] * 4
+disabled    = [False] * 4
+
+my_servo.angle = target_angle
+print("AFFORD:SERVO:" + str(target_angle))
+print("Ready — drag slider to set angle, touch a pad to move there")
 
 while True:
-    for i, pad in enumerate(pads):
-        try:
-            touched = pad and pad.value
-        except Exception:
-            pads[pads.index(pad)] = None
+    for i in range(4):
+        if disabled[i] or pads[i] is None:
+            was_touched[i] = False
             continue
-        if touched:
-            my_servo.angle = angles[i]
-            print("AFFORD:SERVO:" + str(angles[i]))
-            print("Position:", labels[i])
-            time.sleep(0.3)
-    time.sleep(0.01)`
+        touched = False
+        try:
+            touched = pads[i].value
+        except Exception:
+            disabled[i] = True
+            was_touched[i] = False
+            continue
+
+        if touched and not was_touched[i]:
+            my_servo.angle = target_angle
+            print("AFFORD:SERVO:" + str(target_angle))
+
+        was_touched[i] = touched
+
+    time.sleep(0.02)`
   },
 ];
 
@@ -3174,7 +3296,6 @@ async function sendRepl(code) {
   } catch(e) { /* silent */ }
 }
 
-// Debounce handle for servo slider
 let servoDebounce = null;
 let servoInitSent = false;
 
@@ -3185,25 +3306,24 @@ function setServoAngle(angle) {
 
   if (!state.boardConnected || !state.serialPort) return;
 
-  // If servo hasn't been set up in the REPL yet, send the initialisation first
-  if (!servoInitSent) {
-    servoInitSent = true;
-    const initCode = [
-      'import board, pwmio',
-      'from adafruit_motor import servo as _sv',
-      '_pwm = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)',
-      '_servo = _sv.Servo(_pwm, min_pulse=500, max_pulse=2500)',
-      '_servo.angle = ' + angle
-    ].join('; ');
-    sendRepl(initCode);
-    return;
-  }
-
-  // Already initialised — just update the angle, debounced to 30ms
-  // so rapid slider drags don't flood the serial port
   clearTimeout(servoDebounce);
   servoDebounce = setTimeout(() => {
-    sendRepl('_servo.angle = ' + angle);
+    if (!servoInitSent) {
+      // First use — initialise servo object in REPL
+      servoInitSent = true;
+      const initCode = [
+        'import board, pwmio',
+        'from adafruit_motor import servo as _sv',
+        '_pwm = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)',
+        '_servo = _sv.Servo(_pwm, min_pulse=500, max_pulse=2500)',
+        '_servo.angle = ' + angle
+      ].join('; ');
+      sendRepl(initCode);
+    } else {
+      // Already initialised — try updating the running program's target_angle first,
+      // then also move via the _servo object in case it was set up directly
+      sendRepl('target_angle = ' + angle + '; _servo.angle = ' + angle);
+    }
   }, 30);
 }
 
@@ -3894,10 +4014,24 @@ function showTemplates() {
 // ═══ HYPOTHESIS ECHOES ═══
 function updateHypothesisEchoes() {
   const h = state.inv4 || state.hypothesis || '';
+  // Phase 3 investigation echo
   const echo = document.getElementById('hypothesisEcho');
-  if (echo) echo.textContent = h || 'Your hypothesis will appear here once you\'ve written it in Phase 1.';
+  if (echo) echo.textContent = h || 'Your hypothesis will appear here once you\'ve written it in Phase 2.';
+  // Phase 4 design proposal echo
+  const proposalEcho = document.getElementById('proposalHypothesisEcho');
+  if (proposalEcho) proposalEcho.textContent = h || 'Your confirmed hypothesis from Investigation will appear here.';
+  // Phase 6 evaluation criteria echo
+  const evalEcho = document.getElementById('evalCriteriaEcho');
+  if (evalEcho) {
+    const criteria = state.proposal3 || '';
+    evalEcho.textContent = criteria || 'Your success criteria from the Design Proposal will appear here.';
+  }
+  // Phase 5 prototyping sidebar
   const proto = document.getElementById('protoHypothesis');
-  if (proto) proto.textContent = h || 'Complete Phase 1 and 2 to see your hypothesis here.';
+  if (proto) {
+    const criteria = state.proposal3 ? '\nCriteria: ' + state.proposal3.slice(0, 120) + (state.proposal3.length > 120 ? '...' : '') : '';
+    proto.textContent = h ? h + (criteria ? '\n\n' + criteria : '') : 'Complete Phases 2–4 to see your hypothesis and success criteria here.';
+  }
 }
 
 // ═══ SHARING ═══
@@ -3909,12 +4043,12 @@ function buildShareView() {
     document.getElementById('shareSubtitle').textContent = cardSummary;
   }
   const entries = [
-    { phase:'1 · Scenario & Hypothesis', color:'var(--phase-1)', content: cardSummary ? `<strong>Scenario:</strong> ${cardSummary}<br><br><strong>Hypothesis:</strong> ${state.hypothesis||'(not written)'}` : null },
-    { phase:'2 · Investigation', color:'var(--phase-2)', content: state.inv1||state.inv4 ? `${state.inv1?'<strong>Evidence:</strong> '+state.inv1+'<br><br>':''}${state.inv4?'<strong>Confirmed hypothesis:</strong> '+state.inv4:''}` : null },
-    { phase:'3 · Design approach', color:'var(--phase-3)', content: state.responseSketch||null },
-    { phase:'4 · Prototype', color:'var(--phase-4)', content: state.designLog||null },
-    { phase:'5 · What we built', color:'var(--phase-5)', content: state.ref1?`<strong>The prototype:</strong> ${state.ref1}${state.ref2?'<br><br><strong>Testing:</strong> '+state.ref2:''}`:null },
-    { phase:'5 · Learning', color:'var(--phase-5)', content: state.ref4||state.ref5?`${state.ref4?'<strong>About the challenge:</strong> '+state.ref4:''}${state.ref5?'<br><br><strong>Next steps:</strong> '+state.ref5:''}`:null },
+    { phase:'1 · Explore the Toolkit', color:'var(--phase-1)', content: state.exploredAffordances && state.exploredAffordances.length > 0 ? `Explored ${state.exploredAffordances.length} affordances. Selected hats: ${state.selectedHats && state.selectedHats.length ? state.selectedHats.join(', ') : 'none'}.` : null },
+    { phase:'2 · Scenario & Hypothesis', color:'var(--phase-2)', content: cardSummary ? `<strong>Scenario:</strong> ${cardSummary}<br><br><strong>Hypothesis:</strong> ${state.hypothesis||'(not written)'}` : null },
+    { phase:'3 · Investigation', color:'var(--phase-3)', content: state.inv1||state.inv4 ? `${state.inv1?'<strong>Evidence:</strong> '+state.inv1+'<br><br>':''}${state.inv4?'<strong>Confirmed hypothesis:</strong> '+state.inv4:''}` : null },
+    { phase:'4 · Design Proposal', color:'var(--phase-4)', content: state.proposal1||state.proposal3 ? `${state.proposal1?'<strong>What we are building:</strong> '+state.proposal1+'<br><br>':''}${state.proposal3?'<strong>Success criteria:</strong> '+state.proposal3:''}` : null },
+    { phase:'5 · Prototype', color:'var(--phase-5)', content: state.designLog||state.responseSketch||null },
+    { phase:'6 · Evaluation', color:'var(--phase-6)', content: state.eval1b||state.eval4 ? `${state.eval1b?'<strong>Test findings:</strong> '+state.eval1b+'<br><br>':''}${state.eval4?'<strong>How good is good enough:</strong> '+state.eval4:''}` : null },
   ];
   document.getElementById('journeyTimeline').innerHTML = entries.map(e => `<div class="journey-entry${e.content?'':' empty'}"><div class="journey-entry-phase" style="color:${e.color}">${e.phase}</div><div class="journey-entry-content">${e.content||'<em>Not completed in this session.</em>'}</div></div>`).join('');
 }
