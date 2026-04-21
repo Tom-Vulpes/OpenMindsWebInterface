@@ -665,20 +665,35 @@ const editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
 });
 
 editor.setValue(`# Pimoroni Explorer — MicroPython 🐙
-# Happy hacking!
+# Board: Explorer (RP2350B) — 320x240 display
 #
 # Ctrl+Enter  → Run on board
 # Ctrl+S      → Save to board
 # Ctrl+/      → Toggle comment
 
-import time
-from machine import Pin
+from explorer import display, BLACK, WHITE
+import utime
 
-led = Pin('LED', Pin.OUT)
+WIDTH, HEIGHT = display.get_bounds()  # 320 x 240
 
-while True:
-    led.toggle()
-    time.sleep(0.5)
+RED = display.create_pen(228, 76, 101)   # pimoroni red
+
+display.set_layer(0)
+display.set_pen(BLACK)
+display.clear()
+
+display.set_pen(RED)
+display.rectangle(0, 0, WIDTH, 48)
+
+display.set_font("bitmap8")
+display.set_pen(WHITE)
+display.text("Hello Explorer!", 14, 14, scale=2)
+
+display.set_pen(WHITE)
+display.text("Edit me and press Ctrl+Enter to run!", 14, 80, scale=1)
+
+display.update()
+print("Done! Screen updated.")
 `);
 
 editor.on('cursorActivity', () => {
@@ -1057,26 +1072,277 @@ while True:
 `
   },
   // ── THREE VERIFIED DISPLAY DEMOS ──────────────────────────────
-  // API confirmed from pimoroni/pimoroni-pico GitHub:
-  //   PicoGraphics(display=DISPLAY_PICO_EXPLORER)  → 240x240 default PEN_RGB332
-  //   display.create_pen(r,g,b)  display.set_pen()  display.clear()  display.update()
-  //   display.circle(x,y,r)  display.rectangle(x,y,w,h)  display.line(x1,y1,x2,y2)
-  //   display.text(string, x, y, wordwrap, scale)  — wordwrap=0 means no wrap
-  //   NOTE: set_backlight() does nothing on Pico Explorer (pin unavailable)
+  // Board: Pimoroni Explorer (RP2350B) — 320x240 IPS LCD
+  // The `explorer` module pre-creates `display` and colour constants.
+  // Buttons are Active Low: button_x.value() == 0 means PRESSED.
+  // Use display.set_layer(0) before drawing (Explorer has 2 layers by default).
+  // No gc.collect() needed — RP2350B has plenty of RAM.
   {
     id:'dvd_bounce', cat:'display', badge:'beginner', icon:'📀',
     banner:'#0d0d1a', bannerGlow:'#E44C65',
     name:'DVD Logo Bounce',
-    desc:'A coloured logo bounces around the 240×240 screen, changing colour every time it hits a wall — just like that famous screensaver.',
-    code:`# DVD Logo Bounce — bounces around the screen, changes colour on hits
-# Uses the real PicoGraphics API — no set_backlight needed on Explorer
-from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_P8
+    desc:'A coloured logo bounces around the 320×240 screen, changing colour every time it hits a wall.',
+    code:`# DVD Logo Bounce — bounces around the Explorer screen
+# Board: Pimoroni Explorer (RP2350B)
+from explorer import display, BLACK
+import utime, random
+
+WIDTH, HEIGHT = display.get_bounds()  # 320, 240
+
+# Pre-create colour pens (do this once, outside the loop)
+COLORS = [
+    display.create_pen(228,  76, 101),  # pimoroni red
+    display.create_pen(170, 219,  30),  # explorer lime
+    display.create_pen( 70, 200, 240),  # sky blue
+    display.create_pen(255, 224,  67),  # yellow
+    display.create_pen(200, 100, 240),  # purple
+    display.create_pen(255, 140,   0),  # orange
+    display.create_pen( 50, 220, 180),  # teal
+]
+
+LW, LH = 90, 44        # logo box width / height in pixels
+
+x  = float(WIDTH // 3)
+y  = float(HEIGHT // 3)
+vx = 2.5
+vy = 1.8
+color_idx = 0
+
+print("DVD bounce — Ctrl+C to stop")
+
+while True:
+    x += vx
+    y += vy
+
+    bounced = False
+    if x < 0:
+        x = 0.0;              vx =  abs(vx); bounced = True
+    elif x + LW > WIDTH:
+        x = float(WIDTH - LW); vx = -abs(vx); bounced = True
+    if y < 0:
+        y = 0.0;               vy =  abs(vy); bounced = True
+    elif y + LH > HEIGHT:
+        y = float(HEIGHT - LH); vy = -abs(vy); bounced = True
+
+    if bounced:
+        color_idx = (color_idx + 1) % len(COLORS)
+
+    display.set_layer(0)
+    display.set_pen(BLACK)
+    display.clear()
+
+    display.set_pen(COLORS[color_idx])
+    display.rectangle(int(x), int(y), LW, LH)
+
+    # "DVD" text centred in the box
+    # bitmap8 at scale 3 → each char is 24px wide, 24px tall
+    display.set_pen(BLACK)
+    display.set_font("bitmap8")
+    display.text("DVD", int(x) + 9, int(y) + 10, scale=3)
+
+    display.update()
+`
+  },
+  {
+    id:'digital_clock', cat:'display', badge:'beginner', icon:'🕐',
+    banner:'#0a0a1a', bannerGlow:'#46C8F0',
+    name:'Digital Clock',
+    desc:'Big bold HH:MM digits on the Explorer screen, with a live seconds bar and date. Set the RTC from the REPL first.',
+    code:`# Digital Clock — Explorer 320x240 display
+# Board: Pimoroni Explorer (RP2350B)
+#
+# To set the clock, paste this into the REPL terminal first:
+#   import machine
+#   machine.RTC().datetime((2025, 6, 1, 6, 14, 30, 0, 0))
+#   # args: (year, month, day, weekday(0=Mon), hour, minute, second, subsecond)
+from explorer import display, BLACK, WHITE
 import utime
 
-display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_P8)
+WIDTH, HEIGHT = display.get_bounds()  # 320, 240
+
+# Create extra colour pens once
+RED  = display.create_pen(228,  76, 101)  # pimoroni red
+LIME = display.create_pen(170, 219,  30)  # explorer lime
+DIM  = display.create_pen( 55,  55,  55)
+BLUE = display.create_pen( 70, 200, 240)
+
+DAYS   = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+last_second = -1
+print("Clock running — Ctrl+C to stop")
+print("Set time: import machine; machine.RTC().datetime((Y,Mo,D,WD,H,Mi,S,0))")
+
+while True:
+    t = utime.localtime()
+    # t = (year, month, mday, hour, minute, second, weekday, yearday)
+    year, month, mday, hour, minute, second, weekday, _ = t
+
+    if second == last_second:
+        utime.sleep_ms(50)
+        continue
+    last_second = second
+
+    display.set_layer(0)
+    display.set_pen(BLACK)
+    display.clear()
+
+    # Red top and bottom accent bars
+    display.set_pen(RED)
+    display.rectangle(0, 0, WIDTH, 5)
+    display.rectangle(0, HEIGHT - 5, WIDTH, 5)
+
+    # Day name and date
+    display.set_font("bitmap8")
+    display.set_pen(LIME)
+    display.text(DAYS[weekday], 14, 14, scale=2)
+    display.set_pen(DIM)
+    display.text("{} {} {}".format(mday, MONTHS[month], year), 14, 35, scale=2)
+
+    # Thin divider line
+    display.set_pen(DIM)
+    display.rectangle(0, 56, WIDTH, 1)
+
+    # Big HH:MM — bitmap8 at scale 6 → 48px per char, 48px tall
+    # "HH:MM" = 5 chars × 48px = 240px, centred in 320px → x=40
+    hm_str = "{:02d}:{:02d}".format(hour, minute)
+    display.set_pen(WHITE)
+    display.text(hm_str, 40, 70, scale=6)
+
+    # Seconds progress bar — fills over 60 seconds
+    bar_w = int(second / 59.0 * WIDTH)
+    display.set_pen(DIM)
+    display.rectangle(0, 164, WIDTH, 8)
+    display.set_pen(BLUE)
+    if bar_w > 0:
+        display.rectangle(0, 164, bar_w, 8)
+
+    # Seconds digits
+    display.set_pen(BLUE)
+    display.text(":{:02d}".format(second), 14, 182, scale=4)
+
+    display.update()
+`
+  },
+  {
+    id:'starfield', cat:'display', badge:'intermediate', icon:'✨',
+    banner:'#020208', bannerGlow:'#FFFFFF',
+    name:'Twinkling Stars',
+    desc:'A deep-space star field with 150 stars of different sizes twinkling at different rates, plus random shooting stars.',
+    code:`# Twinkling Starfield — Explorer 320x240 display
+# Board: Pimoroni Explorer (RP2350B)
+from explorer import display, BLACK
+import utime, random, math
+
+WIDTH, HEIGHT = display.get_bounds()  # 320, 240
+
+# 8 brightness levels for star twinkling — create pens once
+SHADES = [
+    display.create_pen( 20,  20,  40),
+    display.create_pen( 50,  50,  80),
+    display.create_pen( 90,  90, 130),
+    display.create_pen(130, 130, 170),
+    display.create_pen(170, 170, 210),
+    display.create_pen(210, 210, 240),
+    display.create_pen(240, 240, 255),
+    display.create_pen(255, 255, 255),
+]
+NUM_SHADES = len(SHADES)
+
+NUM_STARS = 150
+
+# Each star: [x, y, size 1-3, sine phase, twinkle speed]
+stars = []
+for _ in range(NUM_STARS):
+    stars.append([
+        random.randint(0, WIDTH  - 1),
+        random.randint(0, HEIGHT - 1),
+        random.randint(1, 3),
+        random.uniform(0, math.pi * 2),
+        random.uniform(0.03, 0.14),
+    ])
+
+# Shooting star state
+sx, sy   = -1.0, 0.0
+svx, svy = 0.0, 0.0
+sleft    = 0
+TRAIL    = 22
+next_shoot = random.randint(80, 220)
+
+t     = 0.0
+frame = 0
+
+print("Starfield — Ctrl+C to stop")
+
+while True:
+    display.set_layer(0)
+    display.set_pen(BLACK)
+    display.clear()
+
+    # Draw background stars
+    for star in stars:
+        sx2, sy2, size, phase, speed = star
+        b = (math.sin(t * speed + phase) + 1) * 0.5   # 0.0 → 1.0
+        shade = SHADES[int(b * (NUM_SHADES - 1))]
+        display.set_pen(shade)
+        if size == 1:
+            display.pixel(sx2, sy2)
+        elif size == 2:
+            display.pixel(sx2,     sy2)
+            display.pixel(sx2 + 1, sy2)
+            display.pixel(sx2,     sy2 + 1)
+            display.pixel(sx2 + 1, sy2 + 1)
+        else:
+            display.pixel(sx2,     sy2)
+            display.pixel(sx2 - 1, sy2)
+            display.pixel(sx2 + 1, sy2)
+            display.pixel(sx2,     sy2 - 1)
+            display.pixel(sx2,     sy2 + 1)
+
+    # Draw shooting star trail
+    if sleft > 0:
+        for i in range(TRAIL):
+            tx = int(sx - svx * i)
+            ty = int(sy - svy * i)
+            if 0 <= tx < WIDTH and 0 <= ty < HEIGHT:
+                fade = NUM_SHADES - 1 - int(i / TRAIL * (NUM_SHADES - 1))
+                display.set_pen(SHADES[max(0, fade)])
+                display.pixel(tx, ty)
+        sx    += svx
+        sy    += svy
+        sleft -= 1
+
+    elif frame >= next_shoot:
+        # Launch from top or left edge
+        if random.randint(0, 1):
+            sx  = float(random.randint(0, WIDTH))
+            sy  = 0.0
+        else:
+            sx  = 0.0
+            sy  = float(random.randint(0, HEIGHT // 2))
+        svx  = random.uniform(3.0, 7.0)
+        svy  = random.uniform(1.0, 4.0)
+        sleft = random.randint(30, 60)
+        next_shoot = frame + random.randint(100, 260)
+
+    display.update()
+    t     += 0.06
+    frame += 1
+    utime.sleep_ms(30)
+`
+  },
+    code:`# DVD Logo Bounce — bounces around the screen, changes colour on hits
+# gc.collect() frees heap fragmentation before the 57,600-byte display buffer
+import gc
+gc.collect()
+
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER
+import utime, random
+
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER)
 WIDTH, HEIGHT = display.get_bounds()
 
-# Pre-create all pens in the P8 palette (max 256 entries)
 BG = display.create_pen(0, 0, 0)
 
 COLORS = [
@@ -1149,10 +1415,13 @@ while True:
 # Set the RTC first from the REPL if needed:
 #   import machine; machine.RTC().datetime((2025, 1, 1, 0, 12, 30, 0, 0))
 #   args are: (year, month, day, weekday, hour, minute, second, subsecond)
-from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_P8
+import gc
+gc.collect()
+
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER
 import utime
 
-display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_P8)
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER)
 WIDTH, HEIGHT = display.get_bounds()
 
 # Pens
@@ -1232,10 +1501,13 @@ while True:
     name:'Twinkling Stars',
     desc:'A deep-space star field with stars of different sizes and brightness, slowly twinkling.',
     code:`# Twinkling Starfield — deep space on your Explorer display
-from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_P8
+import gc
+gc.collect()
+
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER
 import utime, random, math
 
-display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_P8)
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER)
 WIDTH, HEIGHT = display.get_bounds()
 
 # Build a brightness palette: black + 8 shades of white/blue-white
