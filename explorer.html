@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pimoroni Explorer IDE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+<style>
+:root {
+  --bg:       #0C0E14;
+  --bg2:      #13151F;
+  --bg3:      #191C28;
+  --bg4:      #1F2233;
+  --border:   #252A3A;
+  --accent:   #FF6B35;
+  --accent2:  #FF9D6E;
+  --text:     #C8D0E4;
+  --dim:      #4A5270;
+  --green:    #5DEFA8;
+  --red:      #FF4F6A;
+  --yellow:   #FFCA56;
+  --blue:     #4FC1F0;
+  --mono:     'JetBrains Mono', monospace;
+  --ui:       'Syne', sans-serif;
+  --radius:   6px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ─── HEADER ─────────────────────────────── */
+#header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  height: 48px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+#logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--ui);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+#logo-icon {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+#logo span { color: var(--accent); }
+
+.sep { width: 1px; height: 28px; background: var(--border); margin: 0 4px; }
+
+.hdr-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.hdr-btn:hover { background: var(--bg4); border-color: var(--accent); color: var(--accent); }
+.hdr-btn.active { background: #FF6B3522; border-color: var(--accent); color: var(--accent); }
+.hdr-btn.danger:hover { border-color: var(--red); color: var(--red); }
+.hdr-btn.success { border-color: var(--green); color: var(--green); }
+
+#connect-btn { margin-left: auto; }
+#connect-btn.connected { background: #5DEFA822; border-color: var(--green); color: var(--green); }
+
+#baud-select {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 8px;
+  cursor: pointer;
+  outline: none;
+}
+#baud-select:focus { border-color: var(--accent); }
+
+#status-pill {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px;
+  color: var(--dim);
+  font-family: var(--ui);
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--dim);
+  transition: all 0.3s;
+}
+.status-dot.connected { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.status-dot.error { background: var(--red); }
+
+/* ─── MAIN LAYOUT ────────────────────────── */
+#main {
+  display: flex;
+  height: calc(100vh - 48px - 28px);
+}
+
+/* ─── SIDEBAR ────────────────────────────── */
+#sidebar {
+  width: 220px;
+  min-width: 160px;
+  max-width: 350px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.panel-title {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 10px;
+  font-family: var(--ui);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  border-bottom: 1px solid var(--border);
+}
+.panel-title-actions { display: flex; gap: 4px; }
+.icon-btn {
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--dim);
+  font-size: 13px;
+  transition: all 0.15s;
+  border: none; background: transparent;
+}
+.icon-btn:hover { background: var(--bg4); color: var(--text); }
+
+#file-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.file-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 14px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text);
+  border-radius: 0;
+  transition: background 0.12s;
+  position: relative;
+}
+.file-item:hover { background: var(--bg3); }
+.file-item.active { background: #FF6B351A; color: var(--accent2); }
+.file-item.active::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--accent);
+}
+.file-icon { font-size: 13px; flex-shrink: 0; }
+.file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-size { font-size: 10px; color: var(--dim); }
+
+.dir-item { color: var(--blue); }
+.dir-item.expanded > .file-icon::after { content: ''; }
+
+.tree-empty {
+  padding: 20px 14px;
+  font-size: 11px;
+  color: var(--dim);
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* Context menu */
+#ctx-menu {
+  position: fixed;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 8px 32px #00000060;
+  min-width: 140px;
+}
+.ctx-item {
+  padding: 7px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+.ctx-item:hover { background: var(--bg4); }
+.ctx-item.danger { color: var(--red); }
+
+/* ─── CENTER: EDITOR + TERMINAL ───────────── */
+#center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── TOOLBAR ────────────────────────────── */
+#toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+#current-file {
+  font-size: 12px;
+  color: var(--dim);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#current-file span { color: var(--text); }
+
+.tool-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tool-btn:hover { background: var(--bg4); border-color: var(--accent); color: var(--accent); }
+.tool-btn.run-btn:hover { border-color: var(--green); color: var(--green); }
+.tool-btn.danger:hover { border-color: var(--red); color: var(--red); }
+.tool-btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+/* ─── EDITOR ─────────────────────────────── */
+#editor-wrap {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.CodeMirror {
+  height: 100%;
+  font-family: var(--mono) !important;
+  font-size: 13px !important;
+  line-height: 1.7 !important;
+  background: var(--bg) !important;
+  color: #ABB2BF !important;
+}
+.CodeMirror-gutters { background: var(--bg2) !important; border-right: 1px solid var(--border) !important; }
+.CodeMirror-linenumber { color: var(--dim) !important; }
+.CodeMirror-cursor { border-left: 2px solid var(--accent) !important; }
+.CodeMirror-selected { background: #FF6B3520 !important; }
+.CodeMirror-focused .CodeMirror-selected { background: #FF6B3528 !important; }
+.CodeMirror-activeline-background { background: #FFFFFF07 !important; }
+/* Python syntax colors */
+.cm-keyword { color: #C678DD !important; }
+.cm-def { color: #61AFEF !important; }
+.cm-string { color: #98C379 !important; }
+.cm-string-2 { color: #98C379 !important; }
+.cm-comment { color: var(--dim) !important; font-style: italic; }
+.cm-number { color: var(--accent2) !important; }
+.cm-builtin { color: #56B6C2 !important; }
+.cm-operator { color: #ABB2BF !important; }
+.cm-variable { color: #E06C75 !important; }
+.cm-variable-2 { color: #E5C07B !important; }
+.cm-property { color: #61AFEF !important; }
+.cm-bracket { color: var(--text) !important; }
+.CodeMirror-matchingbracket { color: var(--accent) !important; outline: 1px solid var(--accent); }
+
+/* ─── TERMINAL ───────────────────────────── */
+#terminal-wrap {
+  height: 220px;
+  min-height: 80px;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border-top: 2px solid var(--border);
+  flex-shrink: 0;
+}
+
+#terminal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 12px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  font-family: var(--ui);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+  flex-shrink: 0;
+}
+#terminal-header-actions { display: flex; gap: 4px; }
+
+#terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.65;
+  color: #A8B0C8;
+  scroll-behavior: smooth;
+}
+#terminal-output::-webkit-scrollbar { width: 6px; }
+#terminal-output::-webkit-scrollbar-track { background: transparent; }
+#terminal-output::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.term-line { white-space: pre-wrap; word-break: break-all; }
+.term-line.info { color: var(--blue); }
+.term-line.success { color: var(--green); }
+.term-line.error { color: var(--red); }
+.term-line.warning { color: var(--yellow); }
+.term-line.dim { color: var(--dim); }
+.term-line.input-echo { color: var(--accent2); }
+
+#terminal-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+#terminal-prompt {
+  padding: 6px 8px 6px 14px;
+  color: var(--accent);
+  font-size: 13px;
+  font-family: var(--mono);
+  flex-shrink: 0;
+}
+#terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 6px 8px;
+  caret-color: var(--accent);
+}
+
+/* resize handle */
+#resize-handle {
+  height: 4px;
+  cursor: ns-resize;
+  background: transparent;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+#resize-handle:hover { background: var(--accent); }
+
+/* ─── STATUS BAR ─────────────────────────── */
+#statusbar {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 14px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--dim);
+  flex-shrink: 0;
+  font-family: var(--ui);
+}
+#statusbar .sb-item { display: flex; align-items: center; gap: 5px; }
+#statusbar .sb-accent { color: var(--accent); }
+#sb-message { margin-left: auto; font-style: italic; transition: opacity 0.3s; }
+
+/* ─── MODAL ──────────────────────────────── */
+#modal-overlay {
+  position: fixed; inset: 0;
+  background: #00000080;
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+#modal-overlay.visible { display: flex; }
+#modal {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  width: 360px;
+  box-shadow: 0 24px 80px #00000080;
+}
+#modal h3 {
+  font-family: var(--ui);
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.modal-label {
+  font-size: 11px; color: var(--dim); margin-bottom: 6px;
+  font-family: var(--ui); letter-spacing: 0.05em;
+}
+.modal-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 8px 12px;
+  outline: none;
+  margin-bottom: 16px;
+}
+.modal-input:focus { border-color: var(--accent); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.modal-btn {
+  padding: 7px 16px;
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg4);
+  color: var(--text);
+  transition: all 0.15s;
+}
+.modal-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.modal-btn:hover { filter: brightness(1.15); }
+
+/* ─── LOADING OVERLAY ────────────────────── */
+#loading-overlay {
+  position: fixed; inset: 0;
+  background: #0C0E14E8;
+  z-index: 800;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+#loading-overlay.visible { display: flex; }
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+#loading-msg { font-family: var(--ui); color: var(--dim); font-size: 13px; }
+
+/* ─── SCROLLBARS ─────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
+/* ─── NO SERIAL API WARNING ──────────────── */
+#no-serial {
+  display: none;
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 900;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--ui);
+  text-align: center;
+  padding: 24px;
+}
+#no-serial.visible { display: flex; }
+#no-serial h2 { font-size: 22px; color: var(--accent); }
+#no-serial p { color: var(--dim); max-width: 480px; line-height: 1.7; }
+#no-serial code { background: var(--bg3); padding: 2px 8px; border-radius: 4px; color: var(--green); font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<!-- No Serial API Warning -->
+<div id="no-serial">
+  <div style="font-size:48px">🔌</div>
+  <h2>Web Serial API Required</h2>
+  <p>This IDE needs the Web Serial API, available in <strong>Chrome</strong> or <strong>Edge</strong>.<br>
+  Also, this page must be served over <code>localhost</code> or <code>HTTPS</code> — not opened as a raw file.</p>
+  <p style="margin-top:8px">Run a local server with:<br>
+  <code>python -m http.server 8080</code><br>then open <code>http://localhost:8080/pimoroni-explorer-ide.html</code></p>
+</div>
+
+<!-- Header -->
+<div id="header">
+  <div id="logo">
+    <div id="logo-icon">🐙</div>
+    PIMORONI <span>EXPLORER</span> IDE
+  </div>
+  <div class="sep"></div>
+
+  <button class="tool-btn" onclick="newFile()">＋ New File</button>
+  <button class="tool-btn" onclick="saveFile()" id="btn-save">💾 Save</button>
+  <button class="tool-btn run-btn" onclick="runCode()" id="btn-run">▶ Run</button>
+  <button class="tool-btn danger" onclick="softReset()" id="btn-reset">↺ Soft Reset</button>
+
+  <div class="sep"></div>
+  <div id="status-pill">
+    <div class="status-dot" id="status-dot"></div>
+    <span id="status-text">Disconnected</span>
+  </div>
+
+  <select id="baud-select">
+    <option value="115200" selected>115200 baud</option>
+    <option value="9600">9600 baud</option>
+    <option value="57600">57600 baud</option>
+  </select>
+
+  <button class="hdr-btn" id="connect-btn" onclick="toggleConnect()">⚡ Connect</button>
+</div>
+
+<!-- Main -->
+<div id="main">
+
+  <!-- Sidebar / File Browser -->
+  <div id="sidebar">
+    <div class="panel-title">
+      Files
+      <div class="panel-title-actions">
+        <button class="icon-btn" title="Refresh files" onclick="refreshFiles()">⟳</button>
+        <button class="icon-btn" title="New file" onclick="newFile()">＋</button>
+      </div>
+    </div>
+    <div id="file-tree">
+      <div class="tree-empty">Connect to board<br>to browse files</div>
+    </div>
+  </div>
+
+  <!-- Center: Editor + Terminal -->
+  <div id="center">
+
+    <!-- Toolbar -->
+    <div id="toolbar">
+      <div id="current-file">No file open</div>
+    </div>
+
+    <!-- Editor -->
+    <div id="editor-wrap">
+      <textarea id="editor"></textarea>
+    </div>
+
+    <!-- Resize handle -->
+    <div id="resize-handle"></div>
+
+    <!-- Terminal -->
+    <div id="terminal-wrap">
+      <div id="terminal-header">
+        REPL Terminal
+        <div id="terminal-header-actions">
+          <button class="icon-btn" title="Interrupt (Ctrl+C)" onclick="sendInterrupt()">⏹</button>
+          <button class="icon-btn" title="Clear terminal" onclick="clearTerminal()">🗑</button>
+        </div>
+      </div>
+      <div id="terminal-output"></div>
+      <div id="terminal-input-row">
+        <span id="terminal-prompt">&gt;&gt;&gt;</span>
+        <input id="terminal-input" type="text" placeholder="Type Python or REPL commands..." autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Status Bar -->
+<div id="statusbar">
+  <div class="sb-item">🐙 <span id="sb-board">No board</span></div>
+  <div class="sb-item">Ln <span id="sb-line" class="sb-accent">1</span>  Col <span id="sb-col" class="sb-accent">1</span></div>
+  <div class="sb-item" id="sb-fileinfo"></div>
+  <div id="sb-message"></div>
+</div>
+
+<!-- Context Menu -->
+<div id="ctx-menu">
+  <div class="ctx-item" id="ctx-open" onclick="ctxOpen()">📄 Open</div>
+  <div class="ctx-item" id="ctx-rename" onclick="ctxRename()">✏️ Rename</div>
+  <div class="ctx-item danger" id="ctx-delete" onclick="ctxDelete()">🗑 Delete</div>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay">
+  <div id="modal">
+    <h3 id="modal-title">New File</h3>
+    <div class="modal-label" id="modal-label">File name</div>
+    <input id="modal-input" class="modal-input" type="text" placeholder="main.py">
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" id="modal-confirm" onclick="confirmModal()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div id="loading-msg">Working...</div>
+</div>
+
+<script>
+'use strict';
+
+// ─── CODEMIRROR SETUP ──────────────────────────────────────────
+const editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+  mode: 'python',
+  theme: 'default',
+  lineNumbers: true,
+  matchBrackets: true,
+  autoCloseBrackets: true,
+  indentUnit: 4,
+  tabSize: 4,
+  indentWithTabs: false,
+  lineWrapping: false,
+  autofocus: true,
+  extraKeys: {
+    'Ctrl-/': 'toggleComment',
+    'Cmd-/': 'toggleComment',
+    'Tab': (cm) => {
+      if (cm.somethingSelected()) cm.indentSelection('add');
+      else cm.replaceSelection('    ', 'end');
+    },
+    'Shift-Tab': (cm) => cm.indentSelection('subtract'),
+    'Ctrl-S': () => saveFile(),
+    'Cmd-S': () => saveFile(),
+    'Ctrl-Enter': () => runCode(),
+    'Cmd-Enter': () => runCode(),
+  }
+});
+
+// Populate with starter template
+editor.setValue(`# Pimoroni Explorer MicroPython
+# Connect your board and start coding!
+
+import time
+
+# Explorer board GPIO access
+from machine import Pin, ADC, PWM
+
+# Example: blink the onboard LED
+led = Pin('LED', Pin.OUT)
+
+while True:
+    led.on()
+    time.sleep(0.5)
+    led.off()
+    time.sleep(0.5)
+`);
+
+editor.on('cursorActivity', () => {
+  const pos = editor.getCursor();
+  document.getElementById('sb-line').textContent = pos.line + 1;
+  document.getElementById('sb-col').textContent  = pos.ch + 1;
+});
+
+// ─── STATE ────────────────────────────────────────────────────
+let serial = null;
+let repl   = null;
+let connected = false;
+let currentFile = null;
+let ctxTarget   = null;
+let modalAction = null;
+let inputHistory = [];
+let historyIdx   = -1;
+let isRawMode    = false;
+let silentMode   = false; // suppress terminal output during IDE ops
+
+// ─── SERIAL MANAGER ──────────────────────────────────────────
+class SerialManager {
+  constructor() {
+    this.port    = null;
+    this.reader  = null;
+    this.writer  = null;
+    this.buffer  = '';
+    this._resolvers = [];
+    this.active  = false;
+  }
+
+  async connect(baudRate) {
+    this.port = await navigator.serial.requestPort();
+    await this.port.open({ baudRate: parseInt(baudRate), dataBits: 8, stopBits: 1, parity: 'none', flowControl: 'none' });
+    this.reader = this.port.readable.getReader();
+    this.writer = this.port.writable.getWriter();
+    this.active = true;
+    this._readLoop();
+  }
+
+  async disconnect() {
+    this.active = false;
+    try { await this.reader?.cancel(); } catch {}
+    try { await this.writer?.close();  } catch {}
+    try { await this.port?.close();    } catch {}
+    this.reader = null;
+    this.writer = null;
+    this.port   = null;
+    this.buffer = '';
+    this._resolvers = [];
+  }
+
+  _readLoop() {
+    const dec = new TextDecoder();
+    (async () => {
+      try {
+        while (this.active) {
+          const { value, done } = await this.reader.read();
+          if (done) break;
+          const text = dec.decode(value);
+          this.buffer += text;
+          if (!silentMode) termWrite(text);
+          this._tick();
+        }
+      } catch (e) {
+        if (this.active) termLine('⚠ Serial read error: ' + e.message, 'error');
+      }
+    })();
+  }
+
+  _tick() {
+    const now = Date.now();
+    this._resolvers = this._resolvers.filter(r => {
+      if (now > r.deadline) { r.reject(new Error('Serial timeout')); return false; }
+      const ok = typeof r.pattern === 'string'
+        ? this.buffer.includes(r.pattern)
+        : r.pattern.test(this.buffer);
+      if (ok) { r.resolve(this.buffer); return false; }
+      return true;
+    });
+  }
+
+  waitFor(pattern, timeout = 15000) {
+    return new Promise((resolve, reject) => {
+      const ok = typeof pattern === 'string'
+        ? this.buffer.includes(pattern)
+        : pattern.test(this.buffer);
+      if (ok) { resolve(this.buffer); return; }
+      const entry = { pattern, resolve, reject, deadline: Date.now() + timeout };
+      this._resolvers.push(entry);
+      setTimeout(() => {
+        const i = this._resolvers.indexOf(entry);
+        if (i !== -1) { this._resolvers.splice(i, 1); reject(new Error('Timeout')); }
+      }, timeout);
+    });
+  }
+
+  clearBuffer() { this.buffer = ''; }
+
+  async write(text) {
+    const enc = new TextEncoder();
+    await this.writer.write(enc.encode(text));
+  }
+}
+
+// ─── MICROPYTHON REPL ──────────────────────────────────────────
+class MicroPythonREPL {
+  constructor(ser) { this.ser = ser; this._raw = false; }
+
+  async interrupt() {
+    await this.ser.write('\x03\x03');
+    await sleep(400);
+  }
+
+  async enterRaw() {
+    this.ser.clearBuffer();
+    await this.ser.write('\x01');
+    await this.ser.waitFor('raw REPL; CTRL-B to exit', 5000);
+    this._raw = true;
+  }
+
+  async exitRaw() {
+    await this.ser.write('\x02');
+    this._raw = false;
+    await sleep(200);
+    this.ser.clearBuffer();
+  }
+
+  // Execute code in raw REPL, return {stdout, stderr}
+  async exec(code) {
+    this.ser.clearBuffer();
+    await this.ser.write(code + '\x04');
+    // Wait for OK
+    await this.ser.waitFor('OK', 8000);
+    // Wait for end-of-output markers
+    await this.ser.waitFor('\x04\x04>', 30000);
+    const buf = this.ser.buffer;
+    const okIdx = buf.indexOf('OK');
+    const after = buf.slice(okIdx + 2);
+    const p1 = after.indexOf('\x04');
+    const stdout = p1 >= 0 ? after.slice(0, p1) : after;
+    const rest   = p1 >= 0 ? after.slice(p1 + 1) : '';
+    const p2 = rest.indexOf('\x04');
+    const stderr = p2 >= 0 ? rest.slice(0, p2) : rest;
+    this.ser.clearBuffer();
+    return { stdout: stdout.trim(), stderr: stderr.trim() };
+  }
+
+  // Full cycle: interrupt → raw → exec → exit
+  async run(code) {
+    await this.interrupt();
+    await this.enterRaw();
+    const result = await this.exec(code);
+    await this.exitRaw();
+    return result;
+  }
+
+  async listDir(path = '/') {
+    const r = await this.run(
+      `import os\n` +
+      `for x in os.ilistdir('${path}'):\n` +
+      `    print(x[0]+'\\t'+str(x[1])+'\\t'+str(x[3] if len(x)>3 else 0))`
+    );
+    const items = [];
+    for (const line of r.stdout.split('\n')) {
+      const p = line.split('\t');
+      if (p.length >= 2 && p[0].trim()) {
+        items.push({
+          name:  p[0].trim(),
+          isDir: parseInt(p[1]) === 0x4000,
+          size:  parseInt(p[2]) || 0,
+          path:  (path === '/' ? '' : path) + '/' + p[0].trim()
+        });
+      }
+    }
+    return items;
+  }
+
+  async readFile(path) {
+    const r = await this.run(
+      `f=open('${path}','r')\n` +
+      `d=f.read()\n` +
+      `f.close()\n` +
+      `print(d)`
+    );
+    if (r.stderr) throw new Error(r.stderr);
+    return r.stdout;
+  }
+
+  async writeFile(path, content) {
+    // Encode as base64 chunks to safely transfer any content
+    const bytes = new TextEncoder().encode(content);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    const b64 = btoa(binary);
+    const CHUNK = 60;
+
+    await this.interrupt();
+    await this.enterRaw();
+
+    await this.exec(`f=open('${path}','wb')`);
+
+    for (let i = 0; i < b64.length; i += CHUNK) {
+      const chunk = b64.slice(i, i + CHUNK);
+      await this.exec(`import ubinascii\nf.write(ubinascii.a2b_base64('${chunk}'))`);
+    }
+
+    await this.exec(`f.close()`);
+    await this.exitRaw();
+  }
+
+  async deleteFile(path) {
+    await this.run(`import os\nos.remove('${path}')`);
+  }
+
+  async renameFile(oldPath, newPath) {
+    await this.run(`import os\nos.rename('${oldPath}','${newPath}')`);
+  }
+
+  async softReset() {
+    if (this._raw) await this.exitRaw();
+    await this.interrupt();
+    await this.ser.write('\x04'); // Ctrl+D soft reset
+    this.ser.clearBuffer();
+  }
+
+  async sendInteractive(text) {
+    if (this._raw) await this.exitRaw();
+    await this.ser.write(text + '\r\n');
+  }
+
+  async getVersion() {
+    const r = await this.run('import sys\nprint(sys.version)');
+    return r.stdout;
+  }
+}
+
+// ─── UTILITY ──────────────────────────────────────────────────
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function termWrite(raw) {
+  const el = document.getElementById('terminal-output');
+  const span = document.createElement('span');
+  span.className = 'term-line';
+  // Clean up raw REPL control chars for display
+  span.textContent = raw.replace(/[\x01\x02\x03\x04]/g, '');
+  el.appendChild(span);
+  el.scrollTop = el.scrollHeight;
+}
+
+function termLine(text, cls = '') {
+  const el = document.getElementById('terminal-output');
+  const div = document.createElement('div');
+  div.className = 'term-line' + (cls ? ' ' + cls : '');
+  div.textContent = text;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function clearTerminal() {
+  document.getElementById('terminal-output').innerHTML = '';
+}
+
+function setStatus(msg, duration = 3000) {
+  const el = document.getElementById('sb-message');
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  if (duration > 0) {
+    el._t = setTimeout(() => { el.style.opacity = '0'; }, duration);
+  }
+}
+
+function showLoading(msg = 'Working...') {
+  document.getElementById('loading-msg').textContent = msg;
+  document.getElementById('loading-overlay').classList.add('visible');
+}
+
+function hideLoading() {
+  document.getElementById('loading-overlay').classList.remove('visible');
+}
+
+function setConnected(state) {
+  connected = state;
+  const dot  = document.getElementById('status-dot');
+  const txt  = document.getElementById('status-text');
+  const btn  = document.getElementById('connect-btn');
+  dot.className  = 'status-dot' + (state ? ' connected' : '');
+  txt.textContent = state ? 'Connected' : 'Disconnected';
+  btn.textContent = state ? '⏏ Disconnect' : '⚡ Connect';
+  btn.className   = 'hdr-btn' + (state ? ' connected' : '');
+}
+
+function setDisabled(state) {
+  ['btn-save', 'btn-run', 'btn-reset'].forEach(id => {
+    document.getElementById(id).disabled = state;
+  });
+}
+
+// ─── CONNECTION ──────────────────────────────────────────────
+async function toggleConnect() {
+  if (connected) {
+    await doDisconnect();
+  } else {
+    await doConnect();
+  }
+}
+
+async function doConnect() {
+  if (!navigator.serial) return;
+  try {
+    const baud = document.getElementById('baud-select').value;
+    serial = new SerialManager();
+    serial.onData = null; // handled in _readLoop
+
+    showLoading('Connecting to board...');
+    await serial.connect(baud);
+    repl = new MicroPythonREPL(serial);
+
+    // Interrupt any running code and get to REPL
+    termLine('\n🔌 Connecting to Pimoroni Explorer...', 'info');
+    silentMode = true;
+    await repl.interrupt();
+
+    // Get version
+    let version = '';
+    try {
+      version = await repl.getVersion();
+      document.getElementById('sb-board').textContent = 'MicroPython ' + version.split(' ')[0];
+    } catch(e) {
+      document.getElementById('sb-board').textContent = 'Pimoroni Explorer';
+    }
+    silentMode = false;
+
+    setConnected(true);
+    setDisabled(false);
+    hideLoading();
+    termLine('✓ Connected! Board ready.', 'success');
+    if (version) termLine('  ' + version, 'dim');
+    termLine('', 'dim');
+
+    await refreshFiles();
+  } catch (e) {
+    silentMode = false;
+    hideLoading();
+    if (serial) { try { await serial.disconnect(); } catch {} serial = null; }
+    repl = null;
+    if (e.name !== 'NotFoundError') {
+      termLine('✗ Connection failed: ' + e.message, 'error');
+      setStatus('Connection failed', 4000);
+    }
+    setDisabled(true);
+  }
+}
+
+async function doDisconnect() {
+  try {
+    if (repl) { try { await repl.interrupt(); } catch {} }
+    if (serial) await serial.disconnect();
+  } catch {}
+  serial = null;
+  repl   = null;
+  setConnected(false);
+  setDisabled(true);
+  document.getElementById('sb-board').textContent = 'No board';
+  document.getElementById('file-tree').innerHTML =
+    '<div class="tree-empty">Connect to board<br>to browse files</div>';
+  termLine('\n⏏ Disconnected.', 'dim');
+}
+
+// ─── FILE BROWSER ─────────────────────────────────────────────
+let fileTree = [];
+
+async function refreshFiles() {
+  if (!connected || !repl) return;
+  try {
+    showLoading('Reading files...');
+    silentMode = true;
+    fileTree = await repl.listDir('/');
+    silentMode = false;
+    renderFileTree();
+    hideLoading();
+    setStatus('Files refreshed');
+  } catch(e) {
+    silentMode = false;
+    hideLoading();
+    termLine('✗ Could not list files: ' + e.message, 'error');
+  }
+}
+
+function renderFileTree() {
+  const el = document.getElementById('file-tree');
+  el.innerHTML = '';
+  if (!fileTree.length) {
+    el.innerHTML = '<div class="tree-empty">No files found</div>';
+    return;
+  }
+  // Sort: dirs first, then files alphabetically
+  const sorted = [...fileTree].sort((a,b) => {
+    if (a.isDir !== b.isDir) return a.isDir ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
+  sorted.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'file-item' + (item.isDir ? ' dir-item' : '');
+    if (currentFile === item.path) div.classList.add('active');
+    div.dataset.path = item.path;
+    div.dataset.name = item.name;
+    div.dataset.isdir = item.isDir;
+    const icon = item.isDir ? '📁' : getFileIcon(item.name);
+    const size = item.isDir ? '' : `<span class="file-size">${formatSize(item.size)}</span>`;
+    div.innerHTML = `<span class="file-icon">${icon}</span><span class="file-name">${item.name}</span>${size}`;
+    div.onclick = () => { if (!item.isDir) openFile(item.path); };
+    div.oncontextmenu = (e) => { e.preventDefault(); showCtxMenu(e, item); };
+    el.appendChild(div);
+  });
+}
+
+function getFileIcon(name) {
+  if (name.endsWith('.py')) return '🐍';
+  if (name.endsWith('.json')) return '{}';
+  if (name.endsWith('.txt')) return '📝';
+  if (name.endsWith('.mpy')) return '⚡';
+  return '📄';
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + 'B';
+  return (bytes / 1024).toFixed(1) + 'KB';
+}
+
+// ─── FILE OPERATIONS ──────────────────────────────────────────
+async function openFile(path) {
+  if (!connected || !repl) return;
+  try {
+    showLoading('Reading ' + path + '...');
+    silentMode = true;
+    const content = await repl.readFile(path);
+    silentMode = false;
+    editor.setValue(content);
+    editor.setCursor(0, 0);
+    currentFile = path;
+    document.getElementById('current-file').innerHTML = `<span>${path}</span>`;
+    document.getElementById('sb-fileinfo').textContent = formatSize(content.length);
+    renderFileTree();
+    hideLoading();
+    setStatus('Opened ' + path);
+    editor.focus();
+  } catch(e) {
+    silentMode = false;
+    hideLoading();
+    termLine('✗ Could not read ' + path + ': ' + e.message, 'error');
+  }
+}
+
+async function saveFile() {
+  if (!connected || !repl) { termLine('Not connected', 'warning'); return; }
+  const path = currentFile;
+  if (!path) { promptNewFile(); return; }
+  const content = editor.getValue();
+  try {
+    showLoading('Saving ' + path + '...');
+    silentMode = true;
+    await repl.writeFile(path, content);
+    silentMode = false;
+    hideLoading();
+    termLine('✓ Saved ' + path, 'success');
+    setStatus('Saved ' + path);
+    await refreshFiles();
+  } catch(e) {
+    silentMode = false;
+    hideLoading();
+    termLine('✗ Save failed: ' + e.message, 'error');
+  }
+}
+
+async function runCode() {
+  if (!connected || !repl) { termLine('Not connected', 'warning'); return; }
+  const code = editor.getValue();
+  termLine('\n▶ Running...', 'info');
+  try {
+    silentMode = false;
+    await repl.interrupt();
+    // Use paste mode (Ctrl+E) if possible, else raw REPL with visible output
+    // We'll use raw REPL but print stdout to terminal
+    silentMode = true;
+    await repl.interrupt();
+    await repl.enterRaw();
+    silentMode = false;
+    repl.ser.clearBuffer();
+    // Write code + execute
+    await repl.ser.write(code + '\x04');
+    // Wait for completion
+    await repl.ser.waitFor('\x04\x04>', 60000);
+    const buf = repl.ser.buffer;
+    const okIdx = buf.indexOf('OK');
+    if (okIdx >= 0) {
+      const after = buf.slice(okIdx + 2);
+      const p1 = after.indexOf('\x04');
+      const stdout = p1 >= 0 ? after.slice(0, p1) : after;
+      const rest   = p1 >= 0 ? after.slice(p1 + 1) : '';
+      const p2 = rest.indexOf('\x04');
+      const stderr = p2 >= 0 ? rest.slice(0, p2) : rest;
+      if (stdout.trim()) termLine(stdout, '');
+      if (stderr.trim()) termLine(stderr, 'error');
+    }
+    silentMode = true;
+    await repl.exitRaw();
+    silentMode = false;
+    termLine('✓ Done', 'success');
+  } catch(e) {
+    silentMode = false;
+    termLine('✗ Run error: ' + e.message, 'error');
+    try { silentMode = true; await repl.exitRaw(); silentMode = false; } catch {}
+  }
+}
+
+async function softReset() {
+  if (!connected || !repl) return;
+  termLine('\n↺ Soft reset...', 'warning');
+  try {
+    silentMode = false;
+    await repl.softReset();
+    termLine('Board soft-reset. Reconnecting REPL...', 'dim');
+    await sleep(1000);
+    silentMode = true;
+    await repl.interrupt();
+    silentMode = false;
+    termLine('✓ Ready', 'success');
+  } catch(e) {
+    silentMode = false;
+    termLine('✗ Reset error: ' + e.message, 'error');
+  }
+}
+
+async function sendInterrupt() {
+  if (!connected || !repl) return;
+  if (repl._raw) { silentMode = true; await repl.exitRaw(); silentMode = false; }
+  await repl.ser.write('\x03');
+  termLine('\n^C', 'warning');
+}
+
+// ─── NEW FILE MODAL ───────────────────────────────────────────
+function newFile() {
+  openModal('New File', 'File name', 'main.py', 'Create', async (name) => {
+    if (!name) return;
+    const path = name.startsWith('/') ? name : '/' + name;
+    if (connected && repl) {
+      showLoading('Creating ' + path);
+      silentMode = true;
+      try { await repl.writeFile(path, ''); } catch {}
+      silentMode = false;
+      hideLoading();
+      await refreshFiles();
+    }
+    editor.setValue('');
+    currentFile = path;
+    document.getElementById('current-file').innerHTML = `<span>${path}</span>`;
+    editor.focus();
+  });
+}
+
+function promptNewFile() {
+  openModal('Save As', 'File name', 'main.py', 'Save', async (name) => {
+    if (!name) return;
+    currentFile = name.startsWith('/') ? name : '/' + name;
+    document.getElementById('current-file').innerHTML = `<span>${currentFile}</span>`;
+    await saveFile();
+  });
+}
+
+// ─── CONTEXT MENU ─────────────────────────────────────────────
+let ctxItem = null;
+function showCtxMenu(e, item) {
+  ctxItem = item;
+  const menu = document.getElementById('ctx-menu');
+  menu.style.display = 'block';
+  menu.style.left = e.clientX + 'px';
+  menu.style.top  = e.clientY + 'px';
+  document.getElementById('ctx-open').style.display = item.isDir ? 'none' : 'block';
+}
+function hideCtxMenu() { document.getElementById('ctx-menu').style.display = 'none'; }
+function ctxOpen()   { hideCtxMenu(); if (ctxItem) openFile(ctxItem.path); }
+function ctxRename() {
+  hideCtxMenu();
+  if (!ctxItem) return;
+  openModal('Rename', 'New name', ctxItem.name, 'Rename', async (name) => {
+    if (!name) return;
+    const newPath = '/' + name;
+    showLoading('Renaming...');
+    silentMode = true;
+    try { await repl.renameFile(ctxItem.path, newPath); } catch(e) { termLine('✗ '+e.message,'error'); }
+    silentMode = false;
+    hideLoading();
+    if (currentFile === ctxItem.path) {
+      currentFile = newPath;
+      document.getElementById('current-file').innerHTML = `<span>${newPath}</span>`;
+    }
+    await refreshFiles();
+  });
+}
+async function ctxDelete() {
+  hideCtxMenu();
+  if (!ctxItem || ctxItem.isDir) return;
+  if (!confirm(`Delete ${ctxItem.path}?`)) return;
+  showLoading('Deleting...');
+  silentMode = true;
+  try { await repl.deleteFile(ctxItem.path); } catch(e) { termLine('✗ '+e.message,'error'); }
+  silentMode = false;
+  hideLoading();
+  if (currentFile === ctxItem.path) {
+    currentFile = null;
+    document.getElementById('current-file').textContent = 'No file open';
+    editor.setValue('');
+  }
+  await refreshFiles();
+  setStatus('Deleted ' + ctxItem.path);
+}
+document.addEventListener('click', hideCtxMenu);
+
+// ─── MODAL ────────────────────────────────────────────────────
+function openModal(title, label, placeholder, confirmText, callback) {
+  modalAction = callback;
+  document.getElementById('modal-title').textContent   = title;
+  document.getElementById('modal-label').textContent   = label;
+  const inp = document.getElementById('modal-input');
+  inp.placeholder = placeholder;
+  inp.value = '';
+  document.getElementById('modal-confirm').textContent = confirmText;
+  document.getElementById('modal-overlay').classList.add('visible');
+  setTimeout(() => inp.focus(), 50);
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('visible');
+  modalAction = null;
+}
+async function confirmModal() {
+  const val = document.getElementById('modal-input').value.trim();
+  closeModal();
+  if (modalAction && val) await modalAction(val);
+}
+document.getElementById('modal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmModal();
+  if (e.key === 'Escape') closeModal();
+});
+
+// ─── TERMINAL INPUT ───────────────────────────────────────────
+const termInput = document.getElementById('terminal-input');
+termInput.addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter') {
+    const text = termInput.value;
+    if (!text) return;
+    termLine('>>> ' + text, 'input-echo');
+    inputHistory.unshift(text);
+    historyIdx = -1;
+    termInput.value = '';
+    if (connected && repl) {
+      try {
+        if (repl._raw) { silentMode = true; await repl.exitRaw(); silentMode = false; }
+        await repl.ser.write(text + '\r\n');
+      } catch(e) { termLine('✗ ' + e.message, 'error'); }
+    } else {
+      termLine('Not connected', 'warning');
+    }
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (historyIdx < inputHistory.length - 1) {
+      historyIdx++;
+      termInput.value = inputHistory[historyIdx];
+    }
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (historyIdx > 0) {
+      historyIdx--;
+      termInput.value = inputHistory[historyIdx];
+    } else { historyIdx = -1; termInput.value = ''; }
+  } else if (e.key === 'c' && e.ctrlKey) {
+    sendInterrupt();
+  }
+});
+
+// ─── RESIZE HANDLE ────────────────────────────────────────────
+(function() {
+  const handle = document.getElementById('resize-handle');
+  const term   = document.getElementById('terminal-wrap');
+  let dragging = false, startY, startH;
+  handle.addEventListener('mousedown', e => {
+    dragging = true; startY = e.clientY;
+    startH = term.offsetHeight;
+    document.body.style.cursor = 'ns-resize';
+    document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const delta = startY - e.clientY;
+    const newH = Math.max(80, Math.min(window.innerHeight * 0.7, startH + delta));
+    term.style.height = newH + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    dragging = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+})();
+
+// ─── INIT ─────────────────────────────────────────────────────
+function init() {
+  if (!('serial' in navigator)) {
+    document.getElementById('no-serial').classList.add('visible');
+    return;
+  }
+  setDisabled(true);
+  termLine('Pimoroni Explorer IDE ready.', 'info');
+  termLine('Connect your board using the button above.', 'dim');
+  termLine('Keyboard shortcuts: Ctrl+S = Save  |  Ctrl+Enter = Run  |  Ctrl+/ = Comment', 'dim');
+  termLine('', '');
+}
+
+init();
+</script>
+</body>
+</html>
