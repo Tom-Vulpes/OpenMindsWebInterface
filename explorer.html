@@ -356,6 +356,134 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--m
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
+/* ── TEMPLATES BUTTON ───────────────────── */
+.tool-btn.tmpl-btn:hover{border-color:var(--yellow);color:var(--yellow)}
+
+/* ── TEMPLATES MODAL ────────────────────── */
+#tmpl-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.88);
+  z-index:600;display:none;
+  align-items:flex-start;justify-content:center;
+  padding:32px 20px;overflow-y:auto;
+  backdrop-filter:blur(8px);
+}
+#tmpl-overlay.visible{display:flex}
+
+#tmpl-modal{
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:16px;
+  width:100%;max-width:900px;
+  box-shadow:0 32px 80px rgba(0,0,0,.85);
+  overflow:hidden;
+  animation:slideUp .22s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+#tmpl-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 24px;
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
+}
+#tmpl-title{display:flex;align-items:center;gap:14px}
+#tmpl-octopus{font-size:32px;line-height:1}
+#tmpl-heading{font-family:var(--ui);font-weight:900;font-size:18px;color:var(--text)}
+#tmpl-sub{font-family:var(--ui);font-weight:600;font-size:12px;color:var(--dim);margin-top:2px}
+#tmpl-close{
+  width:32px;height:32px;border-radius:50%;
+  border:1.5px solid var(--border);background:var(--bg4);
+  color:var(--dim);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+#tmpl-close:hover{border-color:var(--pim-red);color:var(--pim-red)}
+
+#tmpl-filters{
+  display:flex;gap:6px;flex-wrap:wrap;
+  padding:14px 22px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+}
+.tmpl-filter{
+  padding:5px 14px;border-radius:14px;
+  border:1.5px solid var(--border);
+  background:transparent;
+  color:var(--dim);
+  font-family:var(--ui);font-weight:800;font-size:11px;
+  cursor:pointer;transition:all .15s;
+}
+.tmpl-filter:hover{border-color:var(--text2);color:var(--text2)}
+.tmpl-filter.active{
+  background:var(--pim-red-bg);
+  border-color:var(--pim-red);
+  color:var(--pim-red);
+}
+
+#tmpl-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:14px;
+  padding:22px;
+}
+
+/* Template card */
+.tmpl-card{
+  background:var(--bg3);
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:all .18s;
+  display:flex;flex-direction:column;
+}
+.tmpl-card:hover{
+  border-color:var(--pim-red);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,.4),0 0 0 1px rgba(228,76,101,.15);
+}
+.tmpl-card-banner{
+  height:72px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+  position:relative;
+  overflow:hidden;
+}
+/* Each banner has a category-coloured tint */
+.tmpl-card-body{
+  padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:6px;
+}
+.tmpl-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.tmpl-card-name{font-family:var(--ui);font-weight:900;font-size:13.5px;color:var(--text);line-height:1.2}
+.tmpl-badge{
+  font-family:var(--ui);font-weight:800;font-size:9px;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 7px;border-radius:8px;
+  white-space:nowrap;flex-shrink:0;
+}
+.badge-beginner{background:rgba(170,219,30,.18);color:var(--pim-lime)}
+.badge-intermediate{background:rgba(70,200,240,.15);color:var(--blue)}
+.badge-advanced{background:rgba(228,76,101,.15);color:var(--pim-red2)}
+
+.tmpl-card-desc{font-family:var(--ui);font-weight:600;font-size:11.5px;color:var(--dim);line-height:1.6;flex:1}
+.tmpl-card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.tmpl-cat-tag{
+  font-family:var(--ui);font-weight:800;font-size:10px;
+  color:var(--dim);letter-spacing:.05em;
+}
+.tmpl-load-btn{
+  padding:5px 14px;border-radius:12px;
+  background:var(--pim-red);border:none;
+  color:#fff;font-family:var(--ui);font-weight:800;font-size:11px;
+  cursor:pointer;transition:all .15s;
+}
+.tmpl-load-btn:hover{background:var(--pim-red2);transform:scale(1.05)}
+
 /* ── NO-SERIAL WARNING ──────────────────── */
 #no-serial{
   display:none;position:fixed;inset:0;background:var(--bg);
@@ -397,6 +525,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--m
   <button class="tool-btn" id="btn-save" onclick="saveFile()">💾 Save</button>
   <button class="tool-btn run-btn" id="btn-run" onclick="runCode()">▶ Run</button>
   <button class="tool-btn danger" id="btn-reset" onclick="softReset()">↺ Reset</button>
+  <button class="tool-btn tmpl-btn" onclick="openTemplates()">📋 Templates</button>
 
   <div class="sep"></div>
 
@@ -488,6 +617,32 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--m
       <button class="modal-btn" onclick="closeModal()">Cancel</button>
       <button class="modal-btn primary" id="modal-confirm" onclick="confirmModal()">Create</button>
     </div>
+  </div>
+</div>
+
+<!-- TEMPLATES MODAL -->
+<div id="tmpl-overlay">
+  <div id="tmpl-modal">
+    <div id="tmpl-header">
+      <div id="tmpl-title">
+        <span id="tmpl-octopus">🐙</span>
+        <div>
+          <div id="tmpl-heading">Example Templates</div>
+          <div id="tmpl-sub">Load a ready-made example straight into the editor</div>
+        </div>
+      </div>
+      <button id="tmpl-close" onclick="closeTemplates()">✕</button>
+    </div>
+    <div id="tmpl-filters">
+      <button class="tmpl-filter active" onclick="filterTemplates('all',this)">All</button>
+      <button class="tmpl-filter" onclick="filterTemplates('display',this)">📺 Display</button>
+      <button class="tmpl-filter" onclick="filterTemplates('input',this)">🎮 Buttons</button>
+      <button class="tmpl-filter" onclick="filterTemplates('leds',this)">🌈 LEDs</button>
+      <button class="tmpl-filter" onclick="filterTemplates('sound',this)">🎵 Sound</button>
+      <button class="tmpl-filter" onclick="filterTemplates('motors',this)">⚡ Motors</button>
+      <button class="tmpl-filter" onclick="filterTemplates('sensors',this)">📡 Sensors</button>
+    </div>
+    <div id="tmpl-grid"></div>
   </div>
 </div>
 
@@ -878,6 +1033,811 @@ termInput.addEventListener('keydown',async e=>{
   document.addEventListener('mousemove',e=>{if(!drag)return;term.style.height=Math.max(80,Math.min(window.innerHeight*.7,sh+sy-e.clientY))+'px'});
   document.addEventListener('mouseup',()=>{drag=false;document.body.style.cursor='';document.body.style.userSelect=''});
 })();
+
+// ── Templates ─────────────────────────────────────────────────
+const TEMPLATES = [
+  {
+    id:'blink', cat:'leds', badge:'beginner', icon:'💡',
+    banner:'#1a1a2e', bannerGlow:'#AADB1E',
+    name:'Blink LED',
+    desc:'Flash the Pico\'s onboard LED on and off — the classic first program.',
+    code:`# Blink — the classic first MicroPython program!
+import time
+from machine import Pin
+
+led = Pin('LED', Pin.OUT)
+
+print("Blinking LED... press Ctrl+C to stop")
+
+while True:
+    led.on()
+    time.sleep(0.5)
+    led.off()
+    time.sleep(0.5)
+`
+  },
+  {
+    id:'hello_display', cat:'display', badge:'beginner', icon:'📺',
+    banner:'#1a2030', bannerGlow:'#46C8F0',
+    name:'Hello Display',
+    desc:'Draw colourful text and shapes on the 240×240 Explorer LCD using PicoGraphics.',
+    code:`# Hello Display — your first PicoGraphics sketch
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_RGB565
+import time
+
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_RGB565)
+display.set_backlight(1.0)
+W, H = display.get_bounds()
+
+# Colour helpers
+def rgb(r, g, b): return display.create_pen(r, g, b)
+
+BLACK  = rgb(0,   0,   0)
+WHITE  = rgb(255, 255, 255)
+RED    = rgb(228, 76,  101)   # Pimoroni red!
+LIME   = rgb(170, 219, 30)    # Explorer lime!
+BLUE   = rgb(70,  200, 240)
+YELLOW = rgb(255, 224, 67)
+
+# Background
+display.set_pen(BLACK)
+display.clear()
+
+# Title banner
+display.set_pen(RED)
+display.rectangle(0, 0, W, 60)
+
+display.set_pen(WHITE)
+display.set_font("bitmap8")
+display.text("Pimoroni", 18, 12, scale=3)
+display.text("Explorer IDE", 18, 36, scale=2)
+
+# Coloured circles
+display.set_pen(LIME)
+display.circle(40, 130, 28)
+display.set_pen(BLUE)
+display.circle(120, 130, 28)
+display.set_pen(YELLOW)
+display.circle(200, 130, 28)
+
+# Body text
+display.set_pen(WHITE)
+display.text("Hello, World!", 32, 180, scale=2)
+display.set_pen(LIME)
+display.text("picographics rocks!", 16, 205, scale=1)
+
+display.update()
+print("Display updated!")
+`
+  },
+  {
+    id:'button_demo', cat:'input', badge:'beginner', icon:'🎮',
+    banner:'#1f1a10', bannerGlow:'#FFE043',
+    name:'Button Tester',
+    desc:'Shows which A/B/X/Y button is pressed in real time on the display and REPL.',
+    code:`# Button Tester — try all four Explorer buttons
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_RGB565
+from pimoroni import Button
+import time
+
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_RGB565)
+display.set_backlight(1.0)
+W, H = display.get_bounds()
+
+button_a = Button(12)
+button_b = Button(13)
+button_x = Button(14)
+button_y = Button(15)
+
+def rgb(r, g, b): return display.create_pen(r, g, b)
+
+BG      = rgb(18, 18, 18)
+ACTIVE  = rgb(228, 76, 101)
+IDLE    = rgb(50, 50, 50)
+WHITE   = rgb(255, 255, 255)
+LIME    = rgb(170, 219, 30)
+
+BUTTONS = [
+    ("A", 12, button_a, 40,  150),
+    ("B", 13, button_b, 100, 150),
+    ("X", 14, button_x, 160, 150),
+    ("Y", 15, button_y, 200, 150),
+]
+
+def draw_button(label, pressed, cx, cy):
+    colour = ACTIVE if pressed else IDLE
+    display.set_pen(colour)
+    display.circle(cx, cy, 28)
+    display.set_pen(WHITE)
+    display.set_font("bitmap8")
+    display.text(label, cx - 6, cy - 8, scale=2)
+
+last = [False, False, False, False]
+
+while True:
+    display.set_pen(BG)
+    display.clear()
+
+    display.set_pen(ACTIVE)
+    display.rectangle(0, 0, W, 50)
+    display.set_pen(WHITE)
+    display.set_font("bitmap8")
+    display.text("Button Tester", 22, 16, scale=2)
+
+    states = [button_a.read(), button_b.read(),
+              button_x.read(), button_y.read()]
+
+    display.set_pen(LIME)
+    display.text("Press A, B, X or Y", 18, 80, scale=1)
+
+    for i, (label, pin, btn, cx, cy) in enumerate(BUTTONS):
+        draw_button(label, states[i], cx, cy)
+        if states[i] and not last[i]:
+            print(f"Button {label} pressed!")
+    last = states
+
+    display.update()
+    time.sleep(0.05)
+`
+  },
+  {
+    id:'rainbow_leds', cat:'leds', badge:'beginner', icon:'🌈',
+    banner:'#1a1020', bannerGlow:'#E44C65',
+    name:'Rainbow LEDs',
+    desc:'Cycle a rainbow across the 5 onboard RGB LEDs using the plasma library.',
+    code:`# Rainbow LEDs — cycle through hues on all 5 RGB LEDs
+import plasma
+from plasma import WS2812
+import time, math
+
+NUM_LEDS = 5
+LED_PIN  = 18
+
+leds = WS2812(NUM_LEDS, 0, 0, LED_PIN)
+leds.start()
+
+print(f"Running rainbow on {NUM_LEDS} LEDs... Ctrl+C to stop")
+
+offset = 0.0
+
+while True:
+    for i in range(NUM_LEDS):
+        # Spread hues evenly across the strip
+        hue = (offset + i / NUM_LEDS) % 1.0
+        leds.set_hsv(i, hue, 1.0, 0.6)
+
+    time.sleep(0.02)
+    offset = (offset + 0.005) % 1.0
+`
+  },
+  {
+    id:'led_pulse', cat:'leds', badge:'beginner', icon:'💜',
+    banner:'#150a20', bannerGlow:'#a060f0',
+    name:'LED Pulse',
+    desc:'Breathe a single colour across all five LEDs with a smooth sine-wave pulse.',
+    code:`# LED Pulse — smooth breathing effect on the RGB LEDs
+import plasma
+from plasma import WS2812
+import time, math
+
+NUM_LEDS = 5
+LED_PIN  = 18
+
+leds = WS2812(NUM_LEDS, 0, 0, LED_PIN)
+leds.start()
+
+# Pick your colour (hue 0-1): 0=red, 0.08=orange, 0.6=blue, 0.75=purple
+HUE = 0.0   # Pimoroni red
+
+t = 0.0
+print("Pulsing LEDs... Ctrl+C to stop")
+
+while True:
+    # Sine wave brightness 0 → 1 → 0
+    brightness = (math.sin(t) + 1) / 2 * 0.8
+    for i in range(NUM_LEDS):
+        leds.set_hsv(i, HUE, 1.0, brightness)
+    time.sleep(0.02)
+    t += 0.06
+`
+  },
+  {
+    id:'bouncing_ball', cat:'display', badge:'intermediate', icon:'🏓',
+    banner:'#0d1a0d', bannerGlow:'#AADB1E',
+    name:'Bouncing Ball',
+    desc:'A physics-based ball bounces around the screen with trail and shadow effects.',
+    code:`# Bouncing Ball — simple 2D physics demo on the Explorer display
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_RGB565
+import time
+
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_RGB565)
+display.set_backlight(1.0)
+W, H = display.get_bounds()
+
+def rgb(r, g, b): return display.create_pen(r, g, b)
+
+BG     = rgb(12,  12,  12)
+BALL   = rgb(228, 76,  101)
+SHADOW = rgb(80,  20,  30)
+LIME   = rgb(170, 219, 30)
+
+# Ball state
+x, y   = W // 2, H // 2
+vx, vy = 4.2, 3.7
+RADIUS = 14
+
+# Shadow offset
+SX, SY = 6, 6
+
+print("Bouncing ball running... Ctrl+C to stop")
+
+while True:
+    # Clear
+    display.set_pen(BG)
+    display.clear()
+
+    # Move
+    x += vx; y += vy
+
+    # Bounce off walls
+    if x - RADIUS < 0:
+        x = RADIUS; vx = abs(vx)
+    elif x + RADIUS > W:
+        x = W - RADIUS; vx = -abs(vx)
+
+    if y - RADIUS < 0:
+        y = RADIUS; vy = abs(vy)
+    elif y + RADIUS > H:
+        y = H - RADIUS; vy = -abs(vy)
+
+    # Draw shadow
+    display.set_pen(SHADOW)
+    display.circle(int(x + SX), int(y + SY), RADIUS)
+
+    # Draw ball
+    display.set_pen(BALL)
+    display.circle(int(x), int(y), RADIUS)
+
+    # Highlight
+    display.set_pen(rgb(255, 150, 165))
+    display.circle(int(x - 4), int(y - 4), RADIUS // 3)
+
+    # Speed readout
+    speed = (vx**2 + vy**2) ** 0.5
+    display.set_pen(LIME)
+    display.set_font("bitmap8")
+    display.text(f"spd: {speed:.1f}", 4, 4, scale=1)
+
+    display.update()
+    time.sleep(0.016)  # ~60fps
+`
+  },
+  {
+    id:'analog_meter', cat:'sensors', badge:'intermediate', icon:'📊',
+    banner:'#0a1520', bannerGlow:'#46C8F0',
+    name:'Analog Meter',
+    desc:'Read the ADC inputs and display live bar graphs — great for sensors and pots.',
+    code:`# Analog Meter — live bar graph of the two ADC channels
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_RGB565
+from machine import ADC
+import time
+
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_RGB565)
+display.set_backlight(1.0)
+W, H = display.get_bounds()
+
+# ADC pins on Explorer (adjust if needed)
+adc0 = ADC(26)
+adc1 = ADC(27)
+
+def rgb(r, g, b): return display.create_pen(r, g, b)
+
+BG    = rgb(12, 12, 12)
+RED   = rgb(228, 76, 101)
+LIME  = rgb(170, 219, 30)
+BLUE  = rgb(70, 200, 240)
+GREY  = rgb(50, 50, 50)
+WHITE = rgb(240, 240, 240)
+
+def draw_bar(label, value, colour, bar_y, bar_h=40):
+    """Draw a labelled horizontal bar graph (value 0–65535)."""
+    pct   = value / 65535
+    bar_w = int(pct * (W - 48))
+    volts = pct * 3.3
+
+    # Track
+    display.set_pen(GREY)
+    display.rectangle(40, bar_y, W - 48, bar_h)
+
+    # Fill
+    display.set_pen(colour)
+    if bar_w > 0:
+        display.rectangle(40, bar_y, bar_w, bar_h)
+
+    # Label
+    display.set_pen(WHITE)
+    display.set_font("bitmap8")
+    display.text(label, 4, bar_y + 14, scale=1)
+
+    # Value
+    display.set_pen(colour)
+    display.text(f"{volts:.2f}V", 40 + bar_w + 4, bar_y + 14, scale=1)
+
+print("Analog meter running. Connect a pot or sensor to ADC0/ADC1")
+
+while True:
+    v0 = adc0.read_u16()
+    v1 = adc1.read_u16()
+
+    display.set_pen(BG)
+    display.clear()
+
+    # Header
+    display.set_pen(RED)
+    display.rectangle(0, 0, W, 44)
+    display.set_pen(WHITE)
+    display.set_font("bitmap8")
+    display.text("Analog Meter", 20, 14, scale=2)
+
+    draw_bar("A0", v0, LIME, 68)
+    draw_bar("A1", v1, BLUE, 138)
+
+    # Percent text
+    display.set_pen(WHITE)
+    display.text(f"A0: {v0/655.35:.1f}%", 20, 200, scale=1)
+    display.text(f"A1: {v1/655.35:.1f}%", 20, 215, scale=1)
+
+    display.update()
+    time.sleep(0.05)
+`
+  },
+  {
+    id:'temperature', cat:'sensors', badge:'beginner', icon:'🌡️',
+    banner:'#1a1008', bannerGlow:'#FFE043',
+    name:'Temperature Monitor',
+    desc:'Read the RP2040\'s internal temperature sensor and show it as a live gauge.',
+    code:`# Temperature Monitor — RP2040 internal temp sensor on the display
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_RGB565
+from machine import ADC
+import time, math
+
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_RGB565)
+display.set_backlight(1.0)
+W, H = display.get_bounds()
+
+temp_sensor = ADC(4)  # RP2040 internal temperature sensor
+
+def rgb(r, g, b): return display.create_pen(r, g, b)
+
+def read_temp():
+    raw   = temp_sensor.read_u16()
+    volts = raw * 3.3 / 65535
+    # RP2040 formula from datasheet
+    return 27 - (volts - 0.706) / 0.001721
+
+def temp_colour(t):
+    if t < 25: return rgb(70, 200, 240)    # cool — blue
+    if t < 35: return rgb(170, 219, 30)    # warm — lime
+    if t < 45: return rgb(255, 224, 67)    # hot  — yellow
+    return rgb(228, 76, 101)               # very hot — red
+
+def draw_gauge(cx, cy, radius, pct, colour):
+    """Draw a semicircular gauge."""
+    WHITE = rgb(240, 240, 240)
+    GREY  = rgb(40, 40, 40)
+    # Background arc — draw as small rectangles around a circle
+    for deg in range(180, 361):
+        rad  = math.radians(deg)
+        x1   = int(cx + (radius - 8) * math.cos(rad))
+        y1   = int(cy + (radius - 8) * math.sin(rad))
+        x2   = int(cx + radius * math.cos(rad))
+        y2   = int(cy + radius * math.sin(rad))
+        display.set_pen(GREY)
+        display.line(x1, y1, x2, y2)
+
+    # Value arc
+    end_deg = 180 + int(pct * 180)
+    for deg in range(180, end_deg):
+        rad  = math.radians(deg)
+        x1   = int(cx + (radius - 8) * math.cos(rad))
+        y1   = int(cy + (radius - 8) * math.sin(rad))
+        x2   = int(cx + radius * math.cos(rad))
+        y2   = int(cy + radius * math.sin(rad))
+        display.set_pen(colour)
+        display.line(x1, y1, x2, y2)
+
+BG    = rgb(12, 12, 12)
+WHITE = rgb(240, 240, 240)
+RED   = rgb(228, 76, 101)
+
+print("Temperature monitor running... Ctrl+C to stop")
+
+while True:
+    temp = read_temp()
+    col  = temp_colour(temp)
+    pct  = max(0, min(1, (temp - 10) / 60))  # 10°C–70°C range
+
+    display.set_pen(BG)
+    display.clear()
+
+    # Header
+    display.set_pen(RED)
+    display.rectangle(0, 0, W, 44)
+    display.set_pen(WHITE)
+    display.set_font("bitmap8")
+    display.text("Temperature", 24, 14, scale=2)
+
+    # Gauge
+    draw_gauge(W // 2, 160, 88, pct, col)
+
+    # Big number
+    display.set_pen(col)
+    display.set_font("bitmap8")
+    t_str = f"{temp:.1f}"
+    display.text(t_str, W//2 - len(t_str)*12, 150, scale=4)
+    display.set_pen(WHITE)
+    display.text("degC", W//2 - 24, 192, scale=2)
+
+    display.set_pen(col)
+    display.text(f"min 10  max 70", 24, 222, scale=1)
+
+    display.update()
+    print(f"Temp: {temp:.1f} C")
+    time.sleep(1.0)
+`
+  },
+  {
+    id:'buzzer_melody', cat:'sound', badge:'beginner', icon:'🎵',
+    banner:'#0d150a', bannerGlow:'#AADB1E',
+    name:'Buzzer Melody',
+    desc:'Play Twinkle Twinkle Little Star on the Explorer\'s piezo buzzer.',
+    code:`# Buzzer Melody — Twinkle Twinkle on the piezo
+# Explorer buzzer is on GP0 — adjust PIN if yours differs
+from machine import Pin, PWM
+import time
+
+BUZZER_PIN = 0   # change to match your board revision
+
+buzzer = PWM(Pin(BUZZER_PIN))
+
+# Note frequencies (Hz)
+NOTES = {
+    'C4':262,'D4':294,'E4':330,'F4':349,'G4':392,'A4':440,'B4':494,
+    'C5':523,'D5':587,'E5':659,'F5':698,'G5':784,'A5':880,'_':0,
+}
+
+def play(note, beats=1, bpm=120):
+    dur   = beats * (60 / bpm)
+    freq  = NOTES.get(note, 0)
+    if freq > 0:
+        buzzer.freq(freq)
+        buzzer.duty_u16(30000)
+    else:
+        buzzer.duty_u16(0)
+    time.sleep(dur * 0.85)
+    buzzer.duty_u16(0)
+    time.sleep(dur * 0.15)
+
+# Twinkle Twinkle Little Star
+MELODY = [
+    ('C4',1),('C4',1),('G4',1),('G4',1),
+    ('A4',1),('A4',1),('G4',2),
+    ('F4',1),('F4',1),('E4',1),('E4',1),
+    ('D4',1),('D4',1),('C4',2),
+    ('G4',1),('G4',1),('F4',1),('F4',1),
+    ('E4',1),('E4',1),('D4',2),
+    ('G4',1),('G4',1),('F4',1),('F4',1),
+    ('E4',1),('E4',1),('D4',2),
+    ('C4',1),('C4',1),('G4',1),('G4',1),
+    ('A4',1),('A4',1),('G4',2),
+    ('F4',1),('F4',1),('E4',1),('E4',1),
+    ('D4',1),('D4',1),('C4',2),
+]
+
+print("Playing Twinkle Twinkle...")
+for note, beats in MELODY:
+    play(note, beats, bpm=140)
+
+buzzer.duty_u16(0)
+print("Done!")
+`
+  },
+  {
+    id:'motor_control', cat:'motors', badge:'intermediate', icon:'⚙️',
+    banner:'#101010', bannerGlow:'#B0B0B0',
+    name:'Motor Control',
+    desc:'Drive the two Explorer motor outputs — forward, reverse and speed control.',
+    code:`# Motor Control — drive Motor A and Motor B on the Explorer
+# Uses the onboard DRV8833 motor driver
+from machine import Pin, PWM
+import time
+
+# Explorer motor pins (adjust if needed for your board version)
+MOTOR_A_FWD = PWM(Pin(9))
+MOTOR_A_REV = PWM(Pin(8))
+MOTOR_B_FWD = PWM(Pin(11))
+MOTOR_B_REV = PWM(Pin(10))
+
+PWM_FREQ = 20000  # 20 kHz — above hearing range
+
+for m in [MOTOR_A_FWD, MOTOR_A_REV, MOTOR_B_FWD, MOTOR_B_REV]:
+    m.freq(PWM_FREQ)
+    m.duty_u16(0)
+
+def motor(fwd_pin, rev_pin, speed):
+    """Set motor speed: -1.0 (full reverse) to 1.0 (full forward)."""
+    speed = max(-1.0, min(1.0, speed))
+    duty  = int(abs(speed) * 65535)
+    if speed > 0:
+        fwd_pin.duty_u16(duty)
+        rev_pin.duty_u16(0)
+    elif speed < 0:
+        fwd_pin.duty_u16(0)
+        rev_pin.duty_u16(duty)
+    else:
+        fwd_pin.duty_u16(0)
+        rev_pin.duty_u16(0)
+
+def set_motors(a, b):
+    motor(MOTOR_A_FWD, MOTOR_A_REV, a)
+    motor(MOTOR_B_FWD, MOTOR_B_REV, b)
+
+print("Motor demo — Ctrl+C to stop")
+
+try:
+    while True:
+        print("Forward at 50%")
+        set_motors(0.5, 0.5); time.sleep(1.5)
+
+        print("Ramp up to full")
+        for spd in range(50, 101, 5):
+            set_motors(spd/100, spd/100); time.sleep(0.1)
+
+        print("Coast to stop")
+        set_motors(0, 0); time.sleep(0.5)
+
+        print("Reverse at 70%")
+        set_motors(-0.7, -0.7); time.sleep(1.5)
+
+        print("Spin in place")
+        set_motors(0.6, -0.6); time.sleep(1.0)
+
+        set_motors(0, 0); time.sleep(0.5)
+except KeyboardInterrupt:
+    set_motors(0, 0)
+    print("Motors stopped.")
+`
+  },
+  {
+    id:'scroll_text', cat:'display', badge:'beginner', icon:'📜',
+    banner:'#0a1a1a', bannerGlow:'#46C8F0',
+    name:'Scrolling Text',
+    desc:'Smoothly scroll a marquee message across the Explorer display.',
+    code:`# Scrolling Text marquee on the Explorer display
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_RGB565
+import time
+
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_RGB565)
+display.set_backlight(1.0)
+W, H = display.get_bounds()
+
+def rgb(r, g, b): return display.create_pen(r, g, b)
+
+BG    = rgb(12, 12, 12)
+RED   = rgb(228, 76, 101)
+LIME  = rgb(170, 219, 30)
+WHITE = rgb(255, 255, 255)
+BLUE  = rgb(70, 200, 240)
+
+MESSAGE = "  🐙  Pimoroni Explorer  ★  MicroPython Rocks!  ★  Happy Hacking!  "
+SCALE   = 3
+CHAR_W  = 8 * SCALE   # bitmap8 is 8px wide per char
+SPEED   = 3           # pixels per frame
+
+# Total width of the scrolling text
+text_w = len(MESSAGE) * CHAR_W
+
+x_offset = W  # start off right edge
+
+print("Scrolling... Ctrl+C to stop")
+
+while True:
+    display.set_pen(BG)
+    display.clear()
+
+    # Gradient banner stripes
+    display.set_pen(RED)
+    display.rectangle(0, 0, W, 8)
+    display.set_pen(LIME)
+    display.rectangle(0, H - 8, W, 8)
+
+    # Scrolling text centred vertically
+    display.set_pen(WHITE)
+    display.set_font("bitmap8")
+    display.text(MESSAGE, x_offset, H // 2 - (8 * SCALE) // 2, scale=SCALE)
+
+    # When the second copy enters view, show it too
+    if x_offset < 0:
+        display.text(MESSAGE, x_offset + text_w, H // 2 - (8 * SCALE) // 2, scale=SCALE)
+
+    display.update()
+
+    x_offset -= SPEED
+    if x_offset < -text_w:
+        x_offset = W
+`
+  },
+  {
+    id:'paint', cat:'display', badge:'advanced', icon:'🖌️',
+    banner:'#1a0a1a', bannerGlow:'#E44C65',
+    name:'Button Paint',
+    desc:'Draw pixel art on the display using A/B/X/Y to move and change colour.',
+    code:`# Button Paint — move a cursor and draw on the display!
+# A=left  B=right  X=up  Y=down
+# Long-press A+B together to change colour, hold Y to draw
+from picographics import PicoGraphics, DISPLAY_PICO_EXPLORER, PEN_RGB565
+from pimoroni import Button
+import time
+
+display = PicoGraphics(display=DISPLAY_PICO_EXPLORER, pen_type=PEN_RGB565)
+display.set_backlight(1.0)
+W, H = display.get_bounds()
+
+button_a = Button(12)   # left
+button_b = Button(13)   # right
+button_x = Button(14)   # up
+button_y = Button(15)   # down (also: hold to draw)
+
+def rgb(r, g, b): return display.create_pen(r, g, b)
+
+BG      = rgb(20, 20, 20)
+CURSOR  = rgb(255, 255, 255)
+
+PALETTE = [
+    rgb(228, 76,  101),   # pim red
+    rgb(170, 219, 30),    # pim lime
+    rgb(70,  200, 240),   # blue
+    rgb(255, 224, 67),    # yellow
+    rgb(200, 100, 240),   # purple
+    rgb(255, 255, 255),   # white
+    rgb(20,  20,  20),    # eraser
+]
+colour_idx = 0
+
+cx, cy = W // 2, H // 2  # cursor position
+STEP   = 4
+PX     = 4               # brush pixel size
+
+# Canvas — fill with BG
+display.set_pen(BG)
+display.clear()
+display.update()
+
+def draw_ui():
+    # Colour swatch strip at top
+    sw = W // len(PALETTE)
+    for i, col in enumerate(PALETTE):
+        display.set_pen(col)
+        display.rectangle(i * sw, 0, sw, 10)
+    # Active indicator
+    display.set_pen(CURSOR)
+    active_x = colour_idx * sw + sw // 2
+    display.triangle(active_x - 4, 10, active_x + 4, 10, active_x, 16)
+
+def draw_cursor(x, y, visible):
+    col = CURSOR if visible else PALETTE[colour_idx]
+    display.set_pen(col)
+    display.rectangle(x - 1, y - PX - 2, 2, PX + 2)  # top tick
+    display.rectangle(x - 1, y + 1,      2, PX + 2)  # bottom tick
+    display.rectangle(x - PX - 2, y - 1, PX + 2, 2)  # left tick
+    display.rectangle(x + 1,      y - 1, PX + 2, 2)  # right tick
+
+blink = 0
+drawing = False
+
+print("Paint! A=left B=right X=up Y=down  Hold Y=draw  A+B=change colour")
+
+while True:
+    la = button_a.read()
+    lb = button_b.read()
+    lx = button_x.read()
+    ly = button_y.read()
+
+    # Movement
+    if la: cx = max(PX + 8, cx - STEP)
+    if lb: cx = min(W - PX - 8, cx + STEP)
+    if lx: cy = max(20, cy - STEP)
+    if ly: cy = min(H - PX - 8, cy + STEP)
+
+    # Change colour: A + B together
+    if la and lb:
+        colour_idx = (colour_idx + 1) % len(PALETTE)
+        time.sleep(0.3)
+
+    # Draw: holding Y draws a pixel
+    if ly and not lb:
+        display.set_pen(PALETTE[colour_idx])
+        display.rectangle(cx - PX // 2, cy - PX // 2, PX, PX)
+
+    # Redraw UI and cursor
+    draw_ui()
+    blink = (blink + 1) % 10
+    draw_cursor(cx, cy, blink < 5)
+
+    display.update()
+    time.sleep(0.04)
+`
+  },
+];
+
+let activeFilter = 'all';
+
+function openTemplates() {
+  document.getElementById('tmpl-overlay').classList.add('visible');
+  renderTemplates();
+}
+function closeTemplates() {
+  document.getElementById('tmpl-overlay').classList.remove('visible');
+}
+
+function filterTemplates(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.tmpl-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTemplates();
+}
+
+const CAT_LABELS = {
+  display:'📺 Display', input:'🎮 Buttons',
+  leds:'🌈 LEDs', sound:'🎵 Sound',
+  motors:'⚡ Motors', sensors:'📡 Sensors',
+};
+
+function renderTemplates() {
+  const grid = document.getElementById('tmpl-grid');
+  grid.innerHTML = '';
+  const visible = TEMPLATES.filter(t => activeFilter === 'all' || t.cat === activeFilter);
+
+  visible.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'tmpl-card';
+    card.innerHTML = `
+      <div class="tmpl-card-banner" style="background:${t.banner}">
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 60% 40%,${t.bannerGlow}22,transparent 70%)"></div>
+        <span style="position:relative;font-size:38px;filter:drop-shadow(0 0 12px ${t.bannerGlow}88)">${t.icon}</span>
+      </div>
+      <div class="tmpl-card-body">
+        <div class="tmpl-card-top">
+          <div class="tmpl-card-name">${t.name}</div>
+          <span class="tmpl-badge badge-${t.badge}">${t.badge}</span>
+        </div>
+        <div class="tmpl-card-desc">${t.desc}</div>
+        <div class="tmpl-card-footer">
+          <span class="tmpl-cat-tag">${CAT_LABELS[t.cat] || t.cat}</span>
+          <button class="tmpl-load-btn" onclick="loadTemplate('${t.id}')">Load →</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function loadTemplate(id) {
+  const t = TEMPLATES.find(x => x.id === id);
+  if (!t) return;
+  if (editor.getValue().trim() && !confirm('Replace editor contents with this template?')) return;
+  editor.setValue(t.code);
+  editor.setCursor(0, 0);
+  currentFile = null;
+  document.getElementById('current-file').innerHTML = `<span>${t.name}</span> <span style="color:var(--dim);font-size:10px">(unsaved)</span>`;
+  closeTemplates();
+  editor.focus();
+  setStatus(`Loaded: ${t.name}`);
+}
+
+// Close on backdrop click
+document.getElementById('tmpl-overlay').addEventListener('click', e => {
+  if (e.target.id === 'tmpl-overlay') closeTemplates();
+});
 
 // ── Init ─────────────────────────────────────────────────────
 (function(){
