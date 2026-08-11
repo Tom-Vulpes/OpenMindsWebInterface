@@ -297,9 +297,39 @@ body {
   resize: none;
   line-height: 1.75;
   outline: none;
-  padding: 20px;
+  padding: 20px 20px 20px 0;
   tab-size: 4;
   min-height: 0;
+  min-width: 0;
+}
+
+.editor-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+  background: #1e1e2e;
+}
+
+.line-numbers {
+  flex-shrink: 0;
+  width: 44px;
+  background: #1e1e2e;
+  padding: 20px 0 20px 0;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.18);
+  text-align: right;
+  padding-right: 10px;
+  user-select: none;
+  pointer-events: none;
+  overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+
+.line-numbers span {
+  display: block;
 }
 
 .output-panel {
@@ -602,9 +632,13 @@ body {
       <div class="editor-tab active" id="editorTabLabel">code.py</div>
       <span class="editor-file">CircuitPython</span>
     </div>
-    <textarea class="code-editor" id="codeEditor" spellcheck="false"
-              aria-label="CircuitPython code editor"
-              oninput="markDirty()"># Open Minds Board — CircuitPython IDE
+    <div class="editor-body">
+      <div class="line-numbers" id="lineNumbers" aria-hidden="true"></div>
+      <textarea class="code-editor" id="codeEditor" spellcheck="false"
+                aria-label="CircuitPython code editor"
+                oninput="markDirty(); updateLineNumbers()"
+                onscroll="syncScroll()"
+                onkeydown="handleTab(event)"># Open Minds Board — CircuitPython IDE
 # Select an example from the left panel, or start writing your own.
 #
 # Pin reference:
@@ -622,6 +656,7 @@ while True:
     print("Board ready")
     time.sleep(2)
 </textarea>
+    </div><!-- /editor-body -->
     <div class="output-panel" role="log" aria-label="Board output">
       <div class="output-header">
         <span class="output-label">Output</span>
@@ -769,6 +804,51 @@ while True:
 
 <script>
 // ═══════════════════════════════════════════════════════
+//  EDITOR — LINE NUMBERS + TAB SUPPORT
+// ═══════════════════════════════════════════════════════
+function updateLineNumbers() {
+  const editor  = document.getElementById('codeEditor');
+  const gutter  = document.getElementById('lineNumbers');
+  if (!editor || !gutter) return;
+
+  const lines = editor.value.split('\n').length;
+  const current = gutter.children.length;
+
+  // Add lines if needed
+  for (let i = current; i < lines; i++) {
+    const span = document.createElement('span');
+    span.textContent = i + 1;
+    gutter.appendChild(span);
+  }
+  // Remove lines if needed
+  while (gutter.children.length > lines) {
+    gutter.removeChild(gutter.lastChild);
+  }
+
+  // Sync scroll position
+  gutter.scrollTop = editor.scrollTop;
+}
+
+function syncScroll() {
+  const editor = document.getElementById('codeEditor');
+  const gutter = document.getElementById('lineNumbers');
+  if (editor && gutter) gutter.scrollTop = editor.scrollTop;
+}
+
+function handleTab(e) {
+  if (e.key !== 'Tab') return;
+  e.preventDefault();
+  const el    = e.target;
+  const start = el.selectionStart;
+  const end   = el.selectionEnd;
+  // Insert 4 spaces at cursor
+  el.value = el.value.slice(0, start) + '    ' + el.value.slice(end);
+  el.selectionStart = el.selectionEnd = start + 4;
+  markDirty();
+  updateLineNumbers();
+}
+
+// ═══════════════════════════════════════════════════════
 //  BOARD STATE
 // ═══════════════════════════════════════════════════════
 let serialPort = null;
@@ -856,9 +936,37 @@ function log(msg, type='out') {
   const body = document.getElementById('outputBody');
   const line = document.createElement('div');
   line.className = type === 'err' ? 'out-err' : type === 'sys' ? 'out-sys' : 'out-line';
-  line.textContent = '> ' + msg;
+
+  // If error message mentions a line number, make it clickable
+  const lineMatch = msg.match(/line (\d+)/i) || msg.match(/^(\d+):/);
+  if (lineMatch && (type === 'err' || type === 'out')) {
+    const lineNum = parseInt(lineMatch[1]);
+    line.innerHTML = '> ' + msg.replace(
+      lineMatch[0],
+      `<span style="text-decoration:underline;cursor:pointer;color:#fbbf24;" title="Go to line ${lineNum}" onclick="goToLine(${lineNum})">${lineMatch[0]}</span>`
+    );
+  } else {
+    line.textContent = '> ' + msg;
+  }
+
   body.appendChild(line);
   body.scrollTop = body.scrollHeight;
+}
+
+function goToLine(n) {
+  const editor = document.getElementById('codeEditor');
+  if (!editor) return;
+  const lines  = editor.value.split('\n');
+  let charPos  = 0;
+  for (let i = 0; i < Math.min(n - 1, lines.length); i++) {
+    charPos += lines[i].length + 1;
+  }
+  editor.focus();
+  editor.setSelectionRange(charPos, charPos + (lines[n-1] || '').length);
+  // Scroll the editor to that line
+  const lineHeight = parseFloat(getComputedStyle(editor).lineHeight);
+  editor.scrollTop = (n - 3) * lineHeight;
+  syncScroll();
 }
 
 function clearOutput() {
@@ -1649,6 +1757,7 @@ function loadExample(id) {
   document.getElementById('codeEditor').value = ex.code;
   isDirty = false;
   updateTabLabel();
+  updateLineNumbers();
   document.getElementById('editorTabLabel').textContent = ex.name + '.py';
 
   // Update detail panel
@@ -1706,6 +1815,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderExamples();
   // Load first example by default
   loadExample('quicktest');
+  updateLineNumbers();
 });
 </script>
 </body>
