@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Minds — Board IDE & Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #f5f3ee;
+  --cream: #ede9e0;
+  --border: #d4cfc6;
+  --white: #ffffff;
+  --accent: #e85d26;
+  --teal: #1a7a6e;
+  --purple: #5c3d8f;
+  --amber: #d97706;
+  --muted: #5a5652;
+  --font: 'Comfortaa', sans-serif;
+  --mono: 'Courier New', monospace;
+  --radius: 10px;
+  --sidebar: 300px;
+  --editor: 1fr;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: var(--font);
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #0f0f1a;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  height: 100%;
+}
+
+.topbar-logo img {
+  height: 24px;
+  width: auto;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.topbar-logo-fallback {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hex-sm {
+  width: 14px; height: 14px;
+  background: var(--accent);
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  flex-shrink: 0;
+}
+
+.topbar-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  padding: 0 20px;
+  letter-spacing: 0.04em;
+}
+
+.topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.tb-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: var(--font);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+
+.tb-connect { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65); border: 1px solid rgba(255,255,255,0.1); }
+.tb-connect:hover { background: rgba(255,255,255,0.14); }
+.tb-connect.connected { background: rgba(16,185,129,0.18); color: #6ee7b7; border-color: rgba(16,185,129,0.3); }
+.tb-run { background: #10b981; color: white; }
+.tb-run:hover { background: #059669; }
+.tb-back { background: transparent; color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.08); }
+.tb-back:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.15); }
+
+.board-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #374151;
+  margin-right: 2px;
+  transition: all 0.2s;
+}
+.board-dot.live { background: #10b981; box-shadow: 0 0 6px #10b981; }
+
+/* ── MAIN LAYOUT ── */
+.workspace {
+  display: grid;
+  grid-template-columns: var(--sidebar) var(--editor) 320px;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── LEFT PANEL — EXAMPLES ── */
+.examples-panel {
+  background: #12121f;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.25);
+  flex-shrink: 0;
+}
+
+.examples-search {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+
+.examples-search input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+  outline: none;
+}
+.examples-search input::placeholder { color: rgba(255,255,255,0.25); }
+.examples-search input:focus { border-color: rgba(255,255,255,0.18); }
+
+.examples-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.example-category {
+  margin-bottom: 4px;
+}
+
+.category-label {
+  padding: 6px 16px 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+}
+
+.example-item {
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 0.12s;
+  border-left: 2px solid transparent;
+}
+
+.example-item:hover { background: rgba(255,255,255,0.04); }
+.example-item.active {
+  background: rgba(255,255,255,0.07);
+  border-left-color: var(--accent);
+}
+
+.example-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 2px;
+}
+.example-item.active .example-name { color: var(--paper); }
+
+.example-desc {
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.28);
+  line-height: 1.4;
+}
+
+.example-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 3px;
+}
+.tag-basic   { background: rgba(26,122,110,0.25); color: #6ee7d3; }
+.tag-sensor  { background: rgba(92,61,143,0.25);  color: #c4b5fd; }
+.tag-output  { background: rgba(232,93,38,0.25);  color: #fca07d; }
+.tag-combo   { background: rgba(217,119,6,0.25);  color: #fcd34d; }
+
+/* ── CENTRE — EDITOR ── */
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #1a1a2e;
+}
+
+.editor-tabs {
+  display: flex;
+  align-items: center;
+  background: #13131f;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+  height: 36px;
+}
+
+.editor-tab {
+  padding: 0 16px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.editor-tab:hover { color: rgba(255,255,255,0.65); }
+.editor-tab.active { color: var(--paper); border-bottom-color: var(--accent); }
+
+.editor-file {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.25);
+  margin-left: auto;
+  padding-right: 16px;
+}
+
+.code-editor {
+  flex: 1;
+  background: #1e1e2e;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: #cdd6f4;
+  border: none;
+  resize: none;
+  line-height: 1.75;
+  outline: none;
+  padding: 20px;
+  tab-size: 4;
+  min-height: 0;
+}
+
+.output-panel {
+  height: 140px;
+  background: #0d0d1a;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.output-header {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+
+.output-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.2);
+}
+
+.output-clear {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.2);
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.output-clear:hover { color: rgba(255,255,255,0.4); }
+
+.output-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 14px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.65;
+}
+
+.out-line { color: #a6e3a1; margin-bottom: 1px; }
+.out-err  { color: #f38ba8; }
+.out-sys  { color: #89b4fa; }
+
+/* ── RIGHT PANEL — INFO ── */
+.info-panel {
+  background: #11111e;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.info-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+.info-tab {
+  flex: 1;
+  padding: 10px 8px;
+  text-align: center;
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.25);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.info-tab:hover { color: rgba(255,255,255,0.5); }
+.info-tab.active { color: var(--paper); border-bottom-color: var(--teal); }
+
+.info-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.info-section { display: none; }
+.info-section.active { display: block; }
+
+/* Pinout table */
+.pin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  margin-bottom: 16px;
+}
+
+.pin-table th {
+  text-align: left;
+  padding: 5px 8px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.25);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.pin-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.6);
+  vertical-align: top;
+}
+
+.pin-table td:first-child {
+  font-family: var(--mono);
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pin-table td:nth-child(2) {
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+}
+
+.pin-table td:last-child {
+  color: rgba(255,255,255,0.3);
+  font-size: 0.68rem;
+}
+
+/* Tips */
+.tip-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.tip-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--paper);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tip-accent {
+  width: 8px; height: 8px;
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  flex-shrink: 0;
+}
+
+.tip-body {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.6;
+}
+
+.tip-body code {
+  font-family: var(--mono);
+  background: rgba(255,255,255,0.08);
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.7rem;
+}
+
+/* Example detail view */
+.detail-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--paper);
+  margin-bottom: 5px;
+}
+
+.detail-desc {
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.detail-needs {
+  margin-bottom: 14px;
+}
+
+.detail-needs-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.2);
+  margin-bottom: 5px;
+}
+
+.needs-chip {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.5);
+  margin: 2px 2px 2px 0;
+}
+
+.detail-step {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+
+.step-num {
+  width: 20px; height: 20px;
+  background: var(--accent);
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-text {
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.55;
+}
+
+.step-text strong { color: rgba(255,255,255,0.8); font-weight: 600; }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* Focus */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Syntax colours */
+.kw  { color: #cba6f7; }
+.fn  { color: #89b4fa; }
+.str { color: #a6e3a1; }
+.num { color: #fab387; }
+.cm  { color: #6c7086; }
+.var { color: #cdd6f4; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar" role="banner">
+  <div class="topbar-logo">
+    <img src="logos/Open Minds Logo White.png" alt="Open Minds" id="topbarLogo"
+         onload="this.style.opacity='1'" onerror="this.style.display='none'">
+    <div class="topbar-logo-fallback" id="topbarFallback">
+      <span class="hex-sm" aria-hidden="true"></span>Open Minds
+    </div>
+  </div>
+  <span class="topbar-title">Board IDE &amp; Reference</span>
+
+  <div class="topbar-actions">
+    <div class="board-dot" id="boardDot" aria-hidden="true"></div>
+    <button class="tb-btn tb-connect" id="connectBtn" onclick="connectBoard()" aria-label="Connect Open Minds board">Connect board</button>
+    <button class="tb-btn tb-run" onclick="runCode()" aria-label="Run code on board">Run code</button>
+    <button class="tb-btn tb-back" onclick="window.location='openminds.html'" aria-label="Return to student journey">Back to journey</button>
+  </div>
+</header>
+
+<!-- WORKSPACE -->
+<div class="workspace" role="main">
+
+  <!-- LEFT: EXAMPLES LIST -->
+  <aside class="examples-panel" aria-label="Code examples">
+    <div class="panel-header">Examples</div>
+    <div class="examples-search">
+      <input type="text" placeholder="Search examples..." id="searchInput"
+             oninput="filterExamples(this.value)" aria-label="Search code examples">
+    </div>
+    <div class="examples-list" id="examplesList"></div>
+  </aside>
+
+  <!-- CENTRE: EDITOR -->
+  <section class="editor-panel" aria-label="Code editor">
+    <div class="editor-tabs">
+      <div class="editor-tab active" id="editorTabLabel">code.py</div>
+      <span class="editor-file">CircuitPython</span>
+    </div>
+    <textarea class="code-editor" id="codeEditor" spellcheck="false"
+              aria-label="CircuitPython code editor"
+              oninput="markDirty()"># Open Minds Board — CircuitPython IDE
+# Select an example from the left panel, or start writing your own.
+#
+# Pin reference:
+#   NeoPixels  — GP0   (12 LEDs in circle)
+#   Touch pads — GP2, GP3, GP4, GP5, GP18, GP19, GP20, GP21
+#   Servo      — GP22
+#   LDR        — GP28
+#   i2c        — SDA GP14, SCL GP15
+#
+# Click "Run code" to save to CIRCUITPY and run on the board.
+
+import time
+
+while True:
+    print("Board ready")
+    time.sleep(2)
+</textarea>
+    <div class="output-panel" role="log" aria-label="Board output">
+      <div class="output-header">
+        <span class="output-label">Output</span>
+        <button class="output-clear" onclick="clearOutput()" aria-label="Clear output">Clear</button>
+      </div>
+      <div class="output-body" id="outputBody">
+        <div class="out-sys">// Connect a board and press Run code to see output here</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: INFO PANEL -->
+  <aside class="info-panel" aria-label="Reference and tips">
+    <div class="info-tabs" role="tablist">
+      <div class="info-tab active" role="tab" aria-selected="true"  onclick="showInfoTab('detail')">Example</div>
+      <div class="info-tab"        role="tab" aria-selected="false" onclick="showInfoTab('pins')">Pins</div>
+      <div class="info-tab"        role="tab" aria-selected="false" onclick="showInfoTab('tips')">Tips</div>
+    </div>
+
+    <div class="info-body">
+
+      <!-- EXAMPLE DETAIL -->
+      <div class="info-section active" id="tab-detail">
+        <div class="detail-title" id="detailTitle">Select an example</div>
+        <div class="detail-desc" id="detailDesc">Choose any example from the left panel. The code loads into the editor and the detail panel shows what hardware you need and how to get started.</div>
+        <div class="detail-needs" id="detailNeeds" style="display:none;">
+          <div class="detail-needs-label">Hardware needed</div>
+          <div id="detailNeedsChips"></div>
+        </div>
+        <div id="detailSteps"></div>
+      </div>
+
+      <!-- PINS -->
+      <div class="info-section" id="tab-pins">
+        <table class="pin-table" aria-label="Board pin reference">
+          <thead>
+            <tr><th>Pin</th><th>Component</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>GP0</td><td>NeoPixels</td><td>12 LEDs, circle layout</td></tr>
+            <tr><td>GP2</td><td>Touch Pad 1</td><td>Capacitive</td></tr>
+            <tr><td>GP3</td><td>Touch Pad 2</td><td>Capacitive</td></tr>
+            <tr><td>GP4</td><td>Touch Pad 3</td><td>Capacitive</td></tr>
+            <tr><td>GP5</td><td>Touch Pad 4</td><td>Capacitive</td></tr>
+            <tr><td>GP14</td><td>i2c SDA</td><td>Both i2c buses</td></tr>
+            <tr><td>GP15</td><td>i2c SCL</td><td>Both i2c buses</td></tr>
+            <tr><td>GP6</td><td>Motor A IN1</td><td>Motor driver hat</td></tr>
+            <tr><td>GP7</td><td>Motor A IN2</td><td>Motor driver hat</td></tr>
+            <tr><td>GP8</td><td>Motor B IN1</td><td>Motor driver hat</td></tr>
+            <tr><td>GP9</td><td>Motor B IN2</td><td>Motor driver hat</td></tr>
+            <tr><td>GP18</td><td>Touch Pad 5</td><td>Capacitive</td></tr>
+            <tr><td>GP19</td><td>Touch Pad 6</td><td>Capacitive</td></tr>
+            <tr><td>GP20</td><td>Touch Pad 7</td><td>Capacitive</td></tr>
+            <tr><td>GP21</td><td>Touch Pad 8</td><td>Capacitive</td></tr>
+            <tr><td>GP22</td><td>Servo</td><td>50Hz PWM, 500–2500us</td></tr>
+            <tr><td>GP28</td><td>LDR</td><td>Analogue light sensor</td></tr>
+            <tr><td>GP6/7</td><td>Ultrasonic</td><td>Trigger / Echo</td></tr>
+          </tbody>
+        </table>
+
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.2);line-height:1.6;">
+          NeoPixels: 12 LEDs, brightness 0.05 recommended<br>
+          Servo: min_pulse=500, max_pulse=2500<br>
+          i2c: OLED, distance sensor, other Grove modules
+        </div>
+      </div>
+
+      <!-- TIPS -->
+      <div class="info-section" id="tab-tips">
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:#10b981"></span>Run code quickly</div>
+          <div class="tip-body">Click <strong>Run code</strong> to save <code>code.py</code> to the CIRCUITPY drive. The board restarts automatically. You only need to pick the drive once per session.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:var(--accent)"></span>while True: loops</div>
+          <div class="tip-body">Most board programs run forever inside <code>while True:</code>. Add <code>time.sleep(0.1)</code> inside the loop — without a delay the board can freeze or generate too much output.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:var(--purple)"></span>Touch pad faults</div>
+          <div class="tip-body">Wrap pad reads in <code>try/except</code> — a pad with a missing resistor will throw an exception. The examples do this automatically so one bad pad doesn't stop the others.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:var(--amber)"></span>NeoPixel brightness</div>
+          <div class="tip-body">The 12 LEDs are very bright. Use <code>brightness=0.05</code> as a starting point. Full brightness generates significant heat and draws too much current from USB.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:var(--teal)"></span>Reading sensors</div>
+          <div class="tip-body">Analogue reads (<code>analogio.AnalogIn</code>) return 0–65535. Divide by 65535 to get 0.0–1.0, or scale to a useful range with simple maths. Use <code>print()</code> to see the raw values.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:#f59e0b"></span>i2c devices</div>
+          <div class="tip-body">All i2c devices share the same two wires (SDA=GP14, SCL=GP15). You can connect multiple sensors at once as long as they have different addresses. Use <code>i2c.scan()</code> to find what's connected.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:#6366f1"></span>Servo range</div>
+          <div class="tip-body">Set angle with <code>my_servo.angle = 90</code> (0–180). Signal on <strong>GP22</strong>. If the servo buzzes at limits, adjust <code>min_pulse</code> and <code>max_pulse</code> in the Servo() constructor.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:#dc2626"></span>Motor driver power</div>
+          <div class="tip-body">The motor driver hat needs its own power supply for the motors — don't run motors from USB alone. Connect a separate battery pack to the hat's power terminals. The logic still runs from USB.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:#0ea5e9"></span>Wireless (coming soon)</div>
+          <div class="tip-body">The Pico W has a built-in Wi-Fi chip. Wireless examples for V2 are in development — check the Open Minds GitHub for updates.</div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title"><span class="tip-accent" style="background:#ec4899"></span>CIRCUITPY drive</div>
+          <div class="tip-body">CircuitPython mounts as a USB drive. <code>code.py</code> runs on boot. If the board crashes, it shows a red LED. Connect via serial to see the error message, then fix and re-run.</div>
+        </div>
+
+        <div style="margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.06);">
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.2);margin-bottom:8px;">More resources</div>
+          <a href="https://github.com/Tom-at-MTFLabs/OpenMinds" target="_blank"
+             style="display:block;font-size:0.72rem;color:rgba(255,255,255,0.4);text-decoration:none;padding:4px 0;transition:color 0.15s;"
+             onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+            GitHub repository (MicroPython examples) →
+          </a>
+          <a href="https://docs.circuitpython.org" target="_blank"
+             style="display:block;font-size:0.72rem;color:rgba(255,255,255,0.4);text-decoration:none;padding:4px 0;transition:color 0.15s;"
+             onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+            CircuitPython documentation →
+          </a>
+          <a href="https://learn.adafruit.com/circuitpython-essentials" target="_blank"
+             style="display:block;font-size:0.72rem;color:rgba(255,255,255,0.4);text-decoration:none;padding:4px 0;transition:color 0.15s;"
+             onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+            CircuitPython essentials guide →
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /info-body -->
+  </aside>
+
+</div><!-- /workspace -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  BOARD STATE
+// ═══════════════════════════════════════════════════════
+let serialPort = null;
+let boardConnected = false;
+let cachedDirHandle = null;
+let isDirty = false;
+
+async function connectBoard() {
+  if (!('serial' in navigator)) {
+    log('Web Serial not supported — use Chrome or Edge.', 'err');
+    return;
+  }
+  try {
+    const port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+    serialPort = port;
+    boardConnected = true;
+    document.getElementById('boardDot').classList.add('live');
+    const btn = document.getElementById('connectBtn');
+    btn.textContent = 'Connected';
+    btn.classList.add('connected');
+    btn.disabled = true;
+    log('Board connected. Press "Run code" to upload.', 'sys');
+    readSerial(port);
+  } catch(e) {
+    if (e.name !== 'NotFoundError') log('Connection failed: ' + e.message, 'err');
+  }
+}
+
+async function readSerial(port) {
+  const reader = port.readable.getReader();
+  let buf = '';
+  try {
+    while(true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += new TextDecoder().decode(value);
+      const lines = buf.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+      buf = lines.pop();
+      lines.forEach(l => { if (l.trim()) log(l.trim()); });
+    }
+  } catch(e) {
+    log('Board disconnected.', 'sys');
+    boardConnected = false;
+    document.getElementById('boardDot').classList.remove('live');
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+async function runCode() {
+  const code = document.getElementById('codeEditor').value;
+  if (!('showDirectoryPicker' in window)) {
+    log('File System Access not supported — use Chrome or Edge.', 'err');
+    return;
+  }
+  try {
+    clearOutput();
+    if (cachedDirHandle) {
+      try {
+        const perm = await cachedDirHandle.requestPermission({ mode: 'readwrite' });
+        if (perm !== 'granted') cachedDirHandle = null;
+      } catch(e) { cachedDirHandle = null; }
+    }
+    if (!cachedDirHandle) {
+      log('Select the CIRCUITPY drive...', 'sys');
+      cachedDirHandle = await window.showDirectoryPicker({ id: 'circuitpy', mode: 'readwrite' });
+      log("Drive saved — won\'t ask again this session.", 'sys');
+    }
+    const file = await cachedDirHandle.getFileHandle('code.py', { create: true });
+    const writable = await file.createWritable();
+    await writable.write(code);
+    await writable.close();
+    log('code.py saved to ' + cachedDirHandle.name + ' — board restarting...', 'sys');
+    isDirty = false;
+    updateTabLabel();
+  } catch(e) {
+    if (e.name === 'AbortError') { log('Cancelled.', 'sys'); return; }
+    cachedDirHandle = null;
+    log('Save failed: ' + e.message, 'err');
+  }
+}
+
+function log(msg, type='out') {
+  const body = document.getElementById('outputBody');
+  const line = document.createElement('div');
+  line.className = type === 'err' ? 'out-err' : type === 'sys' ? 'out-sys' : 'out-line';
+  line.textContent = '> ' + msg;
+  body.appendChild(line);
+  body.scrollTop = body.scrollHeight;
+}
+
+function clearOutput() {
+  document.getElementById('outputBody').innerHTML = '';
+}
+
+function markDirty() {
+  isDirty = true;
+  updateTabLabel();
+}
+
+function updateTabLabel() {
+  const label = document.getElementById('editorTabLabel');
+  label.textContent = isDirty ? 'code.py *' : 'code.py';
+}
+
+// ═══════════════════════════════════════════════════════
+//  EXAMPLES DATA
+// ═══════════════════════════════════════════════════════
+const examples = [
+
+  // ── GETTING STARTED ──
+  {
+    id: 'quicktest', category: 'Getting started', name: 'Quick test', tag: 'basic',
+    desc: 'Confirms the board is running and printing to serial.',
+    needs: ['Base board'],
+    steps: [
+      { t: 'Connect the board', b: 'Plug in via USB and click <strong>Connect board</strong> above.' },
+      { t: 'Run the code',      b: 'Press <strong>Run code</strong>. Select the CIRCUITPY drive when prompted.' },
+      { t: 'Watch the output',  b: 'You should see "Board running..." appear in the output panel every second.' },
+    ],
+    code: `# Quick Test — Open Minds Board V2
+# Confirms the board is alive and printing to serial
+import time
+
+print("Open Minds board is running!")
+
+count = 0
+while True:
+    count += 1
+    print("Board running... loop", count)
+    time.sleep(1)
+`
+  },
+
+  {
+    id: 'blink', category: 'Getting started', name: 'NeoPixel blink', tag: 'basic',
+    desc: 'Flash the NeoPixels on and off. The first thing to try.',
+    needs: ['Base board'],
+    steps: [
+      { t: 'Just run it',    b: 'No extra hardware needed. All 12 NeoPixels will flash white on and off.' },
+      { t: 'Change colour',  b: 'Edit the tuple <code>(30, 30, 30)</code> — format is (Red, Green, Blue), each 0–255.' },
+      { t: 'Change speed',   b: 'Edit the <code>time.sleep()</code> values to change the blink rate.' },
+    ],
+    code: `# NeoPixel Blink — Open Minds Board V2
+# NeoPixels on GP0, 12 LEDs in a circle
+import board, time, neopixel
+
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
+
+while True:
+    pixels.fill((30, 30, 30))   # Dim white — on
+    pixels.show()
+    time.sleep(0.5)
+
+    pixels.fill((0, 0, 0))      # Off
+    pixels.show()
+    time.sleep(0.5)
+`
+  },
+
+  {
+    id: 'rainbow', category: 'Getting started', name: 'NeoPixel rainbow', tag: 'basic',
+    desc: 'Smooth rainbow cycle across all 12 LEDs.',
+    needs: ['Base board'],
+    steps: [
+      { t: 'Run it',        b: 'The 12 LEDs cycle through the full colour spectrum continuously.' },
+      { t: 'Adjust speed',  b: 'Change <code>SPEED = 0.01</code> — smaller is faster.' },
+      { t: 'How it works',  b: 'The <code>wheel()</code> function converts a 0–255 position into an RGB colour, cycling smoothly through the spectrum.' },
+    ],
+    code: `# NeoPixel Rainbow — Open Minds Board V2
+import board, time, neopixel
+
+NUM_PIXELS = 12
+SPEED       = 0.01
+
+pixels = neopixel.NeoPixel(board.GP0, NUM_PIXELS, brightness=0.05, auto_write=False)
+
+def wheel(pos):
+    pos = pos % 256
+    if pos < 85:   return (255 - pos * 3, pos * 3, 0)
+    if pos < 170:  pos -= 85;  return (0, 255 - pos * 3, pos * 3)
+    pos -= 170;    return (pos * 3, 0, 255 - pos * 3)
+
+def rainbow_cycle(offset):
+    for i in range(NUM_PIXELS):
+        pixels[i] = wheel((i * 256 // NUM_PIXELS) + offset)
+    pixels.show()
+
+offset = 0
+while True:
+    rainbow_cycle(offset)
+    offset = (offset + 1) % 256
+    time.sleep(SPEED)
+`
+  },
+
+  // ── INPUTS ──
+  {
+    id: 'ldr-test', category: 'Inputs', name: 'LDR — read light level', tag: 'sensor',
+    desc: 'Read the onboard light sensor and print the value. Good for calibrating thresholds.',
+    needs: ['Base board'],
+    steps: [
+      { t: 'Run it',          b: 'Open the output panel. Light level prints every 0.5 seconds.' },
+      { t: 'Cover the sensor', b: 'Put your hand over the board — the number should drop significantly.' },
+      { t: 'Understand scale', b: 'Values run 0–65535. Bright: ~40000. Covered: ~2000. Use these numbers to set thresholds in other programs.' },
+    ],
+    code: `# LDR Light Sensor — Open Minds Board V2
+# LDR is on GP28
+import board, time, analogio
+
+ldr = analogio.AnalogIn(board.GP28)
+
+while True:
+    level   = ldr.value                    # Raw value 0–65535
+    percent = round(level / 65535 * 100, 1)
+    print("Light:", level, "(", percent, "%)")
+    time.sleep(0.5)
+`
+  },
+
+  {
+    id: 'touch-test', category: 'Inputs', name: 'Touch pad test', tag: 'sensor',
+    desc: 'Read all 8 touch pads. Identifies which are working and which have hardware faults.',
+    needs: ['Base board'],
+    steps: [
+      { t: 'Run it',       b: 'Touch any pad — you should see "Pad X touched" in the output panel.' },
+      { t: 'Faulty pads',  b: 'Pads with a missing resistor are skipped and reported on startup. The others keep working.' },
+      { t: 'Calibration',  b: 'If pads trigger without touching, the board may need a moment to calibrate on startup. Wait a second before touching.' },
+    ],
+    code: `# Touch Pad Test — Open Minds Board V2
+# Pads on GP2, GP3, GP4, GP5, GP18, GP19, GP20, GP21
+import board, time, touchio
+
+pins = [board.GP2, board.GP3, board.GP4,  board.GP5,
+        board.GP18, board.GP19, board.GP20, board.GP21]
+
+pads, disabled = [], [False] * 8
+for i, pin in enumerate(pins):
+    try:
+        pads.append(touchio.TouchIn(pin))
+        print("Pad", i + 1, "ready")
+    except Exception as e:
+        pads.append(None)
+        print("Pad", i + 1, "skipped:", e)
+
+print("Touch any pad...")
+
+while True:
+    for i in range(8):
+        if disabled[i] or pads[i] is None:
+            continue
+        try:
+            if pads[i].value:
+                print("Pad", i + 1, "touched")
+        except Exception:
+            disabled[i] = True
+            print("Pad", i + 1, "disabled")
+    time.sleep(0.05)
+`
+  },
+
+  // ── OUTPUTS ──
+  {
+    id: 'rgb-colours', category: 'Outputs', name: 'NeoPixels — set colours', tag: 'output',
+    desc: 'Set each of the 12 LEDs to a different colour individually.',
+    needs: ['Base board'],
+    steps: [
+      { t: 'Run it',          b: 'Each of the 12 LEDs lights up in a different colour from the circle.' },
+      { t: 'Change colours',  b: 'Edit the tuples in the <code>colours</code> list. Format is (Red, Green, Blue), each 0–255.' },
+      { t: 'Single pixels',   b: 'Use <code>pixels[i] = (r, g, b)</code> to set one LED. Call <code>pixels.show()</code> to update.' },
+    ],
+    code: `# NeoPixels — Individual Colours
+# Sets each of the 12 LEDs to a different colour
+import board, time, neopixel
+
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
+
+colours = [
+    (255, 0, 0),    (255, 60, 0),   (255, 120, 0),  (255, 200, 0),
+    (200, 255, 0),  (0, 255, 0),    (0, 255, 150),  (0, 200, 255),
+    (0, 80, 255),   (60, 0, 255),   (150, 0, 255),  (255, 0, 150),
+]
+
+for i, colour in enumerate(colours):
+    pixels[i] = colour
+pixels.show()
+print("All 12 LEDs set to individual colours")
+
+while True:
+    time.sleep(10)
+`
+  },
+
+  {
+    id: 'servo-sweep', category: 'Outputs', name: 'Servo — sweep', tag: 'output',
+    desc: 'Sweep a servo motor back and forth between 0 and 180 degrees.',
+    needs: ['Base board', 'Servo motor (signal to GP22)'],
+    steps: [
+      { t: 'Connect servo',  b: 'Signal (orange/white) to <strong>GP22</strong>. Power (red) to 5V. Ground (black) to GND.' },
+      { t: 'Run it',         b: 'The servo sweeps from 0 to 180 degrees and back, repeatedly.' },
+      { t: 'Adjust range',   b: 'Change the numbers in <code>range(0, 181, 2)</code> to limit the sweep. The step size (2) controls smoothness.' },
+    ],
+    code: `# Servo Sweep — Open Minds Board V2
+# Servo signal on GP22
+import board, time, pwmio
+from adafruit_motor import servo
+
+pwm      = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
+my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
+
+print("Servo sweeping 0 to 180 degrees")
+
+while True:
+    for angle in range(0, 181, 2):
+        my_servo.angle = angle
+        time.sleep(0.01)
+    for angle in range(180, -1, -2):
+        my_servo.angle = angle
+        time.sleep(0.01)
+    time.sleep(0.5)
+`
+  },
+
+  {
+    id: 'servo-positions', category: 'Outputs', name: 'Servo — go to position', tag: 'output',
+    desc: 'Move the servo to specific angles with a smooth step function.',
+    needs: ['Base board', 'Servo motor (signal to GP22)'],
+    steps: [
+      { t: 'Connect servo', b: 'Signal to <strong>GP22</strong>, power to 5V, ground to GND.' },
+      { t: 'Run it',        b: 'The servo steps through a sequence of positions with smooth movement.' },
+      { t: 'Edit positions', b: 'Change the <code>positions</code> list to the angles you need. 0 = closed, 90 = centre, 180 = open.' },
+    ],
+    code: `# Servo — Go to Position
+# Moves smoothly between a sequence of preset angles
+import board, time, pwmio
+from adafruit_motor import servo
+
+pwm      = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
+my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
+
+def move_to(target, current, step=2, delay=0.015):
+    direction = 1 if target > current else -1
+    for angle in range(current, target + direction, direction * step):
+        my_servo.angle = max(0, min(180, angle))
+        time.sleep(delay)
+    return target
+
+positions = [0, 45, 90, 135, 180, 90]
+current   = 90
+my_servo.angle = current
+
+while True:
+    for target in positions:
+        print("Moving to", target, "degrees")
+        current = move_to(target, current)
+        time.sleep(1)
+`
+  },
+
+  {
+    id: 'motor-basic', category: 'Outputs', name: 'Motor — basic control', tag: 'output',
+    desc: 'Drive the DC motor forward, stop, and reverse using the motor driver hat.',
+    needs: ['Base board', 'Motor driver hat', 'DC motor'],
+    steps: [
+      { t: 'Connect motor',  b: 'Attach a DC motor to the motor driver hat terminals. The hat connects via the expansion header.' },
+      { t: 'Run it',         b: 'The motor runs forward for 2 seconds, stops for 1, then reverses for 2 seconds.' },
+      { t: 'Adjust speed',   b: 'Change the <code>speed</code> value (0.0 to 1.0) in each <code>set_motor()</code> call.' },
+    ],
+    code: `# Motor Driver Hat — Basic Control
+# Forward, stop, reverse
+# Motor driver hat uses GP6, GP7 for motor A; GP8, GP9 for motor B
+import board, time, pwmio
+
+motor_a_in1 = pwmio.PWMOut(board.GP6,  frequency=1000)
+motor_a_in2 = pwmio.PWMOut(board.GP7,  frequency=1000)
+motor_b_in1 = pwmio.PWMOut(board.GP8,  frequency=1000)
+motor_b_in2 = pwmio.PWMOut(board.GP9,  frequency=1000)
+
+def set_motor_a(speed):
+    # speed: -1.0 (full reverse) to 1.0 (full forward), 0 = stop
+    if speed > 0:
+        motor_a_in1.duty_cycle = int(speed * 65535)
+        motor_a_in2.duty_cycle = 0
+    elif speed < 0:
+        motor_a_in1.duty_cycle = 0
+        motor_a_in2.duty_cycle = int(abs(speed) * 65535)
+    else:
+        motor_a_in1.duty_cycle = 0
+        motor_a_in2.duty_cycle = 0
+
+def set_motor_b(speed):
+    if speed > 0:
+        motor_b_in1.duty_cycle = int(speed * 65535)
+        motor_b_in2.duty_cycle = 0
+    elif speed < 0:
+        motor_b_in1.duty_cycle = 0
+        motor_b_in2.duty_cycle = int(abs(speed) * 65535)
+    else:
+        motor_b_in1.duty_cycle = 0
+        motor_b_in2.duty_cycle = 0
+
+while True:
+    print("Forward")
+    set_motor_a(0.7)
+    time.sleep(2)
+
+    print("Stop")
+    set_motor_a(0)
+    time.sleep(1)
+
+    print("Reverse")
+    set_motor_a(-0.7)
+    time.sleep(2)
+
+    print("Stop")
+    set_motor_a(0)
+    time.sleep(1)
+`
+  },
+
+  {
+    id: 'motor-speed', category: 'Outputs', name: 'Motor — variable speed', tag: 'output',
+    desc: 'Ramp motor speed up and down smoothly.',
+    needs: ['Base board', 'Motor driver hat', 'DC motor'],
+    steps: [
+      { t: 'Connect motor', b: 'Attach a DC motor to the motor driver hat terminals.' },
+      { t: 'Run it',        b: 'The motor accelerates gradually from stopped to full speed, then decelerates back.' },
+      { t: 'Use case',      b: 'Smooth speed control is important for mechanisms that need gentle starts — gates, lifts, anything where a sudden jerk would be a problem.' },
+    ],
+    code: `# Motor — Variable Speed Ramp
+# Accelerates and decelerates smoothly
+import board, time, pwmio
+
+motor_in1 = pwmio.PWMOut(board.GP6, frequency=1000)
+motor_in2 = pwmio.PWMOut(board.GP7, frequency=1000)
+
+def set_motor(speed):
+    speed = max(-1.0, min(1.0, speed))
+    if speed > 0:
+        motor_in1.duty_cycle = int(speed * 65535)
+        motor_in2.duty_cycle = 0
+    elif speed < 0:
+        motor_in1.duty_cycle = 0
+        motor_in2.duty_cycle = int(abs(speed) * 65535)
+    else:
+        motor_in1.duty_cycle = 0
+        motor_in2.duty_cycle = 0
+
+STEPS = 50      # Number of speed steps
+DELAY = 0.03    # Delay between steps (seconds)
+
+while True:
+    # Ramp up forward
+    for i in range(STEPS + 1):
+        set_motor(i / STEPS)
+        time.sleep(DELAY)
+    time.sleep(1)
+
+    # Ramp down to stop
+    for i in range(STEPS, -1, -1):
+        set_motor(i / STEPS)
+        time.sleep(DELAY)
+    time.sleep(1)
+`
+  },
+
+  // ── COMBINATIONS ──
+  {
+    id: 'ldr-led', category: 'Combinations', name: 'LDR controls LED colour', tag: 'combo',
+    desc: 'Light level changes the NeoPixel colour. A simple input-output loop.',
+    needs: ['Base board'],
+    steps: [
+      { t: 'Run it',           b: 'Cover the LDR — LEDs shift from green to red.' },
+      { t: 'Calibrate',        b: 'Print <code>ldr.value</code> in your room first to find a good threshold for your environment.' },
+      { t: 'Design question',  b: 'What would this signal in your design scenario? Dark room alert? Occupancy sensor? Reminder to turn lights off?' },
+    ],
+    code: `# LDR controls NeoPixel colour
+# Bright = green, dim = amber, dark = red
+import board, time, analogio, neopixel
+
+ldr    = analogio.AnalogIn(board.GP28)
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
+
+DARK_THRESHOLD = 15000   # Adjust for your room
+DIM_THRESHOLD  = 35000
+
+while True:
+    level = ldr.value
+    print("Light:", level)
+
+    if level < DARK_THRESHOLD:
+        pixels.fill((200, 10, 0))    # Red — dark
+    elif level < DIM_THRESHOLD:
+        pixels.fill((200, 100, 0))   # Amber — dim
+    else:
+        pixels.fill((0, 180, 40))    # Green — bright
+
+    pixels.show()
+    time.sleep(0.3)
+`
+  },
+
+  {
+    id: 'ldr-servo', category: 'Combinations', name: 'LDR controls servo', tag: 'combo',
+    desc: 'Light level directly drives servo position. Cover the sensor — the servo moves.',
+    needs: ['Base board', 'Servo motor (signal to GP22)'],
+    steps: [
+      { t: 'Connect servo',    b: 'Signal to <strong>GP22</strong>, power to 5V, ground to GND.' },
+      { t: 'Run it',           b: 'Cover the LDR — the servo moves toward 0 degrees. Bright = 180 degrees.' },
+      { t: 'Design question',  b: 'What physical change in an environment could be triggered by light level? A blind? A valve? A sign?' },
+    ],
+    code: `# LDR controls Servo position
+# Light level maps directly to servo angle
+import board, time, analogio, pwmio
+from adafruit_motor import servo
+
+ldr      = analogio.AnalogIn(board.GP28)
+pwm      = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
+my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
+
+def map_val(val, in_min, in_max, out_min, out_max):
+    return int((val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
+
+while True:
+    level = ldr.value
+    angle = map_val(level, 0, 65535, 0, 180)
+    angle = max(0, min(180, angle))
+    my_servo.angle = angle
+    print("Light:", level, "-> Servo:", angle, "deg")
+    time.sleep(0.1)
+`
+  },
+
+  {
+    id: 'touch-led', category: 'Combinations', name: 'Touch pads control NeoPixels', tag: 'combo',
+    desc: 'Each touch pad lights the NeoPixels in a different colour.',
+    needs: ['Base board'],
+    steps: [
+      { t: "Run it", b: "Touch any pad — all 12 LEDs fill with that pad's colour. Release — lights go off." },
+      { t: 'Change colours',   b: 'Edit the <code>colours</code> list. Each entry maps to a pad by position.' },
+      { t: 'Design question',  b: 'What could colour communicate in your design scenario? Urgency? Category? Status?' },
+    ],
+    code: `# Touch Pads control NeoPixels
+# Each pad = a different colour. Release = off.
+import board, time, touchio, neopixel
+
+pixels = neopixel.NeoPixel(board.GP0, 12, brightness=0.05, auto_write=False)
+
+colours = [
+    (255, 0, 0),   (255, 80, 0),  (200, 200, 0), (0, 200, 0),
+    (0, 180, 180), (0, 0, 255),   (120, 0, 200), (200, 0, 120),
+]
+
+pins = [board.GP2, board.GP3, board.GP4,  board.GP5,
+        board.GP18, board.GP19, board.GP20, board.GP21]
+
+pads, disabled = [], [False] * 8
+for pin in pins:
+    try:    pads.append(touchio.TouchIn(pin))
+    except: pads.append(None)
+
+while True:
+    any_touched = False
+    for i in range(8):
+        if disabled[i] or pads[i] is None:
+            continue
+        try:
+            touched = pads[i].value
+        except Exception:
+            disabled[i] = True
+            continue
+        if touched:
+            pixels.fill(colours[i])
+            pixels.show()
+            any_touched = True
+
+    if not any_touched:
+        pixels.fill((0, 0, 0))
+        pixels.show()
+
+    time.sleep(0.01)
+`
+  },
+
+  {
+    id: 'touch-servo', category: 'Combinations', name: 'Touch pads move servo', tag: 'combo',
+    desc: 'Touch pads snap the servo to different preset angles.',
+    needs: ['Base board', 'Servo motor (signal to GP22)'],
+    steps: [
+      { t: 'Connect servo', b: 'Signal to <strong>GP22</strong>, power to 5V, ground to GND.' },
+      { t: 'Run it',        b: 'Pad 1–4 move the servo to different positions.' },
+      { t: 'Edit positions', b: 'Change <code>pad_angles</code> to the angles your design needs. Think: what positions are meaningful in your scenario?' },
+    ],
+    code: `# Touch Pads move Servo to preset positions
+import board, time, touchio, pwmio
+from adafruit_motor import servo
+
+pwm      = pwmio.PWMOut(board.GP22, duty_cycle=0, frequency=50)
+my_servo = servo.Servo(pwm, min_pulse=500, max_pulse=2500)
+
+pad_angles = [0, 60, 120, 180, 45, 90, 135, 180]
+
+pins = [board.GP2, board.GP3, board.GP4,  board.GP5,
+        board.GP18, board.GP19, board.GP20, board.GP21]
+
+pads, disabled = [], [False] * 8
+was_touched    = [False] * 8
+for pin in pins:
+    try:    pads.append(touchio.TouchIn(pin))
+    except: pads.append(None)
+
+current = 90
+my_servo.angle = current
+print("Ready — touch a pad to move the servo")
+
+while True:
+    for i in range(8):
+        if disabled[i] or pads[i] is None:
+            continue
+        try:
+            touched = pads[i].value
+        except Exception:
+            disabled[i] = True
+            continue
+        if touched and not was_touched[i]:
+            target = pad_angles[i % len(pad_angles)]
+            my_servo.angle = target
+            current = target
+            print("Pad", i+1, "->", target, "deg")
+        was_touched[i] = touched
+    time.sleep(0.02)
+`
+  },
+
+  {
+    id: 'touch-motor', category: 'Combinations', name: 'Touch pads control motor', tag: 'combo',
+    desc: 'Pad 1 runs motor forward, pad 2 reverses, pad 3 stops.',
+    needs: ['Base board', 'Motor driver hat', 'DC motor'],
+    steps: [
+      { t: 'Connect motor', b: 'Attach a DC motor to the motor driver hat.' },
+      { t: 'Run it',        b: 'Touch pad 1 to go forward, pad 2 to reverse, pad 3 to stop.' },
+      { t: 'Adjust speed',  b: 'Edit the speed values (0.0–1.0) in the if/elif block.' },
+    ],
+    code: `# Touch Pads control Motor
+# Pad 1 = forward, Pad 2 = reverse, Pad 3 = stop
+import board, time, touchio, pwmio
+
+motor_in1 = pwmio.PWMOut(board.GP6, frequency=1000)
+motor_in2 = pwmio.PWMOut(board.GP7, frequency=1000)
+
+def set_motor(speed):
+    speed = max(-1.0, min(1.0, speed))
+    if speed > 0:
+        motor_in1.duty_cycle = int(speed * 65535)
+        motor_in2.duty_cycle = 0
+    elif speed < 0:
+        motor_in1.duty_cycle = 0
+        motor_in2.duty_cycle = int(abs(speed) * 65535)
+    else:
+        motor_in1.duty_cycle = 0
+        motor_in2.duty_cycle = 0
+
+pins = [board.GP2, board.GP3, board.GP4]
+pads, disabled = [], [False] * 3
+for pin in pins:
+    try:    pads.append(touchio.TouchIn(pin))
+    except: pads.append(None)
+
+set_motor(0)
+print("Pad 1=forward, Pad 2=reverse, Pad 3=stop")
+
+while True:
+    for i in range(3):
+        if disabled[i] or pads[i] is None:
+            continue
+        try:
+            touched = pads[i].value
+        except Exception:
+            disabled[i] = True
+            continue
+        if touched:
+            if i == 0:
+                set_motor(0.7)
+                print("Forward")
+            elif i == 1:
+                set_motor(-0.7)
+                print("Reverse")
+            elif i == 2:
+                set_motor(0)
+                print("Stop")
+    time.sleep(0.02)
+`
+  },
+
+  {
+    id: 'ldr-motor', category: 'Combinations', name: 'LDR controls motor speed', tag: 'combo',
+    desc: 'Light level controls motor speed — brighter light = faster motor.',
+    needs: ['Base board', 'Motor driver hat', 'DC motor'],
+    steps: [
+      { t: 'Connect motor', b: 'Attach a DC motor to the motor driver hat.' },
+      { t: 'Run it',        b: 'Cover the LDR to slow the motor. Expose it to light to speed it up.' },
+      { t: 'Design question', b: 'What environment change could trigger a motor response in your scenario? Automatic blinds? A light-activated gate?' },
+    ],
+    code: `# LDR controls Motor speed
+# More light = faster motor
+import board, time, analogio, pwmio
+
+ldr       = analogio.AnalogIn(board.GP28)
+motor_in1 = pwmio.PWMOut(board.GP6, frequency=1000)
+motor_in2 = pwmio.PWMOut(board.GP7, frequency=1000)
+
+# Keep motor stopped below this threshold
+MIN_LIGHT = 5000
+
+while True:
+    level = ldr.value
+    if level < MIN_LIGHT:
+        # Too dark — motor off
+        motor_in1.duty_cycle = 0
+        motor_in2.duty_cycle = 0
+        print("Dark — motor off")
+    else:
+        # Map light to speed
+        speed = min(1.0, (level - MIN_LIGHT) / (65535 - MIN_LIGHT))
+        motor_in1.duty_cycle = int(speed * 65535)
+        motor_in2.duty_cycle = 0
+        print("Light:", level, "-> Speed:", round(speed, 2))
+
+    time.sleep(0.1)
+`
+  },
+
+  {
+    id: 'data-log', category: 'Advanced', name: 'Data logger', tag: 'combo',
+    desc: 'Record LDR readings over time as CSV. Copy into a spreadsheet to understand the problem.',
+    needs: ['Base board'],
+    steps: [
+      { t: 'Run it',         b: 'Light readings print as CSV every 2 seconds. Copy the output into a spreadsheet to chart it.' },
+      { t: 'Change sensor',  b: 'Replace <code>ldr.value</code> with any other reading. This works for any analogue input.' },
+      { t: 'Why log?',       b: 'Before designing a solution, real data tells you what the problem actually looks like. When does a space get dark? How variable is it? How often?' },
+    ],
+    code: `# Data Logger — Open Minds Board V2
+# Records sensor readings as CSV
+# Copy output into a spreadsheet to chart it
+import board, time, analogio
+
+sensor = analogio.AnalogIn(board.GP28)  # LDR
+
+start = time.monotonic()
+print("time_s,raw_value,percent")       # CSV header
+
+while True:
+    elapsed = round(time.monotonic() - start, 1)
+    raw     = sensor.value
+    percent = round(raw / 65535 * 100, 1)
+    print(str(elapsed) + "," + str(raw) + "," + str(percent))
+    time.sleep(2)
+`
+  },
+
+  // ── WIRELESS (COMING SOON) ──
+  {
+    id: 'wireless-info', category: 'Wireless (coming soon)', name: 'About wireless', tag: 'basic',
+    desc: 'The Pico W has a built-in wireless chip. These examples will be added once the V2 board is finalised.',
+    needs: ['Base board', 'Wi-Fi network'],
+    steps: [
+      { t: "What the Pico W can do", b: "Connect to Wi-Fi to send data to webpages, receive commands, post to APIs, or show live sensor data in a browser." },
+      { t: "Coming in V2",     b: 'Wi-Fi examples will be added here once the board firmware is confirmed — including a simple dashboard for viewing sensor data live in the browser.' },
+      { t: "In the meantime",  b: 'The Adafruit CircuitPython Wi-Fi guide covers the basics: <strong>docs.circuitpython.org</strong>' },
+    ],
+    code: `# Wireless — Coming Soon
+# The Pico W has a built-in Wi-Fi chip.
+# These examples will be added once the V2 board firmware is confirmed.
+#
+# What will be possible:
+#   - Connect to a Wi-Fi network
+#   - Send sensor data to a web page
+#   - Receive commands from a phone or browser
+#   - Post data to an API or spreadsheet
+#   - Display a live dashboard in the browser
+#
+# For now, see the Adafruit CircuitPython Wi-Fi guide:
+# https://learn.adafruit.com/circuitpython-esp32-s2/wi-fi-connection
+
+import time
+
+print("Wi-Fi examples coming soon for V2 board.")
+print("Check the Open Minds GitHub for updates.")
+
+while True:
+    time.sleep(10)
+`
+  },
+
+  // ── i2c ADD-ONS ──
+  {
+    id: 'i2c-scan', category: 'i2c add-ons', name: 'Scan i2c bus', tag: 'sensor',
+    desc: "Find what i2c devices are connected. Run this when adding any i2c sensor to check it's detected.",
+    needs: ['Base board', 'Any i2c sensor or module'],
+    steps: [
+      { t: 'Connect a sensor', b: 'Attach any i2c sensor to the i2c connector. SDA to <strong>GP14</strong>, SCL to <strong>GP15</strong>.' },
+      { t: 'Run it',           b: 'The addresses of all connected i2c devices print to the output.' },
+      { t: 'Common addresses', b: 'OLED SSD1306 = 0x3C, MPU6050 = 0x68, VL53L0X distance = 0x29. Use the address in your sensor code.' },
+    ],
+    code: `# i2c Bus Scanner
+# Finds all i2c devices connected to the board
+# SDA: GP14, SCL: GP15
+import board, busio, time
+
+i2c = busio.I2C(board.GP15, board.GP14)
+
+while not i2c.try_lock():
+    pass
+
+try:
+    devices = i2c.scan()
+    if devices:
+        print("i2c devices found:")
+        for addr in devices:
+            print("  Address: 0x" + hex(addr)[2:].upper())
+    else:
+        print("No i2c devices found.")
+        print("Check wiring: SDA=GP14, SCL=GP15")
+finally:
+    i2c.unlock()
+
+while True:
+    time.sleep(10)
+`
+  },
+
+];
+
+// ═══════════════════════════════════════════════════════
+//  RENDER EXAMPLES
+// ═══════════════════════════════════════════════════════
+let activeId = null;
+
+function renderExamples(filter = '') {
+  const list = document.getElementById('examplesList');
+  const categories = [...new Set(examples.map(e => e.category))];
+  const q = filter.toLowerCase();
+
+  list.innerHTML = categories.map(cat => {
+    const items = examples.filter(e =>
+      e.category === cat &&
+      (q === '' || e.name.toLowerCase().includes(q) || e.desc.toLowerCase().includes(q))
+    );
+    if (items.length === 0) return '';
+
+    return `<div class="example-category">
+      <div class="category-label">${cat}</div>
+      ${items.map(e => `
+        <div class="example-item ${e.id === activeId ? 'active' : ''}"
+             onclick="loadExample('${e.id}')"
+             role="button" tabindex="0"
+             aria-label="${e.name}"
+             onkeydown="if(event.key==='Enter'||event.key===' '){loadExample('${e.id}')}">
+          <div class="example-name">${e.name}</div>
+          <div class="example-desc">${e.desc}</div>
+          <span class="example-tag tag-${e.tag}">${e.tag}</span>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+function filterExamples(q) {
+  renderExamples(q);
+}
+
+function loadExample(id) {
+  const ex = examples.find(e => e.id === id);
+  if (!ex) return;
+  activeId = id;
+
+  // Load code
+  document.getElementById('codeEditor').value = ex.code;
+  isDirty = false;
+  updateTabLabel();
+  document.getElementById('editorTabLabel').textContent = ex.name + '.py';
+
+  // Update detail panel
+  document.getElementById('detailTitle').textContent = ex.name;
+  document.getElementById('detailDesc').textContent = ex.desc;
+
+  const needsEl = document.getElementById('detailNeeds');
+  const chipsEl = document.getElementById('detailNeedsChips');
+  if (ex.needs && ex.needs.length > 0) {
+    chipsEl.innerHTML = ex.needs.map(n => `<span class="needs-chip">${n}</span>`).join('');
+    needsEl.style.display = 'block';
+  } else {
+    needsEl.style.display = 'none';
+  }
+
+  const stepsEl = document.getElementById('detailSteps');
+  stepsEl.innerHTML = (ex.steps || []).map((s, i) => `
+    <div class="detail-step">
+      <div class="step-num">${i + 1}</div>
+      <div class="step-text"><strong>${s.t}</strong><br>${s.b}</div>
+    </div>
+  `).join('');
+
+  showInfoTab('detail');
+  renderExamples(document.getElementById('searchInput').value);
+}
+
+// ═══════════════════════════════════════════════════════
+//  INFO TABS
+// ═══════════════════════════════════════════════════════
+function showInfoTab(id) {
+  document.querySelectorAll('.info-tab').forEach((t, i) => {
+    const ids = ['detail', 'pins', 'tips'];
+    t.classList.toggle('active', ids[i] === id);
+    t.setAttribute('aria-selected', ids[i] === id);
+  });
+  document.querySelectorAll('.info-section').forEach(s => {
+    s.classList.toggle('active', s.id === 'tab-' + id);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOGO
+// ═══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const img      = document.getElementById('topbarLogo');
+  const fallback = document.getElementById('topbarFallback');
+  if (img && img.complete && img.naturalWidth > 0) {
+    img.style.opacity = '1';
+    fallback.style.display = 'none';
+  } else if (img) {
+    img.onload  = () => { img.style.opacity = '1'; fallback.style.display = 'none'; };
+    img.onerror = () => { img.style.display = 'none'; };
+  }
+  renderExamples();
+  // Load first example by default
+  loadExample('quicktest');
+});
+</script>
+</body>
+</html>
